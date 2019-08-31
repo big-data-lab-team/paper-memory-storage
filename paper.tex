@@ -5,25 +5,26 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage[binary-units]{siunitx}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\newcommand{\bigdata}{Big Data }
+
+\newcommand{\valerie}[1]{\color{blue}\textbf{Note from Valerie}:
+      #1 \color{black}}
+
 \begin{document}
 
-\title{Paper Title*}
+\title{Performance benefits of all-memory processing for large neuroimaging data}
 
-\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
-\and
-\IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address}
+\author{\IEEEauthorblockN{Val\'erie Hayot-Sasson$^1$, Shawn T Brown$^2$ and 
+    Tristan Glatard$^1$
+  }\\
+  \IEEEauthorblockA{
+    $^1$Department of Computer Science and Software Engineering, Concordia University, Montreal, Canada\\
+    $^2$Montreal Neurological Institute, McGill University, Montreal, Canada
+  }
 }
-
 \maketitle
 
 \begin{abstract}
@@ -34,8 +35,63 @@ component, formatting, style, styling, insert
 \end{IEEEkeywords}
 
 \section{Introduction}
-\section{Methods}
+Data transfer rates are a significant source of bottleneck in \bigdata
+applications. As a result, many \bigdata frameworks have opted to reduce data
+transfers using strategies such as data locality, in-memory computing and lazy
+evaluation. Furthermore, kernel optimizations, such as the Page Cache, also
+attempt to minimize the amount of data transfers that may arise during the
+lifetime of an application through cache hits. It also lessens the burden of
+data transfers by asynchronously flushing to desired storage device.
+
+Adaptations made for the efficient processing of \bigdata applications are not 
+limited to software. Infrastructure technology has also improved to increase the
+bandwidth of slower storage devices, to a point at which cost-effective Solid 
+State Drives (SSD) can emulate RAM-like bandwidths and exhibit a significantly 
+larger capacity that standard DRAM. Moreover, such SSDs provide persistent
+storage enabling all data to be stored in a RAM-like non-volatile filesystem.
+\valerie{Perhaps introduce optane here/do related-work search}
+
+Neuroimaging open-data initiatives have led to extensively large repositories of
+publicly available data. Such initiatives include the BigBrain~\cite{BigBrain}, 
+a one-of-a-kind $\SI{603}{\gibi\byte}$\valerie{verify this w/ Claude}
+histological image of a 76 year-old~\valerie{from memory, so better double-check} healthy human brain
+at 20$\mu$m resolution; the UK Biobank~\cite{ukbiobank}, a repository expected to
+contain approximately $\SI{0.2}{\peta\byte}$ of data (including various magnetic
+resonance (MR) imaging modalities) from 500,000 individuals living in the UK;
+the Human Connectome Project~\cite{HCP}, a repository containing MR scans from
+1200 healthy adults, which is expected to exceed $\SI{2}{\peta\byte}$ in size; 
+and the Consortium for Reliability and Reproducibility (CoRR)~\cite{corr}, an
+initiative which aggregates MR data from various laboratories around the world, 
+of which 32 are currently available and make up about $\SI{937}{\giga\byte}$ of
+data in total.
+
+Due to storage limitations, only subsets of the neuroimaging repositories 
+can be processed in a typical research laboratory. Moreover, as these datasets 
+are extremely large and are only increasing in size, they are typically stored 
+in higher-capacity, slower storage devices. In such conditions, large-scale 
+studies in neuroimaging remain limited to labs with access to adequate 
+infrastructure and are limited by data transfer times.
+
+In this paper, we aim to:
+\begin{itemize}
+        \item Quantify the added value of Intel Optane persistent memory on 
+            processing large neuroimaging data using representative pipelines; and
+        \item Determine when a given Intel Optane storage configuration (Memory 
+            and App Direct mode) is preferable.
+\end{itemize}
+
+\section{Materials and Methods}
+\subsection{Infrastructure}
+\subsection{Storage configuration}
+\subsection{Applications}
+\subsection{Performance model}
 \section{Results}
+\subsection{Memory-mode}
+\subsection{App-Direct mode}
+\section{Discussion}
+\subsection{Memory vs App Direct mode}
+\subsection{Effect of Page Cache}
+\subsection{Added value of persistent memory}
 \section{Conclusion}
 \section{Acknowledgement}
 \bibliographystyle{IEEEtran} 
