@@ -1,0 +1,6 @@
+[submodule "experiments/bids-app-example/bids-example"]
+	path = experiments/bids-app-example/bids-example
+	url = git@github.com:BIDS-Apps/example.git
+[submodule "experiments/bids-app-example/data/corr"]
+	path = experiments/bids-app-example/data/corr
+	url = http://datasets.datalad.org/corr/.git
