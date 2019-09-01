@@ -14,7 +14,7 @@ optane = '/run/user/61218'
 cmd_template = 'spark-submit --master local[{0}] --driver-memory {1} spark_inc.py {2} {3} {4} --benchmark'
 im_size_b = 646461552 
 
-with open('test_condition.json', 'r') as f:
+with open('conditions.json', 'r') as f:
     conditions = json.load(f)
 
 shuffle(conditions)
