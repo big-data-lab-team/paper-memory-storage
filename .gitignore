@@ -3,3 +3,5 @@ paper.bbl
 paper.blg
 paper.log
 paper.pdf
+temp-*.localExec.boshjob.sh
+bids-example.simg
