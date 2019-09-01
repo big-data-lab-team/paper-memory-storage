@@ -144,7 +144,7 @@ def increment_data(idx, filename, im, delay, benchmark, start,
         fn = os.path.basename(fn)
 
         if '-' in fn:
-            fn = fn.split('-')[1]
+            fn = fn.split('-')[-1]
 
         out_fn = 'inc{0}-{1}'.format(iteration, fn)
         out_fp = os.path.join(work_dir, out_fn)
@@ -185,8 +185,8 @@ def save_incremented(idx, filename, im, benchmark, start,
 
     start_time = time() - start
 
-    bn = os.path.basename(filename).replace('inc-', '')
-    out_fn = os.path.join(output_dir, 'inc{0}-{1}'.format(iterations, bn))
+    bn = os.path.basename(filename) #.replace('inc-', '')
+    out_fn = os.path.join(output_dir, bn) #'inc{0}-{1}'.format(iterations, bn))
 
     if not wd:
         nib.save(im, out_fn)
@@ -271,7 +271,7 @@ def main():
                                                        bench_file=x[3]))
     else:
         # get all filenames
-        files = glob(os.path.join(args.bb_dir, '*'))
+        files = glob(os.path.join(args.bb_dir, 'bigbrain*'))
         fidx = [i for i in range(0, len(files))]
 
         # Create an RDD of filenames

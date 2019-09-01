@@ -40,7 +40,7 @@
         "delay": 60,
         "iterations": 3,
         "storage": "optane"
-    }
+    },
     {
         "id": "isilon_3it_96cpus_0delay_npc",
         "ncpus": 96,
