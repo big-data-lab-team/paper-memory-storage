@@ -13,7 +13,7 @@ import argparse
 import subprocess
 
 
-def write_bench(name, start_time, end_time, node, filename, executor,
+def write_bench(name, start_time, end_time, filename, executor,
                 benchmark_dir=None, benchmark_file=None):
     """Write benchmarks to file.
 
@@ -45,8 +45,8 @@ def write_bench(name, start_time, end_time, node, filename, executor,
                 )
 
     with open(benchmark_file, 'a+') as f:
-        f.write('{0},{1},{2},{3},{4},{5}\n'.format(name, start_time, end_time,
-                                                   node, filename, executor))
+        f.write('{0},{1},{2},{3},{4}\n'.format(name, start_time, end_time,
+                                                   filename, executor))
 
     return benchmark_file
 
@@ -80,12 +80,10 @@ def read_img(filename, data, benchmark, start, bench_dir=None):
 
     bench_file = None
     if benchmark:
-        bench_file = write_bench('load_img', start_time, end_time,
-                                 socket.gethostname(), bn,
+        bench_file = write_bench('load_img', start_time, end_time, bn,
                                  os.getpid(), benchmark_dir=bench_dir)
 
-    return (socket.gethostname(), filename, im,
-            bench_file)
+    return (os.getpid(), filename, im, bench_file)
 
 
 def increment_data(idx, filename, im, delay, benchmark, start,
@@ -94,10 +92,9 @@ def increment_data(idx, filename, im, delay, benchmark, start,
     """Increment image data by 1
 
     Keyword arguments:
-    idx -- image index within the RDD (Or node hostname if in-memory)
+    idx -- image index within the RDD (Or pid if in-memory)
     filename -- image filename
-    data -- image data (can be None w/ CLI-based processing)
-    metadata -- image metadata (can be None w/ CLI-based processing)
+    im -- Nibabel image (can be None w/ CLI-based processing)
     delay -- task duration (or sleep time) in seconds
     benchmark -- boolean representing whether task should be benchmarked
     start -- start time of driver
@@ -126,7 +123,7 @@ def increment_data(idx, filename, im, delay, benchmark, start,
     if not cli:
         print("Incrementing data in memory")
         data = np.asanyarray(im.dataobj) + 1
-        im = nib.Nifti1Image(data, im.header, im.affine)
+        im = nib.Nifti1Image(data, im.affine, im.header)
         sleep(delay)
     else:
         work_dir = output_dir if work_dir is None else work_dir
@@ -164,7 +161,7 @@ def increment_data(idx, filename, im, delay, benchmark, start,
     if benchmark:
         bn = os.path.basename(filename)
         write_bench('increment_data', start_time, end_time,
-                    socket.gethostname(), bn,
+                    bn,
                     os.getpid(), bench_dir, bench_file)
 
     return (idx, filename, im, bench_file, iteration + 1)
@@ -177,7 +174,7 @@ def save_incremented(idx, filename, im, benchmark, start,
     Keyword arguments:
     idx -- index of data in RDD (cli) or initial hostname (in-mem)
     filename -- image filename
-    data -- Nibabel image (can be None if processed using CLI)
+    im -- Nibabel image (can be None if processed using CLI)
     benchmark -- boolean denoting whether to benchmark task
     start -- driver start time (in seconds)
     output_dir -- directory to write final data to
@@ -201,7 +198,6 @@ def save_incremented(idx, filename, im, benchmark, start,
         except Exception as e:
             raise Exception("****ERROR****"
                             " {0} {1} {2}".format(filename,
-                                                  socket.gethostname(),
                                                   os.listdir(
                                                       os.path.dirname(
                                                           filename
@@ -215,8 +211,7 @@ def save_incremented(idx, filename, im, benchmark, start,
         if os.path.isdir(bench_file):
             bench_dir = bench_file
             bench_file = None
-        write_bench('save_incremented', start_time, end_time,
-                    socket.gethostname(), bn, os.getpid(),
+        write_bench('save_incremented', start_time, end_time, bn, os.getpid(),
                     benchmark_dir=bench_dir, benchmark_file=bench_file)
 
     return (out_fn, 'SUCCESS')
@@ -274,10 +269,10 @@ def main():
                                              bench_dir=benchmark_dir))
 
         for i in range(args.iterations):
-            imRDD = imRDD.map(lambda x: increment_data(x[0], x[1], x[2], x[3],
+            imRDD = imRDD.map(lambda x: increment_data(x[0], x[1], x[2],
                                                        delay, args.benchmark,
                                                        start,
-                                                       bench_file=x[4]))
+                                                       bench_file=x[3]))
     else:
         # get all filenames
         files = glob(os.path.join(args.bb_dir, '*'))
@@ -311,10 +306,10 @@ def main():
                                                        args.cli),
                               preservesPartitioning=True)
 
-    imRDD.map(lambda x: save_incremented(x[0], x[1], x[2], x[3],
+    imRDD.map(lambda x: save_incremented(x[0], x[1], x[2],
                                          args.benchmark, start,
                                          output_dir,
-                                         args.iterations, x[4], args.cli),
+                                         args.iterations, x[3], args.cli),
               preservesPartitioning=True).collect()
 
     end = time() - start
@@ -322,8 +317,8 @@ def main():
     if args.benchmark:
         fname = 'benchmark-{}.txt'.format(app_uuid)
         benchmark_file = os.path.join(output_dir, fname)
-        write_bench('driver_program', 0, end, socket.gethostname(),
-                    output_dir, 'allfiles', get_ident(),
+        write_bench('driver_program', 0, end,
+                    output_dir, 'allfiles', os.getpid(),
                     benchmark_file=benchmark_file)
 
         with open(benchmark_file, 'a+') as bench:
