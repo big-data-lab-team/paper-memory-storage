@@ -1,0 +1,4 @@
+logs/*
+invocations/*_*.json
+outputs/*_*
+venv
