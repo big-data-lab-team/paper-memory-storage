@@ -288,10 +288,10 @@ def main():
                           preservesPartitioning=True)
 
         for i in range(1, args.iterations):
-            imRDD = imRDD.map(lambda x: increment_data(x[0], x[1], None, None,
+            imRDD = imRDD.map(lambda x: increment_data(x[0], x[1], None,
                                                        delay, args.benchmark,
                                                        start,
-                                                       x[5],
+                                                       x[4],
                                                        work_dir,
                                                        benchmark_dir),
                               preservesPartitioning=True)

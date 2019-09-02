@@ -5,9 +5,10 @@ from random import shuffle
 from os import path as op, remove
 import subprocess
 import glob
+import sys
 
 base_dir = '/home/users/vhayots' 
-block_dir = '1000_blocks'
+block_dir = sys.argv[1] #'1000_blocks'
 input_dataset = op.join(base_dir, block_dir)
 isilon = base_dir
 optane = '/run/user/61218'
@@ -40,7 +41,7 @@ def delete_output_files(work_dir_flag, mem_dir, mem_dir_out, isilon_dir_out):
         empty_dir(op.join(mem_dir_out, '*.nii'))
 
 
-for i in range(5):
+for i in range(int(sys.argv[2])):
     for c in conditions:
 
         parallel_writes = c['ncpus'] * im_size_b
@@ -54,7 +55,7 @@ for i in range(5):
         if c['storage'] == 'optane':
             mem_dir = op.join(optane, block_dir) 
             mem_dir_out = op.join(optane, '{0}-{1}'.format(c['id'], i))
-            p = subprocess.Popen(['cp', '-r', input_dataset, mem_dir],
+            p = subprocess.Popen(['cp', '-r', input_dataset, optane],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             print(p.communicate())
 
