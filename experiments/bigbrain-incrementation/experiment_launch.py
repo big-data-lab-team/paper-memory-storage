@@ -22,7 +22,7 @@ shuffle(conditions)
 
 def drop_caches():
     p = subprocess.Popen('echo 3 | sudo tee /proc/sys/vm/drop_caches',
-                         shell=True)
+                         shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     print(p.communicate())
 
 
@@ -31,20 +31,18 @@ def empty_dir(regex):
     for f in files:
         remove(f)
 
-def delete_output_files(work_dir_flag, mem_dir, mem_dir_out, isilon_dir_out):
-    if isilon_dir_out is not None:
-        empty_dir(op.join(isilon_dir_out, '*.nii'))
-        empty_dir(op.join(work_dir_flag.split(' ')[1], '*.nii'))
-
-    else:
+def delete_output_files(mem_dir, out_dir):
+    if mem_dir is not None:
         empty_dir(op.join(mem_dir, '*.nii'))
-        empty_dir(op.join(mem_dir_out, '*.nii'))
+
+    empty_dir(op.join(out_dir, '*.nii'))
 
 
 for i in range(int(sys.argv[2])):
     for c in conditions:
 
         parallel_writes = c['ncpus'] * im_size_b
+        mem_in_dir = None
         in_dir = input_dataset
         out_dir = None
         mem_size = str(int((parallel_writes * 0.05 + parallel_writes) / 1024**3)) + 'G'
@@ -52,6 +50,7 @@ for i in range(int(sys.argv[2])):
 
         if c['storage'] == 'optane':
             in_dir = op.join(optane, block_dir) 
+            mem_in_dir = in_dir
             out_dir = op.join(optane, '{0}-{1}'.format(c['id'], i))
 
             # Copy dataset to memory
@@ -78,7 +77,7 @@ for i in range(int(sys.argv[2])):
         p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
         print(p.communicate())
 
-        delete_output_files(work_dir_flag, mem_dir, mem_dir_out, isilon_dir_out)
+        delete_output_files(mem_in_dir, out_dir)
 
 
 
