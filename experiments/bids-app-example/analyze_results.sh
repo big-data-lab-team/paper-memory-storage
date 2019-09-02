@@ -21,6 +21,7 @@ first=true
 i=0
 for log in $(ls -tra ${exp_name}/logs/*.log)
 do
+  echo -n .
   if [ "${first}" = false ]
   then
     echo "," >> ${task_file}
@@ -33,6 +34,9 @@ do
   start=$(date -d @${start})  # convert from unix timestamp to date
   end=$(grep 'END DATE' ${log} | awk -F ':' '{print $2}')
   end=$(date -d @${end})  # convert from unix timestamp to date
-  echo "  { \"Task\": \"${task_number}\", \"Start\": \"${start}\", \"Finish\": \"${end}\" } " >> ${task_file}
+  code=$(grep -A 1 -i "exit code" ${log} | tail -1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g")
+  echo "  { \"Task\": \"${task_number}\", \"Start\": \"${start}\", \
+            \"Finish\": \"${end}\", \"Name\": \"${job_name}\", \
+            \"Exit code\": \"${code}\" } " >> ${task_file}
 done
 echo '] }' >> ${task_file}
