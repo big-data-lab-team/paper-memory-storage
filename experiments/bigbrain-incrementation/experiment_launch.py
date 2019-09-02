@@ -12,7 +12,7 @@ base_dir = '/home/users/vhayots'
 block_dir = sys.argv[1] #'1000_blocks'
 input_dataset = op.join(base_dir, block_dir)
 isilon = base_dir
-optane = '/run/user/61218'
+optane = '/nvme-disk1'
 cmd_template = 'spark-submit --master local[{0}] --driver-memory {1} --conf spark.network.timeout=10000001 --conf spark.executor.heartbeatInterval=10000000 spark_inc.py {2} {3} {4} --benchmark'
 im_size_b = 646461552 
 
