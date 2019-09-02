@@ -45,40 +45,28 @@ for i in range(int(sys.argv[2])):
     for c in conditions:
 
         parallel_writes = c['ncpus'] * im_size_b
-        work_dir_flag = None
-        mem_dir_out = None 
-        mem_dir = None
-        isilon_dir_out = None
+        in_dir = input_dataset
+        out_dir = None
         mem_size = str(int((parallel_writes * 0.05 + parallel_writes) / 1024**3)) + 'G'
         print(mem_size)
 
         if c['storage'] == 'optane':
-            mem_dir = op.join(optane, block_dir) 
-            mem_dir_out = op.join(optane, '{0}-{1}'.format(c['id'], i))
+            in_dir = op.join(optane, block_dir) 
+            out_dir = op.join(optane, '{0}-{1}'.format(c['id'], i))
+
+            # Copy dataset to memory
             p = subprocess.Popen(['cp', '-r', input_dataset, optane],
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             print(p.communicate())
-
-            drop_caches()
-
-
-            cmd = cmd_template.format(c['ncpus'],
-                                      mem_size,
-                                      mem_dir,
-                                      mem_dir_out,
-                                      c['iterations'])
-
         else:
-            isilon_dir_out = op.join(isilon, '{0}-{1}'.format(c['id'], i))
-            drop_caches()
-            cmd = cmd_template.format(c['ncpus'],
-                                      mem_size,
-                                      input_dataset,
-                                      isilon_dir_out,
-                                      c['iterations'])
-            work_dir_flag = '--work_dir {}'.format(op.join(isilon, 'work_dir'))
-            cmd = '{0} {1}'.format(cmd, work_dir_flag)
+            out_dir = op.join(isilon, '{0}-{1}'.format(c['id'], i))
 
+        drop_caches()
+        cmd = cmd_template.format(c['ncpus'],
+                                  mem_size,
+                                  in_dir,
+                                  out_dir,
+                                  c['iterations'])
 
         if c['delay'] != 0 :
             delay_flag = '--delay {}'.format(c['delay'])
