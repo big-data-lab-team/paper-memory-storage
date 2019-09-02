@@ -87,7 +87,7 @@ def read_img(filename, data, benchmark, start, bench_dir=None):
 
 
 def increment_data(idx, filename, im, delay, benchmark, start,
-                   iteration=0, work_dir=None, bench_file=None):
+                   iteration=0, bench_file=None):
     """Increment image data by 1
 
     Keyword arguments:
@@ -98,15 +98,12 @@ def increment_data(idx, filename, im, delay, benchmark, start,
     benchmark -- boolean representing whether task should be benchmarked
     start -- start time of driver
     iteration -- the current iteration value (default 0)
-    work_dir -- work directory to save intermediate results to
-               (default None)
     bench_file -- the filepath to save benchmarks to
 
     Returns: Tuple containing incremented data and associated metadata
     """
     start_time = time() - start
 
-    print('****', work_dir)
     if benchmark and os.path.isdir(bench_file):
         bench_dir = bench_file
         try:
@@ -119,39 +116,10 @@ def increment_data(idx, filename, im, delay, benchmark, start,
                         "bench-{}.txt".format(str(uuid.uuid1()))
                      )
 
-    if not work_dir:
-        print("Incrementing data in memory")
-        data = np.asanyarray(im.dataobj) + 1
-        im = nib.Nifti1Image(data, im.affine, im.header)
-        sleep(delay)
-    else:
-        it_dir = "iteration-{}".format(iteration)
-
-        work_dir = os.path.join(work_dir, it_dir)
-
-        try:
-            os.makedirs(work_dir)
-        except Exception as e:
-            pass
-
-        fn = filename[5:] if 'file:' in filename else os.path.abspath(filename)
-
-        im = nib.load(fn)
-        data = np.asanyarray(im.dataobj) + 1
-        im = nib.Nifti1Image(data, im.affine, im.header)
-
-
-        fn = os.path.basename(fn)
-
-        if '-' in fn:
-            fn = fn.split('-')[-1]
-
-        out_fn = 'inc{0}-{1}'.format(iteration, fn)
-        out_fp = os.path.join(work_dir, out_fn)
-
-        nib.save(im, out_fp)
-
-        filename = out_fp
+    print("Incrementing data in memory")
+    data = np.asanyarray(im.dataobj) + 1
+    im = nib.Nifti1Image(data, im.affine, im.header)
+    sleep(delay)
 
     end_time = time() - start
 
@@ -166,7 +134,7 @@ def increment_data(idx, filename, im, delay, benchmark, start,
 
 
 def save_incremented(idx, filename, im, benchmark, start,
-                     output_dir, iterations, bench_file=None, wd=None):
+                     output_dir, iterations, bench_file=None):
     """Save final data to output directory
 
     Keyword arguments:
@@ -178,7 +146,6 @@ def save_incremented(idx, filename, im, benchmark, start,
     output_dir -- directory to write final data to
     iterations -- number of iterations that resulted in final data
     bench_file -- the file to append benchmarks to (default None)
-    wd -- working directory (default: None)
 
     Returns: Tuple containing final output filename
     """
@@ -188,19 +155,7 @@ def save_incremented(idx, filename, im, benchmark, start,
     bn = os.path.basename(filename) #.replace('inc-', '')
     out_fn = os.path.join(output_dir, bn) #'inc{0}-{1}'.format(iterations, bn))
 
-    if not wd:
-        nib.save(im, out_fn)
-    else:
-        try:
-            shutil.copyfile(filename, out_fn)
-        except Exception as e:
-            raise Exception("****ERROR****"
-                            " {0} {1} {2}".format(filename,
-                                                  os.listdir(
-                                                      os.path.dirname(
-                                                          filename
-                                                      )
-                                                  )))
+    nib.save(im, out_fn)
 
     end_time = time() - start
 
@@ -231,7 +186,6 @@ def main():
                         help='task duration time (in s)')
     parser.add_argument('--benchmark', action='store_true',
                         help='benchmark results')
-    parser.add_argument('--work_dir', type=str, help="working directory")
 
     args = parser.parse_args()
 
@@ -257,49 +211,22 @@ def main():
         pass
 
     # read binary data stored in folder and create an RDD from it
-    if not args.work_dir:
-        imRDD = sc.binaryFiles('file://' + os.path.abspath(args.bb_dir) + '/bigbrain*')
-        imRDD = imRDD.map(lambda x: read_img(x[0], x[1],
-                                             args.benchmark,
-                                             start,
-                                             bench_dir=benchmark_dir))
+    imRDD = sc.binaryFiles('file://' + os.path.abspath(args.bb_dir) + '/bigbrain*')
+    imRDD = imRDD.map(lambda x: read_img(x[0], x[1],
+                                         args.benchmark,
+                                         start,
+                                         bench_dir=benchmark_dir))
 
-        for i in range(args.iterations):
-            imRDD = imRDD.map(lambda x: increment_data(x[0], x[1], x[2],
-                                                       delay, args.benchmark,
-                                                       start,
-                                                       bench_file=x[3]))
-    else:
-        # get all filenames
-        files = glob(os.path.join(args.bb_dir, 'bigbrain*'))
-        fidx = [i for i in range(0, len(files))]
-
-        # Create an RDD of filenames
-        imRDD = sc.parallelize(zip(fidx, files), len(files))
-
-        work_dir = os.path.abspath(os.path.join(args.work_dir,
-                                                'app-{}'.format(app_uuid)))
-
-        imRDD = imRDD.map(lambda x: increment_data(x[0], x[1], None,
+    for i in range(args.iterations):
+        imRDD = imRDD.map(lambda x: increment_data(x[0], x[1], x[2],
                                                    delay, args.benchmark,
-                                                   start, 0,
-                                                   work_dir,
-                                                   benchmark_dir),
-                          preservesPartitioning=True)
-
-        for i in range(1, args.iterations):
-            imRDD = imRDD.map(lambda x: increment_data(x[0], x[1], None,
-                                                       delay, args.benchmark,
-                                                       start,
-                                                       x[4],
-                                                       work_dir,
-                                                       benchmark_dir),
-                              preservesPartitioning=True)
+                                                   start,
+                                                   bench_file=x[3]))
 
     imRDD.map(lambda x: save_incremented(x[0], x[1], x[2],
                                          args.benchmark, start,
                                          output_dir,
-                                         args.iterations, x[3], args.work_dir),
+                                         args.iterations, x[3]),
               preservesPartitioning=True).collect()
 
     end = time() - start
