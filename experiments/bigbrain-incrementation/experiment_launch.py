@@ -6,13 +6,14 @@ from os import path as op, remove
 import subprocess
 import glob
 import sys
+from shutil import copytree
 
 base_dir = '/home/users/vhayots' 
 block_dir = sys.argv[1] #'1000_blocks'
 input_dataset = op.join(base_dir, block_dir)
 isilon = base_dir
 optane = '/run/user/61218'
-cmd_template = 'spark-submit --master local[{0}] --driver-memory {1} spark_inc.py {2} {3} {4} --benchmark'
+cmd_template = 'spark-submit --master local[{0}] --driver-memory {1} --conf spark.network.timeout=10000001 --conf spark.executor.heartbeatInterval=10000000 spark_inc.py {2} {3} {4} --benchmark'
 im_size_b = 646461552 
 
 with open('conditions.json', 'r') as f:
@@ -54,9 +55,8 @@ for i in range(int(sys.argv[2])):
             out_dir = op.join(optane, '{0}-{1}'.format(c['id'], i))
 
             # Copy dataset to memory
-            p = subprocess.Popen(['cp', '-r', input_dataset, optane],
-                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            print(p.communicate())
+            in_dir = copytree(input_dataset, in_dir)
+            print(in_dir, 'created')
         else:
             out_dir = op.join(isilon, '{0}-{1}'.format(c['id'], i))
 
