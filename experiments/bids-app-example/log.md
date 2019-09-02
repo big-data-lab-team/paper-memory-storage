@@ -28,4 +28,9 @@
 * put them in data/blacklisted
 * all remaining subjects pass bids validation
 
+* only the T1s are processed, it's not a lot of data
+* the singularity image (420M) must be read by every task
+
 # isilon-rep2, 92 jobs
+
+* Should be done by midnight on Sep 1.
