@@ -5,7 +5,6 @@ import nibabel as nib
 from os import path as op, makedirs as md
 import time
 import subprocess
-import socket
 try:
     from threading import get_ident
 except Exception as e:
@@ -27,13 +26,18 @@ def increment(fn, outdir, delay, benchmark_file, start_time):
     start = time.time() - start_time
     im = nib.load(fn)
     end = time.time() - start_time
-    print("read time", end)
+    print("read time", end - start)
 
-    if benchmark_file is not None:
-        write_bench(benchmark_file, "read_file", start, end,
-                    socket.gethostname(), op.basename(fn), get_ident())
+    write_bench(benchmark_file, "read_file", start, end,
+                op.basename(fn), get_ident())
 
+    start = time.time() - start_time
     inc_data = im.get_data() + 1
+    end = time.time() - start_time
+    print("incrementation time", end - start)
+
+    write_bench(benchmark_file, "increment_file", start, end,
+                op.basename(fn), get_ident())
 
     im = nib.Nifti1Image(inc_data, affine=im.affine, header=im.header)
 
@@ -48,24 +52,25 @@ def increment(fn, outdir, delay, benchmark_file, start_time):
     end = time.time() - start_time
     print("write time", time.time() - start)
 
-    if benchmark_file is not None:
-        write_bench(benchmark_file, "write_file", start, end,
-                    socket.gethostname(), op.basename(out_fn), get_ident())
+    write_bench(benchmark_file, "write_file", start, end,
+                op.basename(out_fn), get_ident())
 
     time.sleep(delay)
     print('Saved image to: ', out_fn)
 
 
-def write_bench(benchmark_file, name, start_time, end_time, node, filename,
+def write_bench(benchmark_file, name, start_time, end_time, filename,
                 executor):
 
-    with open(benchmark_file, 'a+') as f:
-        f.write('{0} {1} {2} {3} {4} {5}\n'.format(name, start_time, end_time,
-                                                   node, filename, executor))
+    if benchmark_file is not None:
+        with open(benchmark_file, 'a+') as f:
+            f.write('{0} {1} {2} {3} {4}\n'.format(name, start_time, end_time,
+                                                       filename, executor))
 
 
 def main():
 
+    start = time.time()
     print('Incrementation CLI started')
     parser = argparse.ArgumentParser(description="BigBrain incrementation")
     parser.add_argument('filename', type=str,
@@ -88,6 +93,11 @@ def main():
 
     increment(args.filename, args.output_dir, args.delay,
               args.benchmark_file, args.delay)
+
+    end = time.time()
+
+    write_bench(args.benchmark_file, "task_duration", start, end,
+                op.basename(args.output_dir), get_ident())
 
 
 if __name__ == '__main__':
