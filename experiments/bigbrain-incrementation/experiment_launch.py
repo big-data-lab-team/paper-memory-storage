@@ -7,6 +7,10 @@ import subprocess
 import glob
 import sys
 from shutil import copytree, rmtree
+from time import time
+import fileinput
+import glob
+
 
 base_dir = '/home/users/vhayots' 
 exp_dir = op.join(base_dir, 'paper-memory-storage/experiments/bigbrain-incrementation')
@@ -17,6 +21,7 @@ optane = '/nvme-disk1'
 local = '/home/val'
 tmpfs = '/run/user/61218'
 ef_dir = op.join(exp_dir, 'experiment_files')
+results_dir = op.join(exp_dir, 'results')
 cmd_template = 'time $(parallel --jobs {} < {})'
 im_size_b = 646461552 
 
@@ -43,8 +48,16 @@ def delete_output_files(mem_dir, out_dir):
     empty_dir(op.join(out_dir, '*.nii'))
 
 
+def get_results(out_dir, out_name):
+    with open(op.join(results_dir, '{}.out'.format(out_name)), 'w+') as f:
+        for line in fileinput.input(glob.glob(op.join(out_dir, '/*'))):
+            f.write(line)
+        fileinput.close()
+    
+
+
 for i in range(int(sys.argv[2])):
-    for c in conditions:
+    for c in sys.argv[3]:
 
         parallel_writes = c['ncpus'] * im_size_b
         mem_in_dir = None
@@ -52,13 +65,15 @@ for i in range(int(sys.argv[2])):
         out_dir = None
         mem_size = str(int((parallel_writes * 0.05 + parallel_writes) / 1024**3)) + 'G'
         print(mem_size)
+        start = int(time())
 
+        out_name = '{0}-{1}-{2}'.format(start, c['id'], i)
         if c['storage'] == 'optane' or c['storage'] == 'local' or c['storage'] == 'tmpfs':
             disk = optane
 
             if c['storage'] == 'local':
                 disk = local
-            else:
+            elif c['storage'] == 'tmpfs':
                 disk = tmpfs
             in_dir = op.join(disk, block_dir)
             mem_in_dir = in_dir
@@ -68,7 +83,7 @@ for i in range(int(sys.argv[2])):
             in_dir = copytree(input_dataset, in_dir)
             print(in_dir, 'created')
         else:
-            out_dir = op.join(isilon, '{0}-{1}'.format(c['id'], i))
+            out_dir = op.join(isilon, out_name)
 
         ef_cmd = [op.join(exp_dir, 'generate_ef.sh'), in_dir, out_dir, str(c['delay'])]
         p = subprocess.Popen(ef_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -83,9 +98,11 @@ for i in range(int(sys.argv[2])):
 
         p = subprocess.Popen(cmd, shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print(p.communicate())
+        out,err = p.communicate()
+        print('COMMAND OUTPUT:\n', str(out), '\n\nCOMMAND ERR:\n', str(err))
 
         delete_output_files(mem_in_dir, out_dir)
+        get_results(out_dir, out_name)
 
 
 
