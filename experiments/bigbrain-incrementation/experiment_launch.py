@@ -6,14 +6,17 @@ from os import path as op, remove
 import subprocess
 import glob
 import sys
-from shutil import copytree
+from shutil import copytree, rmtree
 
 base_dir = '/home/users/vhayots' 
+exp_dir = op.join(base_dir, 'paper-memory-storage/experiments/bigbrain-incrementation')
 block_dir = sys.argv[1] #'1000_blocks'
 input_dataset = op.join(base_dir, block_dir)
 isilon = base_dir
 optane = '/nvme-disk1'
-cmd_template = 'spark-submit --master local[{0}] --driver-memory {1} --conf spark.network.timeout=10000001 --conf spark.executor.heartbeatInterval=10000000 spark_inc.py {2} {3} {4} --benchmark'
+local = '/home/val'
+ef_dir = op.join(exp_dir, 'experiment_files')
+cmd_template = 'time $(parallel --jobs {} < {})'
 im_size_b = 646461552 
 
 with open('conditions.json', 'r') as f:
@@ -23,7 +26,7 @@ shuffle(conditions)
 
 def drop_caches():
     p = subprocess.Popen('echo 3 | sudo tee /proc/sys/vm/drop_caches',
-                         shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                         shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     print(p.communicate())
 
 
@@ -34,7 +37,7 @@ def empty_dir(regex):
 
 def delete_output_files(mem_dir, out_dir):
     if mem_dir is not None:
-        empty_dir(op.join(mem_dir, '*.nii'))
+        rmtree(mem_dir)
 
     empty_dir(op.join(out_dir, '*.nii'))
 
@@ -60,21 +63,19 @@ for i in range(int(sys.argv[2])):
         else:
             out_dir = op.join(isilon, '{0}-{1}'.format(c['id'], i))
 
+        ef_cmd = [op.join(exp_dir, 'generate_ef.sh'), in_dir, out_dir, str(c['delay'])]
+        p = subprocess.Popen(ef_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        print(p.communicate())
+
+        ef_exec = op.join(ef_dir, '{}-ef.sh'.format(op.basename(out_dir)))
+
         drop_caches()
-        cmd = cmd_template.format(c['ncpus'],
-                                  mem_size,
-                                  in_dir,
-                                  out_dir,
-                                  c['iterations'])
+        cmd = cmd_template.format(c['ncpus'], ef_exec)
 
-        if c['delay'] != 0 :
-            delay_flag = '--delay {}'.format(c['delay'])
-            cmd = '{0} {1}'.format(cmd, delay_flag)
-
-        cmd = cmd.split(' ')
         print(cmd)
 
-        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(cmd, shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print(p.communicate())
 
         delete_output_files(mem_in_dir, out_dir)
