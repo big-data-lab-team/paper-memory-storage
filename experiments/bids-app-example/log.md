@@ -1,3 +1,5 @@
+Experiment log (oldest first)
+
 # isilon-rep1, 92 jobs
 
 * Removed UPSM_1 subjects manually from bosh-commands.sh because datalad
@@ -34,3 +36,75 @@
 # isilon-rep2, 92 jobs
 
 * Should be done by midnight on Sep 1.
+* Don't forget to cite GNU parallel:  
+  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
+  ;login: The USENIX Magazine, February 2011:42-47.
+* forgot to clear the page cache
+* why am I using 92 jobs while there are 96 cores?
+
+# isilon-rep3, 96 jobs
+# isilon-rep4, 96 jobs
+# isilon-rep5, 96 jobs
+# isilon-rep6, 25 jobs
+
+rep3-6 worked fine
+
+# isilon-rep7, 25 jobs
+
+killed, will try the new async mode for isilon 
+
+# isilon-rep8, 25 jobs
+
+cancelled
+
+# UPDATE: previous conditions should be discarded
+
+We will add local disk (150G) and in-memory only has 298GB
+So excluded the following datasets:
+
+BMB_1  BNU_1  BNU_3  DC_1  HNU_1  SWU_1  SWU_4  UM  XHCUMS
+
+Input data is now 141GB
+
+# /run/user/61218 -- see launch-in-mem.sh
+* in-mem-1, 96 jobs
+* in-mem-2, 96 jobs
+* in-mem-3, 96 jobs
+* in-mem-4, 25 jobs
+* in-mem-5, 25 jobs
+* in-mem-6, 25 jobs
+ALL DONE
+
+Not sure why, but input data is 112GB on run/user, while it was 141GB on isilon
+
+# disk -- see launch-disk.sh
+Input data is 112GB here too.
+
+bandwidth: 500 MB/s (?)
+gamma: 96
+
+D = 4M 
+C = 22s
+
+-> we're in page cache for both conditions
+
+* disk-1: 96 jobs
+* disk-4: 25 jobs
+
+# nvme: /nvme-disk1 -- see launch-nvme.sh
+* nvme-1: 96 jobs
+* nvme-4: 25 jobs
+
+
+# Methods
+Removed output data after each run
+Removed input data from volume before switching conditions
+
+Infra:
+* disk used xfs
+* nvme used fuseblk
+* run/user used tmpfs
+
+# Conclusion from first glimpse
+
+disk, in-mem and nvme give similar results, due to page cache.
