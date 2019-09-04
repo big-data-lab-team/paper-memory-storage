@@ -1,0 +1,55 @@
+START DATE:1567561467
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p disk-4/outputs/IPCAS_6_0026044; /run.py data/corr/RawDataBIDS/IPCAS_6 disk-4/outputs/IPCAS_6_0026044 participant --participant_label 0026044 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/val/tristan/bids-app-example:/home/val/tristan/bids-app-example -W /home/val/tristan/bids-app-example /home/val/tristan/bids-app-example/bids-example.simg /home/val/tristan/bids-app-example/temp-1189480277761-1567561495113.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/22/cn-60c309ce126805bdedb1bcd2d505ff.xz
+			Evidence: cn-60c309ce126805bdedb1bcd2d505ff.xz
+		/.datalad/metadata/objects/22/ds-60c309ce126805bdedb1bcd2d505ff
+			Evidence: ds-60c309ce126805bdedb1bcd2d505ff
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0026045/ses-1/anat/sub-0026045_ses-1_run-1_T1w.nii.gz
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        533 Files, 4.88GB        rest                    T1w                   
+        2 - Subjects                                     bold                  
+        15 - Sessions                                                          
+
+
+bet data/corr/RawDataBIDS/IPCAS_6/sub-0026044/ses-1/anat/sub-0026044_ses-1_run-1_T1w.nii.gz disk-4/outputs/IPCAS_6_0026044/sub-0026044_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- disk-4/outputs/IPCAS_6_0026044 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m32.348s
+user	0m13.831s
+sys	0m2.689s
+END DATE:1567561500

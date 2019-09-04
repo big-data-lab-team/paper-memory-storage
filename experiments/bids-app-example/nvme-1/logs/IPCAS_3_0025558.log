@@ -1,0 +1,78 @@
+START DATE:1567565578
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p nvme-1/outputs/IPCAS_3_0025558; /run.py data/corr/RawDataBIDS/IPCAS_3 nvme-1/outputs/IPCAS_3_0025558 participant --participant_label 0025558 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /nvme-disk1/tristan/bids-app-example:/nvme-disk1/tristan/bids-app-example -W /nvme-disk1/tristan/bids-app-example /nvme-disk1/tristan/bids-app-example/bids-example.simg /nvme-disk1/tristan/bids-app-example/temp-1247447702814-1567565606830.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/5f/cn-0cb4fbe4b9852b3d6086d093012bf4.xz
+			Evidence: cn-0cb4fbe4b9852b3d6086d093012bf4.xz
+		/.datalad/metadata/objects/5f/ds-0cb4fbe4b9852b3d6086d093012bf4
+			Evidence: ds-0cb4fbe4b9852b3d6086d093012bf4
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects contain the same files. Each subject should contain the same number of files with the same naming unless some files are known to be missing. (code: 38 - INCONSISTENT_SUBJECTS)
+		/sub-0025550/ses-2/anat/sub-0025550_ses-2_run-1_T1w.nii.gz
+		/sub-0025550/ses-2/func/sub-0025550_ses-2_task-rest_run-1_bold.nii.gz
+		/sub-0025550/ses-2/func/sub-0025550_ses-2_task-rest_run-2_bold.nii.gz
+		/sub-0025551/ses-2/anat/sub-0025551_ses-2_run-1_T1w.nii.gz
+		/sub-0025551/ses-2/func/sub-0025551_ses-2_task-rest_run-1_bold.nii.gz
+		/sub-0025551/ses-2/func/sub-0025551_ses-2_task-rest_run-2_bold.nii.gz
+		/sub-0025552/ses-2/anat/sub-0025552_ses-2_run-1_T1w.nii.gz
+		/sub-0025552/ses-2/func/sub-0025552_ses-2_task-rest_run-1_bold.nii.gz
+		/sub-0025552/ses-2/func/sub-0025552_ses-2_task-rest_run-2_bold.nii.gz
+		/sub-0025553/ses-2/anat/sub-0025553_ses-2_run-1_T1w.nii.gz
+		... and 86 more files having this issue (Use --verbose to see them all).
+
+	3: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0025561/ses-2/anat/sub-0025561_ses-2_run-1_T1w.nii.gz
+		/sub-0025562/ses-2/anat/sub-0025562_ses-2_run-1_T1w.nii.gz
+		/sub-0025564/ses-1/func/sub-0025564_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0025564/ses-1/func/sub-0025564_ses-1_task-rest_run-2_bold.nii.gz
+		/sub-0025565/ses-1/func/sub-0025565_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0025565/ses-1/func/sub-0025565_ses-1_task-rest_run-2_bold.nii.gz
+		/sub-0025566/ses-1/func/sub-0025566_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0025566/ses-1/func/sub-0025566_ses-1_task-rest_run-2_bold.nii.gz
+		/sub-0025567/ses-2/anat/sub-0025567_ses-2_run-1_T1w.nii.gz
+		/sub-0025567/ses-2/func/sub-0025567_ses-2_task-rest_run-1_bold.nii.gz
+		... and 11 more files having this issue (Use --verbose to see them all).
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        844 Files, 4.54GB        rest                    T1w                   
+        36 - Subjects                                    bold                  
+        2 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/IPCAS_3/sub-0025558/ses-1/anat/sub-0025558_ses-1_run-1_T1w.nii.gz nvme-1/outputs/IPCAS_3_0025558/sub-0025558_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- nvme-1/outputs/IPCAS_3_0025558 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m34.434s
+user	0m13.572s
+sys	0m2.560s
+END DATE:1567565612

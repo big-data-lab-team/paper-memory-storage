@@ -1,0 +1,52 @@
+START DATE:1567545788
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p in-mem-1/outputs/IPCAS_4_0026206; /run.py data/corr/RawDataBIDS/IPCAS_4 in-mem-1/outputs/IPCAS_4_0026206 participant --participant_label 0026206 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /run/user/61218/tristan/bids-app-example:/run/user/61218/tristan/bids-app-example -W /run/user/61218/tristan/bids-app-example /run/user/61218/tristan/bids-app-example/bids-example.simg /run/user/61218/tristan/bids-app-example/temp-315582759369-1567545836261.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/6e/cn-5645afe93f50d2b373fb70c5d32128.xz
+			Evidence: cn-5645afe93f50d2b373fb70c5d32128.xz
+		/.datalad/metadata/objects/6e/ds-5645afe93f50d2b373fb70c5d32128
+			Evidence: ds-5645afe93f50d2b373fb70c5d32128
+		/.gitattributes
+			Evidence: .gitattributes
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        465 Files, 2.11GB        rest                    T1w                   
+        20 - Subjects                                    bold                  
+        1 - Session                                                            
+
+
+bet data/corr/RawDataBIDS/IPCAS_4/sub-0026206/ses-1/anat/sub-0026206_ses-1_run-1_T1w.nii.gz in-mem-1/outputs/IPCAS_4_0026206/sub-0026206_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- in-mem-1/outputs/IPCAS_4_0026206 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m56.056s
+user	0m12.680s
+sys	0m2.324s
+END DATE:1567545844

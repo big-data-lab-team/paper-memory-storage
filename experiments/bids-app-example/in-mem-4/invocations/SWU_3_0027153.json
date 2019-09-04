@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/SWU_3",
+    "output_dir_name" : "in-mem-4/outputs/SWU_3_0027153",
+    "analysis_level": "participant",
+    "participant_label": [ "0027153" ]
+}

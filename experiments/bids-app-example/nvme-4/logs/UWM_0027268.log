@@ -1,0 +1,62 @@
+START DATE:1567569446
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p nvme-4/outputs/UWM_0027268; /run.py data/corr/RawDataBIDS/UWM nvme-4/outputs/UWM_0027268 participant --participant_label 0027268 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /nvme-disk1/tristan/bids-app-example:/nvme-disk1/tristan/bids-app-example -W /nvme-disk1/tristan/bids-app-example /nvme-disk1/tristan/bids-app-example/bids-example.simg /nvme-disk1/tristan/bids-app-example/temp-920523474476-1567569493385.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/a7/cn-c52785044ffe5270a104ead70b63ba.xz
+			Evidence: cn-c52785044ffe5270a104ead70b63ba.xz
+		/.datalad/metadata/objects/a7/ds-c52785044ffe5270a104ead70b63ba
+			Evidence: ds-c52785044ffe5270a104ead70b63ba
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0027268/ses-1/func/sub-0027268_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0027268/ses-1/func/sub-0027268_ses-1_task-rest_run-2_bold.nii.gz
+		/sub-0027274/ses-2/func/sub-0027274_ses-2_task-rest_run-1_bold.nii.gz
+		/sub-0027280/ses-2/func/sub-0027280_ses-2_task-rest_run-1_bold.nii.gz
+		/sub-0027281/ses-1/func/sub-0027281_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0027281/ses-1/func/sub-0027281_ses-1_task-rest_run-2_bold.nii.gz
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        814 Files, 8.54GB        rest                    T1w                   
+        25 - Subjects                                    bold                  
+        2 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/UWM/sub-0027268/ses-1/anat/sub-0027268_ses-1_run-1_T1w.nii.gz nvme-4/outputs/UWM_0027268/sub-0027268_ses-1_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/UWM/sub-0027268/ses-2/anat/sub-0027268_ses-2_run-1_T1w.nii.gz nvme-4/outputs/UWM_0027268/sub-0027268_ses-2_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- nvme-4/outputs/UWM_0027268 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m56.031s
+user	0m22.013s
+sys	0m4.019s
+END DATE:1567569502
