@@ -78,7 +78,7 @@ for i in range(int(sys.argv[2])):
                 disk = tmpfs
             in_dir = op.join(disk, block_dir)
             mem_in_dir = in_dir
-            out_dir = op.join(disk, '{0}-{1}'.format(c['id'], i))
+            out_dir = op.join(disk, out_name)
 
             # Copy dataset to memory
             in_dir = copytree(input_dataset, in_dir)
