@@ -50,7 +50,7 @@ def delete_output_files(mem_dir, out_dir):
 
 def get_results(out_dir, out_name):
     with open(op.join(results_dir, '{}.out'.format(out_name)), 'w+') as f:
-        for line in fileinput.input(glob.glob(op.join(out_dir, '/*'))):
+        for line in fileinput.input(glob.glob(op.join(out_dir, '*'))):
             f.write(line)
         fileinput.close()
     
@@ -68,6 +68,7 @@ for i in range(int(sys.argv[2])):
         start = int(time())
 
         out_name = '{0}-{1}-{2}'.format(start, c['id'], i)
+
         if c['storage'] == 'optane' or c['storage'] == 'local' or c['storage'] == 'tmpfs':
             disk = optane
 
@@ -99,7 +100,7 @@ for i in range(int(sys.argv[2])):
         p = subprocess.Popen(cmd, shell=True,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out,err = p.communicate()
-        print('COMMAND OUTPUT:\n', str(out), '\n\nCOMMAND ERR:\n', str(err))
+        print('COMMAND OUTPUT:\n', out.decode('utf-8'), '\n\nCOMMAND ERR:\n', err.decode('utf-8'))
 
         delete_output_files(mem_in_dir, out_dir)
         get_results(out_dir, out_name)
