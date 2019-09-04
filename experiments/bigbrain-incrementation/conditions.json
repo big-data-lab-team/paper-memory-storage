@@ -2,16 +2,30 @@
     {
         "id": "isilon_1it_25cpus_60sdelay_withpc",
         "ncpus": 25,
-        "delay": 60,
+        "delay": 120,
         "iterations": 1,
         "storage": "isilon"
     },
     {
         "id": "optane_1it_25cpus_60delay_withpc",
         "ncpus": 25,
-        "delay": 60,
+        "delay": 120,
         "iterations": 1,
         "storage": "optane"
+    },
+    {
+        "id": "local_1it_25cpus_60delay_withpc",
+        "ncpus": 25,
+        "delay": 120,
+        "iterations": 1,
+        "storage": "local"
+    },
+    {
+        "id": "tmpfs_1it_25cpus_60delay_withpc",
+        "ncpus": 25,
+        "delay": 120,
+        "iterations": 1,
+        "storage": "tmpfs"
     },
     {
         "id": "isilon_1it_96cpus_0delay_npc",
@@ -26,5 +40,19 @@
         "delay": 0,
         "iterations": 1,
         "storage": "optane"
+    },
+    {
+        "id": "local_1it_96cpus_0delay_npc",
+        "ncpus": 96,
+        "delay": 0,
+        "iterations": 1,
+        "storage": "local"
+    },
+    {
+        "id": "tmpfs_1it_96cpus_0delay_npc",
+        "ncpus": 96,
+        "delay": 0,
+        "iterations": 1,
+        "storage": "tmpfs"
     }
 ]

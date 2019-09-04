@@ -15,6 +15,7 @@ input_dataset = op.join(base_dir, block_dir)
 isilon = base_dir
 optane = '/nvme-disk1'
 local = '/home/val'
+tmpfs = '/run/user/61218'
 ef_dir = op.join(exp_dir, 'experiment_files')
 cmd_template = 'time $(parallel --jobs {} < {})'
 im_size_b = 646461552 
@@ -52,10 +53,16 @@ for i in range(int(sys.argv[2])):
         mem_size = str(int((parallel_writes * 0.05 + parallel_writes) / 1024**3)) + 'G'
         print(mem_size)
 
-        if c['storage'] == 'optane':
-            in_dir = op.join(optane, block_dir) 
+        if c['storage'] == 'optane' or c['storage'] == 'local' or c['storage'] == 'tmpfs':
+            disk = optane
+
+            if c['storage'] == 'local':
+                disk = local
+            else:
+                disk = tmpfs
+            in_dir = op.join(disk, block_dir)
             mem_in_dir = in_dir
-            out_dir = op.join(optane, '{0}-{1}'.format(c['id'], i))
+            out_dir = op.join(disk, '{0}-{1}'.format(c['id'], i))
 
             # Copy dataset to memory
             in_dir = copytree(input_dataset, in_dir)
