@@ -1,0 +1,122 @@
+Tue Sep  3 17:21:32 EDT 2019
+IN-MEM-REP1
+3
+Tue Sep  3 17:45:32 EDT 2019
+IN-MEM-REP2
+3
+parallel: SIGTERM received. No new jobs will be started.
+parallel: Waiting for these 96 jobs to finish. Send SIGTERM again to stop now.
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025044.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025044.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025064.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025064.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025048.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025048.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025066.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025066.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025021.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025021.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025019.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025019.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025084.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025084.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025062.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025062.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025022.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025022.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025078.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025078.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025094.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025094.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025092.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025092.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025061.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025061.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025050.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025050.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025017.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025017.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025091.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025091.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025024.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025024.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025000.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025000.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025055.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025055.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025051.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025051.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025054.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025054.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025011.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025011.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025079.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025079.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025056.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025056.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025067.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025067.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025082.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025082.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025020.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025020.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025065.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025065.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025080.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025080.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025058.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025058.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025039.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025039.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025036.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025036.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025053.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025053.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025010.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025010.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025087.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025087.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025023.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025023.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025029.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025029.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025032.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025032.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025002.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025002.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025008.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025008.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025027.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025027.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025075.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025075.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025069.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025069.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025060.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025060.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025071.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025071.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025025.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025025.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025014.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025014.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025016.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025016.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025003.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025003.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025068.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025068.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025057.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025057.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025076.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025076.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025004.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025004.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025063.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025063.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025045.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025045.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025001.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025001.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025035.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025035.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025031.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025031.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025037.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025037.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025034.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025034.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025073.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025073.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025028.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025028.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025018.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025018.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025090.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025090.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025046.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025046.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025038.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025038.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025026.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025026.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025085.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025085.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025070.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025070.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025012.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025012.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025083.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025083.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025081.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025081.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025089.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025089.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025007.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025007.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025041.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025041.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025072.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025072.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025006.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025006.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025059.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025059.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025077.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025077.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025040.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025040.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025088.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025088.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025052.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025052.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025009.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025009.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025043.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025043.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025095.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025095.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025005.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025005.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025047.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025047.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025049.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025049.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025030.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025030.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025093.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025093.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025033.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025033.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025015.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025015.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025042.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025042.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025086.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025086.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025013.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025013.log
+parallel: (echo -n START DATE: ; date +%s ;         time bosh exec launch bids-example/boutiques/bids-app-example.json         in-mem-2/invocations/NYU_2_0025074.json ; echo -n END DATE: ; date +%s ) &>in-mem-2/logs/NYU_2_0025074.log
+Tue Sep  3 17:55:31 EDT 2019
+IN-MEM-REP4
+3
+Tue Sep  3 18:01:31 EDT 2019
+IN-MEM-REP4
+3
+Tue Sep  3 18:45:16 EDT 2019
+IN-MEM-REP3
+3
+Tue Sep  3 19:06:04 EDT 2019
+IN-MEM-REP5
+3
+Tue Sep  3 19:50:33 EDT 2019
+IN-MEM-REP2
+3
+Tue Sep  3 20:11:27 EDT 2019
+IN-MEM-REP6
+3
