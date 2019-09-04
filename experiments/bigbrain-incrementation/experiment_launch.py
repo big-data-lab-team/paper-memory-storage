@@ -25,7 +25,7 @@ results_dir = op.join(exp_dir, 'results')
 cmd_template = 'time $(parallel --jobs {} < {})'
 im_size_b = 646461552 
 
-with open('conditions.json', 'r') as f:
+with open(sys.argv[3], 'r') as f:
     conditions = json.load(f)
 
 shuffle(conditions)
@@ -57,7 +57,7 @@ def get_results(out_dir, out_name):
 
 
 for i in range(int(sys.argv[2])):
-    for c in sys.argv[3]:
+    for c in conditions:
 
         parallel_writes = c['ncpus'] * im_size_b
         mem_in_dir = None
