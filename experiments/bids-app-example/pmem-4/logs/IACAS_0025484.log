@@ -1,0 +1,72 @@
+START DATE:1567643432
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p pmem-4/outputs/IACAS_0025484; /run.py data/corr/RawDataBIDS/IACAS pmem-4/outputs/IACAS_0025484 participant --participant_label 0025484 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /pmem1-data/val/tristan:/pmem1-data/val/tristan -W /pmem1-data/val/tristan /pmem1-data/val/tristan/bids-example.simg /pmem1-data/val/tristan/temp-1393743413312-1567643458378.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/de/cn-0c7eb01b832d599f781eb10ec2006a.xz
+			Evidence: cn-0c7eb01b832d599f781eb10ec2006a.xz
+		/.datalad/metadata/objects/de/ds-0c7eb01b832d599f781eb10ec2006a
+			Evidence: ds-0c7eb01b832d599f781eb10ec2006a
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects contain the same files. Each subject should contain the same number of files with the same naming unless some files are known to be missing. (code: 38 - INCONSISTENT_SUBJECTS)
+		/sub-0025457/ses-3/anat/sub-0025457_ses-3_run-1_T1w.nii.gz
+		/sub-0025457/ses-3/func/sub-0025457_ses-3_task-rest_run-1_bold.nii.gz
+		/sub-0025459/ses-3/anat/sub-0025459_ses-3_run-1_T1w.nii.gz
+		/sub-0025459/ses-3/func/sub-0025459_ses-3_task-rest_run-1_bold.nii.gz
+		/sub-0025460/ses-3/anat/sub-0025460_ses-3_run-1_T1w.nii.gz
+		/sub-0025460/ses-3/func/sub-0025460_ses-3_task-rest_run-1_bold.nii.gz
+		/sub-0025461/ses-3/anat/sub-0025461_ses-3_run-1_T1w.nii.gz
+		/sub-0025461/ses-3/func/sub-0025461_ses-3_task-rest_run-1_bold.nii.gz
+		/sub-0025462/ses-3/anat/sub-0025462_ses-3_run-1_T1w.nii.gz
+		/sub-0025462/ses-3/func/sub-0025462_ses-3_task-rest_run-1_bold.nii.gz
+		... and 39 more files having this issue (Use --verbose to see them all).
+
+	3: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0025463/ses-3/anat/sub-0025463_ses-3_run-1_T1w.nii.gz
+		/sub-0025465/ses-3/anat/sub-0025465_ses-3_run-1_T1w.nii.gz
+		/sub-0025466/ses-3/anat/sub-0025466_ses-3_run-1_T1w.nii.gz
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        795 Files, 5.55GB        rest                    T1w                   
+        28 - Subjects                                    bold                  
+        3 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/IACAS/sub-0025484/ses-1/anat/sub-0025484_ses-1_run-1_T1w.nii.gz pmem-4/outputs/IACAS_0025484/sub-0025484_ses-1_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/IACAS/sub-0025484/ses-2/anat/sub-0025484_ses-2_run-1_T1w.nii.gz pmem-4/outputs/IACAS_0025484/sub-0025484_ses-2_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- pmem-4/outputs/IACAS_0025484 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m34.049s
+user	0m17.211s
+sys	0m4.392s
+END DATE:1567643466

@@ -1,0 +1,52 @@
+START DATE:1567643659
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p pmem-4/outputs/IPCAS_5_0027304; /run.py data/corr/RawDataBIDS/IPCAS_5 pmem-4/outputs/IPCAS_5_0027304 participant --participant_label 0027304 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /pmem1-data/val/tristan:/pmem1-data/val/tristan -W /pmem1-data/val/tristan /pmem1-data/val/tristan/bids-example.simg /pmem1-data/val/tristan/temp-744844642223-1567643683226.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/8e/cn-df296854a12bf34a9d67966c563331.xz
+			Evidence: cn-df296854a12bf34a9d67966c563331.xz
+		/.datalad/metadata/objects/8e/ds-df296854a12bf34a9d67966c563331
+			Evidence: ds-df296854a12bf34a9d67966c563331
+		/.gitattributes
+			Evidence: .gitattributes
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        614 Files, 6.37GB        rest                    T1w                   
+        22 - Subjects                                    bold                  
+        2 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/IPCAS_5/sub-0027304/ses-1/anat/sub-0027304_ses-1_run-1_T1w.nii.gz pmem-4/outputs/IPCAS_5_0027304/sub-0027304_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- pmem-4/outputs/IPCAS_5_0027304 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m28.759s
+user	0m15.259s
+sys	0m5.194s
+END DATE:1567643687
