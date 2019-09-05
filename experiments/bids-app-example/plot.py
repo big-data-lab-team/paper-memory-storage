@@ -4,27 +4,27 @@ import os, json
 from matplotlib import pyplot as plt 
 
 makespans = []
-for cond in ["in-mem-1", "nvme-1", "pmem-1", "disk-1"]:
+for cond in ["in-mem-1", "nvme-1", "pmem-1", "disk-1", "isilon-1"]:
     with open(os.path.join(cond,"makespan_seconds")) as f:
         m = int(f.read())
     makespans.append(m)
 
-plt.bar([1,2,3,4], makespans, tick_label=["tmpfs", "optane", "optaneAD", "disk"])
+plt.bar([1, 2, 3, 4, 5], makespans, tick_label=["tmpfs", "optane", "optaneAD", "disk", "isilon"])
 plt.ylabel("Makespan (s)")
-plt.ylim((0,3000))
+plt.ylim((0,5000))
 plt.savefig("96cores.pdf")
 
 plt.clf()
 
 makespans = []
-for cond in ["in-mem-4", "nvme-4", "pmem-4", "disk-4"]:
+for cond in ["in-mem-4", "nvme-4", "pmem-4", "disk-4", "isilon-4"]:
     with open(os.path.join(cond,"makespan_seconds")) as f:
         m = int(f.read())
     makespans.append(m)
 
-plt.bar([1,2,3,4], makespans, tick_label=["tmpfs", "optane", "optaneAD", "disk"])
+plt.bar([1, 2, 3, 4, 5], makespans, tick_label=["tmpfs", "optane", "optaneAD", "disk", "isilon"])
 plt.ylabel("Makespan (s)")
-plt.ylim((0,3000))
+plt.ylim((0,5000))
 plt.savefig("25cores.pdf")
 
 
@@ -40,7 +40,7 @@ def time_to_secs(t):
 plt.clf()
 cpus = []
 ios = []
-for cond in ["in-mem-1", "nvme-1", "pmem-1", "disk-1"]:
+for cond in ["in-mem-1", "nvme-1", "pmem-1", "disk-1", "isilon-1"]:
 
     with open(os.path.join(cond, 'tasks.json')) as f:
         tasks = json.load(f)
@@ -54,9 +54,9 @@ for cond in ["in-mem-1", "nvme-1", "pmem-1", "disk-1"]:
     cpus.append(cpu)
     ios.append(io)
 
-p1 = plt.bar([1, 2, 3, 4], ios, tick_label=["tmpfs", "optane", "optaneAD", "disk"])
-p2 = plt.bar([1, 2, 3, 4], cpus, bottom=ios)
-plt.ylim(0, 130000)
+p1 = plt.bar([1, 2, 3, 4, 5], ios, tick_label=["tmpfs", "optane", "optaneAD", "disk", "isilon"])
+p2 = plt.bar([1, 2, 3, 4, 5], cpus, bottom=ios)
+plt.ylim(0, 400000)
 plt.ylabel("Total time (s)")
 plt.legend((p1[0], p2[0]), ('CPU', 'I/O'))
 plt.savefig('96cores-sum.pdf')
@@ -64,7 +64,7 @@ plt.savefig('96cores-sum.pdf')
 plt.clf()
 cpus = []
 ios = []
-for cond in ["in-mem-4", "nvme-4", "pmem-4", "disk-4"]:
+for cond in ["in-mem-4", "nvme-4", "pmem-4", "disk-4", "isilon-4"]:
 
     with open(os.path.join(cond, 'tasks.json')) as f:
         tasks = json.load(f)
@@ -78,9 +78,9 @@ for cond in ["in-mem-4", "nvme-4", "pmem-4", "disk-4"]:
     cpus.append(cpu)
     ios.append(io)
 
-p1 = plt.bar([1, 2, 3, 4], ios, tick_label=["tmpfs", "optane", "optaneAD", "disk"])
-p2 = plt.bar([1, 2, 3, 4], cpus, bottom=ios)
-plt.ylim(0, 130000)
+p1 = plt.bar([1, 2, 3, 4, 5], ios, tick_label=["tmpfs", "optane", "optaneAD", "disk", "isilon"])
+p2 = plt.bar([1, 2, 3, 4, 5], cpus, bottom=ios)
+plt.ylim(0, 400000)
 plt.ylabel("Total time (s)")
 plt.legend((p1[0], p2[0]), ('CPU', 'I/O'))
 plt.savefig('25cores-sum.pdf')
