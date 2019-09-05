@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/IACAS",
+    "output_dir_name" : "pmem-4/outputs/IACAS_0025457",
+    "analysis_level": "participant",
+    "participant_label": [ "0025457" ]
+}

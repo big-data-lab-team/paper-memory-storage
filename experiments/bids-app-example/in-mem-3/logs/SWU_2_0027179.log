@@ -1,0 +1,52 @@
+START DATE:1567551377
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p in-mem-3/outputs/SWU_2_0027179; /run.py data/corr/RawDataBIDS/SWU_2 in-mem-3/outputs/SWU_2_0027179 participant --participant_label 0027179 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /run/user/61218/tristan/bids-app-example:/run/user/61218/tristan/bids-app-example -W /run/user/61218/tristan/bids-app-example /run/user/61218/tristan/bids-app-example/bids-example.simg /run/user/61218/tristan/bids-app-example/temp-267173500824-1567551413416.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/d5/cn-ea64fc868507061c15e909207139b9.xz
+			Evidence: cn-ea64fc868507061c15e909207139b9.xz
+		/.datalad/metadata/objects/d5/ds-ea64fc868507061c15e909207139b9
+			Evidence: ds-ea64fc868507061c15e909207139b9
+		/.gitattributes
+			Evidence: .gitattributes
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        605 Files, 4.19GB        rest                    T1w                   
+        27 - Subjects                                    bold                  
+        2 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/SWU_2/sub-0027179/ses-1/anat/sub-0027179_ses-1_run-1_T1w.nii.gz in-mem-3/outputs/SWU_2_0027179/sub-0027179_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- in-mem-3/outputs/SWU_2_0027179 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m49.505s
+user	0m20.878s
+sys	0m3.369s
+END DATE:1567551426

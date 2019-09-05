@@ -1,0 +1,73 @@
+START DATE:1567560942
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p disk-1/outputs/Utah_2_0026017; /run.py data/corr/RawDataBIDS/Utah_2 disk-1/outputs/Utah_2_0026017 participant --participant_label 0026017 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/val/tristan/bids-app-example:/home/val/tristan/bids-app-example -W /home/val/tristan/bids-app-example /home/val/tristan/bids-app-example/bids-example.simg /home/val/tristan/bids-app-example/temp-897816266862-1567561016307.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/2a/cn-2b6b574ac97c1f72107e62aba086b5.xz
+			Evidence: cn-2b6b574ac97c1f72107e62aba086b5.xz
+		/.datalad/metadata/objects/2a/ds-2b6b574ac97c1f72107e62aba086b5
+			Evidence: ds-2b6b574ac97c1f72107e62aba086b5
+		/.gitattributes
+			Evidence: .gitattributes
+		/sub-0026017/ses-1/func/sub-0026017_ses-1_task-rest_run-01_recording-physio.mat
+			Evidence: sub-0026017_ses-1_task-rest_run-01_recording-physio.mat
+		... and 499 more files having this issue (Use --verbose to see them all).
+
+        Summary:                  Available Tasks:        Available Modalities: 
+        3063 Files, 9.77GB        rest                    T1w                   
+        1 - Subject                                       bold                  
+        10 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-2/anat/sub-0026017_ses-2_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-2_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-8/anat/sub-0026017_ses-8_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-8_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-9/anat/sub-0026017_ses-9_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-9_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-10/anat/sub-0026017_ses-10_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-10_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-6/anat/sub-0026017_ses-6_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-6_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-4/anat/sub-0026017_ses-4_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-4_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-5/anat/sub-0026017_ses-5_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-5_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-7/anat/sub-0026017_ses-7_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-7_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-1/anat/sub-0026017_ses-1_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-1_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_2/sub-0026017/ses-3/anat/sub-0026017_ses-3_run-1_T1w.nii.gz disk-1/outputs/Utah_2_0026017/sub-0026017_ses-3_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- disk-1/outputs/Utah_2_0026017 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	1m43.974s
+user	0m49.206s
+sys	0m7.185s
+END DATE:1567561046

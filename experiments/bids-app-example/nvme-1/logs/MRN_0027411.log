@@ -1,0 +1,67 @@
+START DATE:1567565727
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p nvme-1/outputs/MRN_0027411; /run.py data/corr/RawDataBIDS/MRN nvme-1/outputs/MRN_0027411 participant --participant_label 0027411 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /nvme-disk1/tristan/bids-app-example:/nvme-disk1/tristan/bids-app-example -W /nvme-disk1/tristan/bids-app-example /nvme-disk1/tristan/bids-app-example/bids-example.simg /nvme-disk1/tristan/bids-app-example/temp-945210050311-1567565800884.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/1d/cn-85d68c7f5cb8bb584c54d4b70c856d.xz
+			Evidence: cn-85d68c7f5cb8bb584c54d4b70c856d.xz
+		/.datalad/metadata/objects/1d/ds-85d68c7f5cb8bb584c54d4b70c856d
+			Evidence: ds-85d68c7f5cb8bb584c54d4b70c856d
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects contain the same files. Each subject should contain the same number of files with the same naming unless some files are known to be missing. (code: 38 - INCONSISTENT_SUBJECTS)
+		/sub-0027010/ses-2/anat/sub-0027010_ses-2_run-1_T1w.nii.gz
+		/sub-0027010/ses-3/anat/sub-0027010_ses-3_run-1_T1w.nii.gz
+		/sub-0027011/ses-1/dwi/sub-0027011_ses-1_run-1_dwi.bval
+		/sub-0027011/ses-1/dwi/sub-0027011_ses-1_run-1_dwi.bvec
+		/sub-0027011/ses-1/dwi/sub-0027011_ses-1_run-1_dwi.nii.gz
+		/sub-0027011/ses-2/dwi/sub-0027011_ses-2_run-1_dwi.bval
+		/sub-0027011/ses-2/dwi/sub-0027011_ses-2_run-1_dwi.bvec
+		/sub-0027011/ses-2/dwi/sub-0027011_ses-2_run-1_dwi.nii.gz
+		/sub-0027011/ses-3/anat/sub-0027011_ses-3_run-1_T1w.nii.gz
+		/sub-0027012/ses-2/dwi/sub-0027012_ses-2_run-1_dwi.bval
+		... and 392 more files having this issue (Use --verbose to see them all).
+
+        Summary:                  Available Tasks:        Available Modalities: 
+        1347 Files, 5.43GB        rest                    T1w                   
+        55 - Subjects                                     dwi                   
+        3 - Sessions                                      bold                  
+
+
+bet data/corr/RawDataBIDS/MRN/sub-0027411/ses-1/anat/sub-0027411_ses-1_run-1_T1w.nii.gz nvme-1/outputs/MRN_0027411/sub-0027411_ses-1_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/MRN/sub-0027411/ses-2/anat/sub-0027411_ses-2_run-1_T1w.nii.gz nvme-1/outputs/MRN_0027411/sub-0027411_ses-2_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- nvme-1/outputs/MRN_0027411 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	1m37.573s
+user	0m24.683s
+sys	0m3.978s
+END DATE:1567565825

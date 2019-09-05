@@ -1,0 +1,69 @@
+START DATE:1567550948
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p in-mem-3/outputs/NYU_1_0027122; /run.py data/corr/RawDataBIDS/NYU_1 in-mem-3/outputs/NYU_1_0027122 participant --participant_label 0027122 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /run/user/61218/tristan/bids-app-example:/run/user/61218/tristan/bids-app-example -W /run/user/61218/tristan/bids-app-example /run/user/61218/tristan/bids-app-example/bids-example.simg /run/user/61218/tristan/bids-app-example/temp-1190546833965-1567550973705.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/23/cn-1607dc9ccc68125701ab93f4651d65.xz
+			Evidence: cn-1607dc9ccc68125701ab93f4651d65.xz
+		/.datalad/metadata/objects/23/ds-1607dc9ccc68125701ab93f4651d65
+			Evidence: ds-1607dc9ccc68125701ab93f4651d65
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: You should define 'SliceTiming' for this file. If you don't provide this information slice time correction will not be possible. (code: 13 - SLICE_TIMING_NOT_DEFINED)
+		/sub-0027103/ses-1/func/sub-0027103_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0027103/ses-2/func/sub-0027103_ses-2_task-rest_run-1_bold.nii.gz
+		/sub-0027103/ses-3/func/sub-0027103_ses-3_task-rest_run-1_bold.nii.gz
+		/sub-0027104/ses-1/func/sub-0027104_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0027104/ses-2/func/sub-0027104_ses-2_task-rest_run-1_bold.nii.gz
+		/sub-0027104/ses-3/func/sub-0027104_ses-3_task-rest_run-1_bold.nii.gz
+		/sub-0027105/ses-1/func/sub-0027105_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0027105/ses-2/func/sub-0027105_ses-2_task-rest_run-1_bold.nii.gz
+		/sub-0027105/ses-3/func/sub-0027105_ses-3_task-rest_run-1_bold.nii.gz
+		/sub-0027106/ses-1/func/sub-0027106_ses-1_task-rest_run-1_bold.nii.gz
+		... and 65 more files having this issue (Use --verbose to see them all).
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        740 Files, 6.82GB        rest                    T1w                   
+        25 - Subjects                                    bold                  
+        3 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/NYU_1/sub-0027122/ses-2/anat/sub-0027122_ses-2_run-1_T1w.nii.gz in-mem-3/outputs/NYU_1_0027122/sub-0027122_ses-2_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/NYU_1/sub-0027122/ses-1/anat/sub-0027122_ses-1_run-1_T1w.nii.gz in-mem-3/outputs/NYU_1_0027122/sub-0027122_ses-1_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/NYU_1/sub-0027122/ses-3/anat/sub-0027122_ses-3_run-1_T1w.nii.gz in-mem-3/outputs/NYU_1_0027122/sub-0027122_ses-3_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- in-mem-3/outputs/NYU_1_0027122 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m45.103s
+user	0m30.205s
+sys	0m4.721s
+END DATE:1567550993

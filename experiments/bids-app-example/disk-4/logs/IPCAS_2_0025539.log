@@ -1,0 +1,57 @@
+START DATE:1567561344
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p disk-4/outputs/IPCAS_2_0025539; /run.py data/corr/RawDataBIDS/IPCAS_2 disk-4/outputs/IPCAS_2_0025539 participant --participant_label 0025539 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/val/tristan/bids-app-example:/home/val/tristan/bids-app-example -W /home/val/tristan/bids-app-example /home/val/tristan/bids-app-example/bids-example.simg /home/val/tristan/bids-app-example/temp-362010025437-1567561387260.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/b1/cn-5db7454c2ef561c92d0236a31ab8cf.xz
+			Evidence: cn-5db7454c2ef561c92d0236a31ab8cf.xz
+		/.datalad/metadata/objects/b1/ds-5db7454c2ef561c92d0236a31ab8cf
+			Evidence: ds-5db7454c2ef561c92d0236a31ab8cf
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects contain the same files. Each subject should contain the same number of files with the same naming unless some files are known to be missing. (code: 38 - INCONSISTENT_SUBJECTS)
+		/sub-0025545/sub-0025545_sessions.tsv
+
+        Summary:                  Available Tasks:        Available Modalities: 
+        1471 Files, 8.51GB        rest                    T1w                   
+        35 - Subjects                                     dwi                   
+        2 - Sessions                                      bold                  
+
+
+bet data/corr/RawDataBIDS/IPCAS_2/sub-0025539/ses-2/anat/sub-0025539_ses-2_run-1_T1w.nii.gz disk-4/outputs/IPCAS_2_0025539/sub-0025539_ses-2_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/IPCAS_2/sub-0025539/ses-1/anat/sub-0025539_ses-1_run-1_T1w.nii.gz disk-4/outputs/IPCAS_2_0025539/sub-0025539_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- disk-4/outputs/IPCAS_2_0025539 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m50.441s
+user	0m21.727s
+sys	0m4.393s
+END DATE:1567561395

@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/IPCAS_4",
+    "output_dir_name" : "pmem-4/outputs/IPCAS_4_0026203",
+    "analysis_level": "participant",
+    "participant_label": [ "0026203" ]
+}

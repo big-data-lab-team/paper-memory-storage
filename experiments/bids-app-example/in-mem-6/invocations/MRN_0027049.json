@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/MRN",
+    "output_dir_name" : "in-mem-6/outputs/MRN_0027049",
+    "analysis_level": "participant",
+    "participant_label": [ "0027049" ]
+}
