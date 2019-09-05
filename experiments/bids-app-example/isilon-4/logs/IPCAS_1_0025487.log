@@ -1,0 +1,65 @@
+START DATE:1567654426
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p isilon-4/outputs/IPCAS_1_0025487; /run.py data/corr/RawDataBIDS/IPCAS_1 isilon-4/outputs/IPCAS_1_0025487 participant --participant_label 0025487 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example:/home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example -W /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example/bids-example.simg /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example/temp-945811530484-1567654541648.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/63/cn-2e82b68e80b7be2b2bb2cb14257f08.xz
+			Evidence: cn-2e82b68e80b7be2b2bb2cb14257f08.xz
+		/.datalad/metadata/objects/63/ds-2e82b68e80b7be2b2bb2cb14257f08
+			Evidence: ds-2e82b68e80b7be2b2bb2cb14257f08
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects contain the same files. Each subject should contain the same number of files with the same naming unless some files are known to be missing. (code: 38 - INCONSISTENT_SUBJECTS)
+		/sub-0025503/ses-2/dwi/sub-0025503_ses-2_run-1_dwi.bval
+		/sub-0025503/ses-2/dwi/sub-0025503_ses-2_run-1_dwi.bvec
+		/sub-0025503/ses-2/dwi/sub-0025503_ses-2_run-1_dwi.nii.gz
+		/sub-0025503/ses-2/func/sub-0025503_ses-2_task-rest_run-2_bold.nii.gz
+		/sub-0025506/ses-1/func/sub-0025506_ses-1_task-rest_run-2_bold.nii.gz
+
+	3: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0025506/ses-1/dwi/sub-0025506_ses-1_run-1_dwi.nii.gz
+		/sub-0025507/ses-1/dwi/sub-0025507_ses-1_run-1_dwi.nii.gz
+
+        Summary:                   Available Tasks:        Available Modalities: 
+        1667 Files, 11.79GB        rest                    T1w                   
+        30 - Subjects                                      dwi                   
+        2 - Sessions                                       bold                  
+
+
+bet data/corr/RawDataBIDS/IPCAS_1/sub-0025487/ses-1/anat/sub-0025487_ses-1_run-1_T1w.nii.gz isilon-4/outputs/IPCAS_1_0025487/sub-0025487_ses-1_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/IPCAS_1/sub-0025487/ses-2/anat/sub-0025487_ses-2_run-1_T1w.nii.gz isilon-4/outputs/IPCAS_1_0025487/sub-0025487_ses-2_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- isilon-4/outputs/IPCAS_1_0025487 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	2m6.190s
+user	0m38.702s
+sys	0m6.711s
+END DATE:1567654552

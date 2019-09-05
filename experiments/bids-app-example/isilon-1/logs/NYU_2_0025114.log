@@ -1,0 +1,70 @@
+START DATE:1567653050
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p isilon-1/outputs/NYU_2_0025114; /run.py data/corr/RawDataBIDS/NYU_2 isilon-1/outputs/NYU_2_0025114 participant --participant_label 0025114 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example:/home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example -W /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example/bids-example.simg /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example/temp-106561115063-1567653749601.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/41/cn-8984f0020e6333c64a4e3d42af4382.xz
+			Evidence: cn-8984f0020e6333c64a4e3d42af4382.xz
+		/.datalad/metadata/objects/41/ds-8984f0020e6333c64a4e3d42af4382
+			Evidence: ds-8984f0020e6333c64a4e3d42af4382
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects contain the same files. Each subject should contain the same number of files with the same naming unless some files are known to be missing. (code: 38 - INCONSISTENT_SUBJECTS)
+		/sub-0025000/ses-3/anat/sub-0025000_ses-3_run-1_T1w.nii.gz
+		/sub-0025000/ses-3/anat/sub-0025000_ses-3_run-2_T1w.nii.gz
+		/sub-0025000/ses-3/func/sub-0025000_ses-3_task-rest_run-1_bold.nii.gz
+		/sub-0025000/ses-3/func/sub-0025000_ses-3_task-rest_run-2_bold.nii.gz
+		/sub-0025001/ses-1/anat/sub-0025001_ses-1_run-2_T1w.nii.gz
+		/sub-0025001/ses-2/anat/sub-0025001_ses-2_run-2_T1w.nii.gz
+		/sub-0025001/ses-2/func/sub-0025001_ses-2_task-rest_run-2_bold.nii.gz
+		/sub-0025001/ses-3/anat/sub-0025001_ses-3_run-1_T1w.nii.gz
+		/sub-0025001/ses-3/anat/sub-0025001_ses-3_run-2_T1w.nii.gz
+		/sub-0025001/ses-3/func/sub-0025001_ses-3_task-rest_run-1_bold.nii.gz
+		... and 1323 more files having this issue (Use --verbose to see them all).
+
+	3: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0025057/ses-2/func/sub-0025057_ses-2_task-rest_run-2_bold.nii.gz
+
+        Summary:                    Available Tasks:        Available Modalities: 
+        5429 Files, 105.53GB        rest                    T1w                   
+        187 - Subjects                                      bold                  
+        3 - Sessions                                                              
+
+
+bet data/corr/RawDataBIDS/NYU_2/sub-0025114/ses-1/anat/sub-0025114_ses-1_run-1_T1w.nii.gz isilon-1/outputs/NYU_2_0025114/sub-0025114_ses-1_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/NYU_2/sub-0025114/ses-1/anat/sub-0025114_ses-1_run-2_T1w.nii.gz isilon-1/outputs/NYU_2_0025114/sub-0025114_ses-1_run-2_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- isilon-1/outputs/NYU_2_0025114 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	12m24.004s
+user	4m3.447s
+sys	0m33.348s
+END DATE:1567653794

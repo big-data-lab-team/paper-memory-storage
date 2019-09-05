@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/MRN",
+    "output_dir_name" : "isilon-1/outputs/MRN_0027048",
+    "analysis_level": "participant",
+    "participant_label": [ "0027048" ]
+}
