@@ -43,6 +43,8 @@ def get_cpu_io_times(conditions):
         cpu = 0
         io = 0
         for t in tasks['tasks']:
+            if t['Exit code'] != "0":
+                raise("Task {} failed!".format(t['Name'])) 
             c = time_to_secs(t['user time']) + time_to_secs(t['system time'])
             r = time_to_secs(t['real time'])
             cpu += c
@@ -56,7 +58,6 @@ plt.clf()
 plt.ylabel("Total time (s)")
 plt.ylim(0, 400000)
 cpus, ios = get_cpu_io_times(conditions_96_jobs)
-print(cpus, ios)
 p1 = plt.bar([1, 2, 3, 4, 5], ios, tick_label=condition_ticks)
 p2 = plt.bar([1, 2, 3, 4, 5], cpus, bottom=ios)
 
