@@ -1,0 +1,19 @@
+/proc/sys/fs/aio-max-nr:65536
+/proc/sys/fs/aio-nr:0
+/proc/sys/fs/dentry-state:223626	187866	45	0	0	0
+/proc/sys/fs/dir-notify-enable:1
+/proc/sys/fs/file-max:78194586
+/proc/sys/fs/file-nr:2112	0	78194586
+/proc/sys/fs/inode-nr:195395	1095
+/proc/sys/fs/inode-state:195395	1095	0	0	0	0	0
+/proc/sys/fs/lease-break-time:45
+/proc/sys/fs/leases-enable:1
+/proc/sys/fs/may_detach_mounts:0
+/proc/sys/fs/mount-max:100000
+/proc/sys/fs/nr_open:1048576
+/proc/sys/fs/overflowgid:65534
+/proc/sys/fs/overflowuid:65534
+/proc/sys/fs/pipe-max-size:1048576
+/proc/sys/fs/pipe-user-pages-hard:0
+/proc/sys/fs/pipe-user-pages-soft:16384
+/proc/sys/fs/suid_dumpable:0
