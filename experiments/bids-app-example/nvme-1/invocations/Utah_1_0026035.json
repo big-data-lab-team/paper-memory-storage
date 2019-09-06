@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/Utah_1",
+    "output_dir_name" : "nvme-1/outputs/Utah_1_0026035",
+    "analysis_level": "participant",
+    "participant_label": [ "0026035" ]
+}

@@ -1,0 +1,57 @@
+START DATE:1567555597
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p in-mem-2/outputs/SWU_3_0027171; /run.py data/corr/RawDataBIDS/SWU_3 in-mem-2/outputs/SWU_3_0027171 participant --participant_label 0027171 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /run/user/61218/tristan/bids-app-example:/run/user/61218/tristan/bids-app-example -W /run/user/61218/tristan/bids-app-example /run/user/61218/tristan/bids-app-example/bids-example.simg /run/user/61218/tristan/bids-app-example/temp-1413776127208-1567555622714.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/03/cn-ab0f55283e1438bb44834b5761b237.xz
+			Evidence: cn-ab0f55283e1438bb44834b5761b237.xz
+		/.datalad/metadata/objects/03/ds-ab0f55283e1438bb44834b5761b237
+			Evidence: ds-ab0f55283e1438bb44834b5761b237
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects contain the same files. Each subject should contain the same number of files with the same naming unless some files are known to be missing. (code: 38 - INCONSISTENT_SUBJECTS)
+		/sub-0027175/sub-0027175_sessions.tsv
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        596 Files, 4.77GB        rest                    T1w                   
+        24 - Subjects                                    bold                  
+        2 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/SWU_3/sub-0027171/ses-2/anat/sub-0027171_ses-2_run-1_T1w.nii.gz in-mem-2/outputs/SWU_3_0027171/sub-0027171_ses-2_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/SWU_3/sub-0027171/ses-1/anat/sub-0027171_ses-1_run-1_T1w.nii.gz in-mem-2/outputs/SWU_3_0027171/sub-0027171_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- in-mem-2/outputs/SWU_3_0027171 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m46.923s
+user	0m28.172s
+sys	0m3.513s
+END DATE:1567555643

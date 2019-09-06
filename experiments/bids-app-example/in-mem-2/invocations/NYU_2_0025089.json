@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/NYU_2",
+    "output_dir_name" : "in-mem-2/outputs/NYU_2_0025089",
+    "analysis_level": "participant",
+    "participant_label": [ "0025089" ]
+}

@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/UWM",
+    "output_dir_name" : "disk-1/outputs/UWM_0027265",
+    "analysis_level": "participant",
+    "participant_label": [ "0027265" ]
+}

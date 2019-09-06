@@ -1,0 +1,58 @@
+START DATE:1567545908
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p in-mem-1/outputs/LMU_3_0025424; /run.py data/corr/RawDataBIDS/LMU_3 in-mem-1/outputs/LMU_3_0025424 participant --participant_label 0025424 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /run/user/61218/tristan/bids-app-example:/run/user/61218/tristan/bids-app-example -W /run/user/61218/tristan/bids-app-example /run/user/61218/tristan/bids-app-example/bids-example.simg /run/user/61218/tristan/bids-app-example/temp-720375181962-1567545932568.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/d0/cn-679ce03a61248e9e4843d27c37a83b.xz
+			Evidence: cn-679ce03a61248e9e4843d27c37a83b.xz
+		/.datalad/metadata/objects/d0/ds-679ce03a61248e9e4843d27c37a83b
+			Evidence: ds-679ce03a61248e9e4843d27c37a83b
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0025404/ses-2/anat/sub-0025404_ses-2_run-1_T1w.nii.gz
+		/sub-0025412/ses-1/func/sub-0025412_ses-1_task-rest_run-1_bold.nii.gz
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        682 Files, 2.34GB        rest                    T1w                   
+        25 - Subjects                                    bold                  
+        2 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/LMU_3/sub-0025424/ses-2/anat/sub-0025424_ses-2_run-1_T1w.nii.gz in-mem-1/outputs/LMU_3_0025424/sub-0025424_ses-2_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/LMU_3/sub-0025424/ses-1/anat/sub-0025424_ses-1_run-1_T1w.nii.gz in-mem-1/outputs/LMU_3_0025424/sub-0025424_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- in-mem-1/outputs/LMU_3_0025424 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m36.577s
+user	0m11.961s
+sys	0m2.057s
+END DATE:1567545944

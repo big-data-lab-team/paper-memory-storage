@@ -1,4 +1,2 @@
-logs/*
-invocations/*_*.json
-outputs/*_*
-venv
+*/outputs
+old-experiments

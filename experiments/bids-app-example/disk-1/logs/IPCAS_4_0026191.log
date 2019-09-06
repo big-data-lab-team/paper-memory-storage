@@ -1,0 +1,52 @@
+START DATE:1567559966
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p disk-1/outputs/IPCAS_4_0026191; /run.py data/corr/RawDataBIDS/IPCAS_4 disk-1/outputs/IPCAS_4_0026191 participant --participant_label 0026191 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/val/tristan/bids-app-example:/home/val/tristan/bids-app-example -W /home/val/tristan/bids-app-example /home/val/tristan/bids-app-example/bids-example.simg /home/val/tristan/bids-app-example/temp-1321613874131-1567560012278.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/6e/cn-5645afe93f50d2b373fb70c5d32128.xz
+			Evidence: cn-5645afe93f50d2b373fb70c5d32128.xz
+		/.datalad/metadata/objects/6e/ds-5645afe93f50d2b373fb70c5d32128
+			Evidence: ds-5645afe93f50d2b373fb70c5d32128
+		/.gitattributes
+			Evidence: .gitattributes
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        465 Files, 2.11GB        rest                    T1w                   
+        20 - Subjects                                    bold                  
+        1 - Session                                                            
+
+
+bet data/corr/RawDataBIDS/IPCAS_4/sub-0026191/ses-1/anat/sub-0026191_ses-1_run-1_T1w.nii.gz disk-1/outputs/IPCAS_4_0026191/sub-0026191_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- disk-1/outputs/IPCAS_4_0026191 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m54.983s
+user	0m13.190s
+sys	0m2.059s
+END DATE:1567560021
