@@ -1,0 +1,4 @@
+[1:0:0:0]    disk    DELL     IDSDM            0001  /dev/sda 
+[16:0:0:0]   disk    ATA      MTFDDAV240TCB    E008  /dev/sdb 
+[17:0:0:0]   disk    ATA      MTFDDAV240TCB    E008  /dev/sdc 
+[18:0:0:0]   process Marvell  Console          1.01  -        

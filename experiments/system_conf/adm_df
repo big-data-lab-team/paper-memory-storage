@@ -1,0 +1,13 @@
+Filesystem                                  Size  Used Avail Use% Mounted on
+/dev/sdc5                                    68G  4.8G   64G   7% /
+devtmpfs                                    377G     0  377G   0% /dev
+tmpfs                                       377G  5.7M  377G   1% /dev/shm
+tmpfs                                       377G   12M  377G   1% /run
+tmpfs                                       377G     0  377G   0% /sys/fs/cgroup
+/dev/sdc3                                   150G   39M  150G   1% /home
+/dev/sdc2                                  1014M  159M  856M  16% /boot
+/dev/sdc1                                   200M  9.7M  191M   5% /boot/efi
+/dev/pmem1                                  1.5T  112G  1.4T   8% /pmem1-data
+/dev/pmem0                                  1.5T   33M  1.5T   1% /pmem0-data
+192.168.1.68:/ifs/data/lab/ace-lab-1/users  628T  508T  113T  82% /home/users
+tmpfs                                        76G     0   76G   0% /run/user/61218

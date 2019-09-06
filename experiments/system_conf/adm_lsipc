@@ -1,0 +1,13 @@
+RESOURCE DESCRIPTION                                              LIMIT USED  USE%
+MSGMNI   Number of message queues                                 32768    0 0.00%
+MSGMAX   Max size of message (bytes)                               8192    -     -
+MSGMNB   Default max size of queue (bytes)                        16384    -     -
+SHMMNI   Shared memory segments                                    4096    0 0.00%
+SHMALL   Shared memory pages                       18446744073692774399    0 0.00%
+SHMMAX   Max size of shared memory segment (bytes) 18446744073692774399    -     -
+SHMMIN   Min size of shared memory segment (bytes)                    1    -     -
+SEMMNI   Number of semaphore identifiers                            128    0 0.00%
+SEMMNS   Total number of semaphores                               32000    0 0.00%
+SEMMSL   Max semaphores per semaphore set.                          250    -     -
+SEMOPM   Max number of operations per semop(2)                       32    -     -
+SEMVMX   Semaphore max value                                      32767    -     -
