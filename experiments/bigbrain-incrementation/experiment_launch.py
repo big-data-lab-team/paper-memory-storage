@@ -113,17 +113,3 @@ for i in range(int(sys.argv[2])):
 
         delete_output_files(mem_in_dir, out_dir)
         get_results(out_dir, out_name)
-
-
-
-        
-
-
-
-
-        
-
-
-        
-
-
