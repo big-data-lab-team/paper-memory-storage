@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/IPCAS_1",
+    "output_dir_name" : "isilon-2/outputs/IPCAS_1_0025495",
+    "analysis_level": "participant",
+    "participant_label": [ "0025495" ]
+}
