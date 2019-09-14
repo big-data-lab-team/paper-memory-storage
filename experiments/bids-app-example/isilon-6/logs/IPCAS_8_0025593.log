@@ -1,0 +1,54 @@
+START DATE:1568270923
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p isilon-6/outputs/IPCAS_8_0025593; /run.py data/corr/RawDataBIDS/IPCAS_8 isilon-6/outputs/IPCAS_8_0025593 participant --participant_label 0025593 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example:/home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example -W /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example/bids-example.simg /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example/temp-787808961373-1568270976125.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/f5/cn-bd8ee6f4a094b34343945370cdaa76.xz
+			Evidence: cn-bd8ee6f4a094b34343945370cdaa76.xz
+		/.datalad/metadata/objects/f5/ds-bd8ee6f4a094b34343945370cdaa76
+			Evidence: ds-bd8ee6f4a094b34343945370cdaa76
+		/.gitattributes
+			Evidence: .gitattributes
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        596 Files, 4.41GB        rest                    T1w                   
+        13 - Subjects                                    dwi                   
+        2 - Sessions                                     bold                  
+
+
+bet data/corr/RawDataBIDS/IPCAS_8/sub-0025593/ses-1/anat/sub-0025593_ses-1_run-1_T1w.nii.gz isilon-6/outputs/IPCAS_8_0025593/sub-0025593_ses-1_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/IPCAS_8/sub-0025593/ses-2/anat/sub-0025593_ses-2_run-1_T1w.nii.gz isilon-6/outputs/IPCAS_8_0025593/sub-0025593_ses-2_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- isilon-6/outputs/IPCAS_8_0025593 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	1m0.438s
+user	0m14.756s
+sys	0m2.559s
+END DATE:1568270984
