@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/LMU_3",
+    "output_dir_name" : "disk-6/outputs/LMU_3_0025404",
+    "analysis_level": "participant",
+    "participant_label": [ "0025404" ]
+}

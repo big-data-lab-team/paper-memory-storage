@@ -1,0 +1,55 @@
+START DATE:1568413743
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p disk-3/outputs/IPCAS_6_0026045; /run.py data/corr/RawDataBIDS/IPCAS_6 disk-3/outputs/IPCAS_6_0026045 participant --participant_label 0026045 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/val/tristan:/home/val/tristan -W /home/val/tristan /home/val/tristan/bids-example.simg /home/val/tristan/temp-1132200410040-1568413809263.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/22/cn-60c309ce126805bdedb1bcd2d505ff.xz
+			Evidence: cn-60c309ce126805bdedb1bcd2d505ff.xz
+		/.datalad/metadata/objects/22/ds-60c309ce126805bdedb1bcd2d505ff
+			Evidence: ds-60c309ce126805bdedb1bcd2d505ff
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0026045/ses-1/anat/sub-0026045_ses-1_run-1_T1w.nii.gz
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        533 Files, 4.88GB        rest                    T1w                   
+        2 - Subjects                                     bold                  
+        15 - Sessions                                                          
+
+
+bet data/corr/RawDataBIDS/IPCAS_6/sub-0026045/ses-1/anat/sub-0026045_ses-1_run-1_T1w.nii.gz disk-3/outputs/IPCAS_6_0026045/sub-0026045_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- disk-3/outputs/IPCAS_6_0026045 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	1m13.993s
+user	0m16.351s
+sys	0m3.120s
+END DATE:1568413817

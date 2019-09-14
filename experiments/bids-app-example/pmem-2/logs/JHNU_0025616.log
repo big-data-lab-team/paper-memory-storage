@@ -1,0 +1,59 @@
+START DATE:1567730541
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p pmem-2/outputs/JHNU_0025616; /run.py data/corr/RawDataBIDS/JHNU pmem-2/outputs/JHNU_0025616 participant --participant_label 0025616 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /pmem1-data/val/tristan:/pmem1-data/val/tristan -W /pmem1-data/val/tristan /pmem1-data/val/tristan/bids-example.simg /pmem1-data/val/tristan/temp-1125221033610-1567730575198.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/58/cn-cfa3b02f4dfca470232123a95c6121.xz
+			Evidence: cn-cfa3b02f4dfca470232123a95c6121.xz
+		/.datalad/metadata/objects/58/ds-cfa3b02f4dfca470232123a95c6121
+			Evidence: ds-cfa3b02f4dfca470232123a95c6121
+		/.gitattributes
+			Evidence: .gitattributes
+
+	2: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0025602/ses-1/anat/sub-0025602_ses-1_run-1_T1w.nii.gz
+		/sub-0025610/ses-1/anat/sub-0025610_ses-1_run-1_T1w.nii.gz
+		/sub-0025612/ses-1/anat/sub-0025612_ses-1_run-1_T1w.nii.gz
+		/sub-0025617/ses-1/anat/sub-0025617_ses-1_run-1_T1w.nii.gz
+		/sub-0025621/ses-1/anat/sub-0025621_ses-1_run-1_T1w.nii.gz
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        663 Files, 4.24GB        rest                    T1w                   
+        30 - Subjects                                    bold                  
+        2 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/JHNU/sub-0025616/ses-1/anat/sub-0025616_ses-1_run-1_T1w.nii.gz pmem-2/outputs/JHNU_0025616/sub-0025616_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- pmem-2/outputs/JHNU_0025616 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m41.686s
+user	0m17.213s
+sys	0m4.914s
+END DATE:1567730583

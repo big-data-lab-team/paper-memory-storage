@@ -1,0 +1,66 @@
+START DATE:1568269446
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p isilon-3/outputs/Utah_1_0026032; /run.py data/corr/RawDataBIDS/Utah_1 isilon-3/outputs/Utah_1_0026032 participant --participant_label 0026032 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example:/home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example -W /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example/bids-example.simg /home/users/vhayots/tristan/paper-memory-storage/experiments/bids-app-example/temp-269478775306-1568269883163.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/ee/cn-d6e194d280365f1716091aa3b7c192.xz
+			Evidence: cn-d6e194d280365f1716091aa3b7c192.xz
+		/.datalad/metadata/objects/ee/ds-d6e194d280365f1716091aa3b7c192
+			Evidence: ds-d6e194d280365f1716091aa3b7c192
+		/.gitattributes
+			Evidence: .gitattributes
+		/sub-0026018/ses-1/func/sub-0026018_ses-1_task-rest_run-1_recording-physio.mat
+			Evidence: sub-0026018_ses-1_task-rest_run-1_recording-physio.mat
+		... and 335 more files having this issue (Use --verbose to see them all).
+
+	2: Not all subjects/sessions/runs have the same scanning parameters. (code: 39 - INCONSISTENT_PARAMETERS)
+		/sub-0026024/ses-1/anat/sub-0026024_ses-1_run-1_T1w.nii.gz
+		/sub-0026024/ses-1/func/sub-0026024_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0026026/ses-1/anat/sub-0026026_ses-1_run-1_T1w.nii.gz
+		/sub-0026026/ses-1/func/sub-0026026_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0026035/ses-1/anat/sub-0026035_ses-1_run-1_T1w.nii.gz
+		/sub-0026035/ses-1/func/sub-0026035_ses-1_task-rest_run-1_bold.nii.gz
+		/sub-0026037/ses-1/func/sub-0026037_ses-1_task-rest_run-1_bold.nii.gz
+
+        Summary:                   Available Tasks:        Available Modalities: 
+        2448 Files, 11.04GB        rest                    T1w                   
+        26 - Subjects                                      bold                  
+        2 - Sessions                                                             
+
+
+bet data/corr/RawDataBIDS/Utah_1/sub-0026032/ses-1/anat/sub-0026032_ses-1_run-1_T1w.nii.gz isilon-3/outputs/Utah_1_0026032/sub-0026032_ses-1_run-1_brain.nii.gz
+
+bet data/corr/RawDataBIDS/Utah_1/sub-0026032/ses-2/anat/sub-0026032_ses-2_run-1_T1w.nii.gz isilon-3/outputs/Utah_1_0026032/sub-0026032_ses-2_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- isilon-3/outputs/Utah_1_0026032 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	7m36.402s
+user	0m39.198s
+sys	0m5.724s
+END DATE:1568269903
