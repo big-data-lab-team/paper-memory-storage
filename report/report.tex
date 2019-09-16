@@ -1,0 +1,423 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\algnewcommand\algorithmicforeach{\textbf{for each}}
+\algdef{S}[FOR]{ForEach}[1]{\algorithmicforeach\ #1\ \algorithmicdo}
+\algblock{Input}{EndInput}
+\algnotext{EndInput}
+\algblock{Output}{EndOutput}
+\algnotext{EndOutput}
+\newcommand{\Desc}[2]{\State \makebox[2em][l]{#1}#2}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage[binary-units]{siunitx}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\newcommand{\bigdata}{Big Data }
+\newcommand{\bigbrain}{BigBrain }
+
+\newcommand{\valerie}[1]{\color{blue}\textbf{Note from Valerie}:
+      #1 \color{black}}
+
+\begin{document}
+
+\title{Performance benefits of Intel Optane DC storage for the processing of large neuroimaging data}
+
+\author{\IEEEauthorblockN{Val\'erie Hayot-Sasson$^1$, Shawn T Brown$^2$ and 
+    Tristan Glatard$^1$
+  }\\
+  \IEEEauthorblockA{
+    $^1$Department of Computer Science and Software Engineering, Concordia University, Montreal, Canada\\
+    $^2$Montreal Neurological Institute, McGill University, Montreal, Canada
+  }
+}
+\maketitle
+
+\begin{abstract}
+\end{abstract}
+
+\begin{IEEEkeywords}
+component, formatting, style, styling, insert
+\end{IEEEkeywords}
+
+\section{Introduction}
+Neuroimaging open-data initiatives have led to extensively large repositories of
+publicly available data. Such initiatives include the \bigbrain~\cite{BigBrain}, 
+a one-of-a-kind $\SI{603}{\gibi\byte}$\valerie{verify this w/ Claude}
+histological image of a 76 year-old~\valerie{from memory, so better double-check} healthy human brain
+at 20$\mu$m resolution; the UK Biobank~\cite{ukbiobank}, a repository expected to
+contain approximately $\SI{0.2}{\peta\byte}$ of data (including various magnetic
+resonance (MR) imaging modalities) from 500,000 individuals living in the UK;
+the Human Connectome Project~\cite{HCP}, a repository containing MR scans from
+1200 healthy adults, which is expected to exceed $\SI{2}{\peta\byte}$ in size; 
+and the Consortium for Reliability and Reproducibility (CoRR)~\cite{corr}, an
+initiative which aggregates MR data from various laboratories around the world, 
+of which 32 are currently available and make up about $\SI{937}{\giga\byte}$ of
+data in total.
+
+Due to storage limitations, only subsets of the neuroimaging repositories 
+can be processed in a typical research laboratory. Moreover, as these datasets 
+are extremely large and are only increasing in size, they are typically stored 
+in higher-capacity, slower storage devices. In such conditions, large-scale 
+studies in neuroimaging remain limited to labs with access to adequate 
+infrastructure and are limited by data transfer times.
+
+Furthermore, intermediary data is often required during results analysis. This limits
+any performance benefits that can arise from volatile in-memory computing as intermediary
+results need to be materialized onto persistent storage. As neuroimaging datasets continue
+to increase in size, this movement of data will significantly increase the processing time
+of neuroimaging data.
+
+
+In this paper, we aim to:
+\begin{itemize}
+        \item Quantify the added value of Intel Optane persistent memory on 
+            processing large neuroimaging data using representative pipelines; and
+        \item Determine when a given Intel Optane storage configuration (Memory 
+            and App Direct mode) is preferable.
+\end{itemize}
+
+\section{Materials and Methods}
+The application pipelines, benchmarks, performance data, and analysis scripts used 
+to implement the methods described hereafter are all available at 
+\url{https://github.com/valhayot/paper-memory-storage} for 
+further inspection and reproducibility. Links to the processing engines 
+and processed data are provided in the text.\valerie{perhaps remove this for double blind}
+
+\subsection{Infrastructure}
+
+The server used in our experiments contain $\SI{3}{\tera\byte}$ of Intel Optane SSD storage, 700~GB of
+DRAM..
+
+\begin{itemize}
+        \item amount of RAM
+
+\end{itemize}
+
+\subsection{Storage configuration}
+
+\begin{itemize}
+    \item Memory Mode
+    \item App Direct Mode
+\end{itemize}
+\subsection{Performance model}
+
+For the purposes of these experiments, we use the inequality introduced in
+\cite{paperinmem}. That is,
+\valerie{it's probably sufficient to just cite the reference, no?}
+\begin{equation}                                                                 
+\frac{D}{C} \leq \frac{\delta}{\gamma} \label{eq:page-cache-inequality}                                                                                                                                  
+\end{equation} 
+where:
+\begin{itemize}
+    \item $D$ is the total amount of data written by the application
+    \item $C$ is the total execution time of the application
+    \item $\delta$ is the disk bandwidth
+    \item $\gamma$ is the max number of concurrent processes on a node
+\end{itemize}
+
+Using this inequality, we anticipate that whenever the application is within the limits,
+the storage selection will make little difference as storage devices with writeback enabled
+will be able to leverage the memory cache. It is expected that Optane in App Direct mode
+will be most useful when this inequality is not satisfied. As Memory mode will inevitably
+increase the amount of data that can be cached by the storage, it is expected that the overall
+performance of all storage devices, even when the inequality is not satisfied.
+
+\subsection{Applications}
+\subsubsection{ \bigbrain Incrementation}
+
+\begin{algorithm}\caption{Incrementation}\label{alg:incrementation}
+    \begin{algorithmic}[1]
+    \Input
+        \Desc{$x$}{a sleep delay in seconds}
+        \Desc{$n$}{a number of iterations}
+        \Desc{$C$}{a set of image chunks}
+        \Desc{$fs$}{filesystem to write to (tmpfs, Optane, local disk, Isilon)}
+    \EndInput
+    \ForEach{$chunk \in C$}
+        \State read $chunk$ from $fs$
+        \For{$i \in [1, n]$}
+            \State $chunk\gets chunk+1$
+            \State sleep $x$
+        \EndFor
+        \State save $chunk$ to $fs$
+    \EndFor
+    \end{algorithmic}
+\end{algorithm}  
+
+Due to the size and uniqueness of the \bigbrain, standardized processing pipelines
+have yet to be developed for it. In order to quantify the effects of data location
+on such a dataset, we have implemented a naive synthetic application that takes 
+the image, split into blocks, and increments all the voxels within each block, in parallel (Figure~\ref{alg:incrementation}).
+This application
+enables us to read and write to different storage devices and ensure that written
+data could not have been previously cache
+in-memory, by ensuring that read and written data are not the same. This application
+will be parallelized using both GNU Parallel and Apache Spark 2.4.3 and implemented in Python 3.6. While the GNU Parallel application
+is currently limited to 1 incrementation step, the Apache Spark implementation allows us to increase
+the number of incrementation steps by a variable amount, thereby increasing the amount of intermediate
+data generated.
+
+We plan to execute this pipeline on both the $\SI{76}{\giga\byte}$ 40~$\mu$m 
+\bigbrain split into 125 $\SI{617}{\mega\byte}$ blocks and the $\SI{603}{\giga\byte}$
+\bigbrain at 20~$\mu$m split into 1000 $\SI{603}{\mega\byte}$ \valerie{verify} blocks.
+
+At this moment, we have executed the application using GNU Parallel for parallelization
+using 25 and 96 processes on the 125 40$\mu$m \bigbrain blocks. Data was read and written to either
+tmpfs, Optane (App Direct only), local disk and Isilon. In all configurations (25 and 96 processes)
+only 1 iteration was performed. At 25 processes, a sleep delay of 120 seconds was added at the
+incrementation step, which would emulate tasks of longer duration and ensure that we satisfy Equation~\ref{eq:page-cache-inequality} for all devices.
+At 96 processes with 0 sleep delay, we estimate being above the inequality for local disk and Isilon.
+All experiments were repeated 5x in each environment (App Direct and Memory mode)
+
+\subsubsection{ BIDS App Example}
+
+The BIDS App Example is a template example for creating a Brain Imaging Data Structure (BIDS)
+compliant application. It runs a standard neuroimaging brain extraction application (FSL BET) 
+on all the anatomical (T1W) images of a dataset containing numerous subjects. This step is 
+referred to as Participant analysis, within the BIDS App Example. An optional
+step of the BIDS App example, referred to as Group analysis, computes the average brain
+mask size of the entire dataset.
+
+For our experiments, we used the entire CoRR dataset, made available on DataLad and
+applied Participant analysis on it. As in the BigBrain Incrementation, the experiment parallelized 
+using GNU Parallel with 25 and 96 processes. The conditions were executed in both App Direct and Memory mode
+using Isilon, local disk, Optane and tmpfs as storage. As participant analysis operates on only a subset of the dataset,
+the inequality is satified for all conditions. Each experiment was repeated 3x.
+\section{Results}
+
+\subsection{\bigbrain incrementation}
+\subsubsection{25 Processes}
+\begin{figure}
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/makespan-makespan_1it_25cpu_120delay.pdf}
+    \captionsetup{width=\columnwidth}
+    \caption{Makespan of \bigbrain Incrementation using 25 processes with a sleep delay of 120s on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:makespan-25cpus}
+\end{figure}
+\begin{figure}
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/1it_25cpu_120delay.pdf}
+    \captionsetup{width=\columnwidth}
+    \caption{Total read/increment/write breakdown of \bigbrain Incrementation using 25 processes with a sleep delay of 120s on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:stacked-25cpus}
+\end{figure}
+\begin{figure*}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/gantt-1567709282-tmpfsAD_1it_25cpus_120delay_withpc-2.pdf}
+    \caption{tmpfs}
+\end{subfigure}
+\begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/gantt-1567705458-optaneAD_1it_25cpus_120delay_withpc-2.pdf}
+    \caption{Optane}
+\end{subfigure}
+\begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/gantt-1567704324-localAD_1it_25cpus_120delay_withpc-2.pdf}
+    \caption{local disk}
+\end{subfigure}
+\begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/gantt-1567707833-isilonAD_1it_25cpus_120delay_withpc-2.pdf}
+    \caption{Isilon}\label{fig:gantt25isilon}
+\end{subfigure}
+\caption{Gantt charts for each storage device (App Direct mode) processing 125 blocks of the 40$\mu$m BigBrain using 25 processes and a sleep delay of 120s}\label{fig:gantt25}
+\end{figure*}
+
+As shown in Figure~\ref{fig:makespan-25cpus}, despite being under the inequality, the
+performance still varies according to selected storage device. As expected, Optane performs
+slightly better than local disk and significantly better than Isilon. Tmpfs outperforms all
+devices, with only slightly better performance than Optane and local disk, in both App Direct mode and Memory mode.
+There is no apparent difference between the two modes on the given devices.
+
+When observing the total task breakdown (Figure~\ref{fig:stacked-25cpus}), it is
+apparent that the differences between the makespans arise from difference in incrementation
+time between all devices. While tmpfs and local disk have comparable write times, Optane
+has a more significant write time difference. Whereas, Isilon has more significant read and
+write time compared to all other devices, it's incrementation time is comparable to that
+of local disk. Further inspection of each storage device's Gantt chart (see Figure~\ref{fig:gantt25})
+show that increased duration of tasks stagger the execution of each individual tasks. This, in turn,
+results in better performance towards the end of the execution, where tasks are significantly more staggered.
+Only tmpfs appears to be able to execute each task efficiently with little staggering.
+
+\subsubsection{96 Processes}
+\begin{figure}
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/makespan-makespan_1it_96cpu_0delay.pdf}
+    \captionsetup{width=\columnwidth}
+    \caption{Makespan of \bigbrain Incrementation using 96 processes on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:makespan-96cpus}
+\end{figure}
+\begin{figure}
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/1it_96cpu_0delay.pdf}
+    \captionsetup{width=\columnwidth}
+    \caption{total read/increment/write breakdown of \bigbrain incrementation using 96 processes on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:stacked-96cpus}
+\end{figure}
+
+\begin{figure*}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/gantt-1568150082-local_1it_96cpus_0delay_npc-3.pdf}
+    \caption{Memory mode}
+\end{subfigure}
+\begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bigbrain-incrementation/figures/gantt-1567714252-localAD_1it_96cpus_0delay_npc-3.pdf}
+    \caption{App Direct mode}
+\end{subfigure}
+\caption{Gantt charts for local disk processing 125 blocks of the 40$\mu$m BigBrain using 96 processes with no delay}\label{fig:gantt96}
+\end{figure*}
+
+At 96 processes, it was expected that the application would not satisfy the inequality.
+In Figure~\ref{fig:makespan-96cpus} we see that there is now a greater disparity between the
+makespans of experiments executed in Memory and App Direct mode, given the same storage. Local disk
+in App Direct mode is significantly faster than its Memory mode counterpart. Local disk in App Direct
+mode is even faster than Optane, by a factor of 1.7. Tmpfs was also found to perform better in App Direct mode, although
+the performance difference is not significant. Only Isilon's performance did not vary between the
+two execution modes.
+
+As with 25 process, the main cause of performance variability appears to be the incrementation
+time (Figure~\ref{fig:stacked-96cpus}. Local disk running in App Direct Mode has an average
+incrementation time that is nearly 15~x faster than in Memory mode. The incrementation time
+for local disk is, on average, 6~x faster than on Optane.
+
+Isilon in App Direct generally performed the same as in memory mode, however, the write
+was almost 4000~seconds slower, on average, in App Direct mode.
+
+A further look at the Gantt charts between Memory mode and App Direct mode (Figure~\ref{fig:gantt96})
+shows that the sole difference between the two modes is the duration of the incrementation step.
+While both modes have an increased incrementation time, the incrementation duration in
+Memory mode is much more important than that of App Direct mode.
+
+\subsection{BIDS App Example}
+\begin{figure*}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bids-app-example/25cores.pdf}
+    \caption{25 processes}\label{fig:bm25}
+\end{subfigure}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bids-app-example/96cores.pdf}
+    \caption{96 processes}\label{fig:bm96}
+\end{subfigure}
+\caption{Makespan of BIDS App Example 25 and 96 processes on all storage devices. 3 repetitions were performed}
+\end{figure*}
+
+\begin{figure*}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bids-app-example/25cores-sum.pdf}
+    \caption{25 processes}\label{fig:bb25}
+\end{subfigure}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{../experiments/bids-app-example/96cores-sum.pdf}
+    \caption{96 processes}\label{fig:bb96}
+\end{subfigure}
+\caption{I/O and CPU breakdown of BIDS App Example 25 and 96 processes on all storage devices. 3 repetitions were performed}\label{fig:bbd}
+\end{figure*}
+
+Unlike the BigBrain incrementation at 25 Processes, the makespan of the BIDS App Example
+executing on Optane is longer than local disk (Figure~\ref{fig:bm25}). However, similarly
+to the BigBrain Incrementation, tmpfs has a slight lead over local disk and Isilon performs the
+worst. The same pattern can be found with 96 process (Figure~\ref{fig:bm96}). When comparing
+the executions of 25 and 96 processes, the performance improved by a similar factor on all
+storage devices.
+
+The CPU and I/O breakdowns (Figure~\ref{fig:bbd}) show that there is a significant increase
+in the time spent on I/O at 96 processes when compared to 25 processes. Furthermore, there appears
+to also be an increase in the amount of time spent on CPU processing. In both cases,
+tmpfs spends the least amount of time on I/O and CPU, followed by local disk, Optane, and finally,
+Isilon.
+\section{Discussion}
+\subsection{Memory vs App Direct mode}
+
+While Memory mode provides a cost-effective solution to increasing the total memory
+size, it is slower than App Direct mode for embarrassingly parallel applications such
+as \bigbrain incrementation. This is likely due to the Page Cache being composed of a
+combination of both DRAM and Optane in Memory mode. Since the data produced by the application should be
+able to fit within DRAM, writing to a slower bandwidth device such as Optane inevitably
+deteriorates performance. As App Direct separates usage of DRAM and Optane, devices only utilize DRAM in this mode.
+The only device that performed better in Memory mode was 
+Isilon. This may be explained by a larger Page Cache in Memory mode, enabling Isilon to
+store more data in memory prior to initiating synchronous writes to Isilon.
+
+I/O-less task duration also seem to be affected by the execution mode, with those tasks
+also performing significantly better in App Direct. A potential explanation for this may be 
+that all memory accesses to Optane are slower due to the devices bandwidth, meaning that
+tasks that do not perform I/O, but access data loaded into memory are slower in Memory mode.
+This can be seen in Figure~\ref{fig:gantt96} where for local disk, incrementation in App Direct
+mode is significantly shorter. Only when the memory bus is overwhelmed does incrementation take
+longer for App Direct, however, it is nothing compared to the average duration of the incrementation
+tasks in Memory mode.
+
+Once again, Isilon is the only device which does not experience an increase in duration for
+I/O-less tasks. In fact, the incrementation duration is less than that of local disk in Memory mode
+and Optane in App Direct mode. It may be that since even the reads are staggered
+(Figure~\ref{fig:gantt25isilon}), the memory bus is less strained by all the parallel processes,
+therefore incurring less of an overall delay for all memory accesses.
+
+
+\subsection{Effect of Page Cache}
+
+As long as all the written data does not exceed the dirty ratio, there is little 
+benefit brought by the use of Optane. This is the case with both
+our applications writing less than $\SI{1}{\gibi\byte}$ to storage on a system with 
+$\SI{768}{\gibi\byte}$ of DRAM and a dirty ratio of 20. However, it is expected 
+that as the memory footprints of applications increase to the point where the kernel
+would be forced to perform synchronous writes to disk if it were to rely on DRAM alone,
+the benefit of using Optane in Memory mode will become more apparent. 
+
+However, depending on the neuroimaging application, the amount of data that could be
+loaded in parallel would be limited by the amount of parallelism possible on the system.
+For instance, typical fMRI tasks process many small images (100s of MB in size) in parallel.
+While the datasets themselves can reach PB in size, the amount of data that can be processed in
+parallel can be $\SI{10}{\giga\byte}$ if each take processes $\SI{100}{\mega\byte}$ and the 
+maximum amount of parallelism is 100. 
+
+On the other hand, Memory mode can be very useful for applications operating on
+ultra-high resolution images, like the \bigbrain. For instance, visualization applications
+many need to load significant amounts of data in memory. Given the size of these datasets, 
+extending the amount of available memory using Optane could be quite beneficial and allow
+for faster visualization of larger datasets.
+
+
+\subsection{Added value of persistent memory}
+
+The added value of Optane a persistent storage device depend on the amount of parallelism
+of the application. For instance, Optane performs better than local disk at 25 Processes,
+but worse than local disk at 96 processes. This can be explained by the fact that it performs
+I/O on the memory bus. While this may reduce overall latency to Optane, the bandwidth of 
+writing to Optane is still significantly less than DRAM. Despite Optane having a similar bandwidth
+to local disk, local disk uses DRAM as cache whereas Optane does not. This fact is 
+particularly evident with the amount of data that is written in parallel at 96 processes. With 25 processes
+and at least a 2 min
+delay between each write, the load on the memory bus is low enough to be efficiently handled.
+
+fMRI application will generally attempt to leverage as much parallelism as possible. As this
+is the case, it is not believed that App Direct mode would bring a significant performance advantage
+unless the server's CPUs are limited, in which case there is less concurrent accesses on the device.
+The same would apply to ultra-high resolution application unless they are sequential, as may be the case with
+visualization.
+\section{Conclusion}
+
+The benefits of Optane for neuroimaging applications are limited to large memory
+accesses with limited parallelism, as would be the case for visualization. This is
+the case for both Memory mode and App Direct mode.
+
+While Memory mode leads to deterioration in performance of non-Optane storage devices,
+they act as expected in App Direct mode. It is currently unknown by how much performance
+of a non-Optane storage device would be affected by a large memory access.
+
+To be able to fully determine the benefits of Optane for neuroimaging application,
+it is necessary to process larger datasets. We plan to execute incrementation pipeline on the 
+20~$\mu$m BigBrain using Apache Spark. 
+\section{Acknowledgement}
+\bibliographystyle{IEEEtran} 
+\bibliography{biblio}
+
+\end{document}
