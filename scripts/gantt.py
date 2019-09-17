@@ -44,7 +44,7 @@ def gantt_increment(df, data_file, ncpus):
         ax.set_xlim(0, 140)
     ax.tick_params(axis='both', which='major', labelsize=8)
     plt.tight_layout()
-    plt.savefig("gantt-{}.pdf".format(op.basename(data_file)))
+    plt.savefig("gantt-{}.pdf".format(op.basename(data_file).strip('.out')))
 
 
 def gantt_bids(df, data_file):

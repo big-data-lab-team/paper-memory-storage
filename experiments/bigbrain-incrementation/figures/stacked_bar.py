@@ -77,7 +77,7 @@ def stacked_bar(df):
     ax.set_xticklabels(labels)
     ax.legend(handles=[r_mem, r_ad, r_read, r_inc, r_write])
 
-    plt.savefig('{}.pdf'.format(sys.argv[2]))
+    plt.savefig('stacked-{}.pdf'.format(sys.argv[2]))
     
 
 all_files = glob(op.abspath(sys.argv[1]))
