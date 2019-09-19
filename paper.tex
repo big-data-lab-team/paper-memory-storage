@@ -267,7 +267,8 @@ using Isilon, local disk, Optane and tmpfs as storage. As participant analysis o
 the inequality is satified for all conditions. Each experiment was repeated 3x.
 
 Time in this application was obtained using Linux's \texttt{time(1)} application.
-\texttt{Real} was used to measure CPU time, where \texttt{Sys} was used to measure
+\texttt{Real + Sys} was used to measure CPU time,
+whereas \texttt{User - (Real + Sys)} was used to measure
 I/O time.
 \section{Results}
 
