@@ -7,11 +7,12 @@ import subprocess
 import glob
 import sys
 from shutil import copytree, rmtree
-from time import time
+from time import time, sleep
 import fileinput
 import glob
 
 
+print(sys.argv)
 base_dir = '/home/users/vhayots' 
 exp_dir = op.join(base_dir, 'paper-memory-storage/experiments/bigbrain-incrementation')
 block_dir = sys.argv[1] #'1000_blocks'
@@ -20,11 +21,12 @@ isilon = base_dir
 optane = '/nvme-disk1'
 optane_ad = '/pmem1-data/val'
 local = '/home/val'
-tmpfs = '/run/user/61218'
+tmpfs = '/dev/shm/val' #'/run/user/61218'
 tmpfs_ad = '/dev/shm/val'
 ef_dir = op.join(exp_dir, 'experiment_files')
 results_dir = op.join(exp_dir, 'results')
 cmd_template = 'time $(parallel --jobs {} < {})'
+cmd_template_spark = 'time $(spark-submit --conf spark.network.timeout=10000000 --master local[{}] --driver-memory 700G spark_inc.py {} {} 1 --benchmark)'
 im_size_b = 646461552 
 
 with open(sys.argv[3], 'r') as f:
@@ -69,7 +71,11 @@ for i in range(int(sys.argv[2])):
         print(mem_size)
         start = int(time())
 
-        out_name = '{0}-{1}-{2}'.format(start, c['id'], i)
+        if len(sys.argv) < 4:
+            out_name = '{0}-{1}-{2}'.format(start, c['id'], i)
+        else:
+            out_name = '{0}-{1}-{2}-{3}'.format('spark', start, c['id'], i)
+
 
         if ('optane' in c['storage'] or c['storage'] == 'local' or 
             'tmpfs' in c['storage']):
@@ -86,6 +92,7 @@ for i in range(int(sys.argv[2])):
             in_dir = op.join(disk, block_dir)
             print(disk, block_dir, in_dir)
             mem_in_dir = in_dir
+
             out_dir = op.join(disk, out_name)
 
             # Copy dataset to memory
@@ -94,15 +101,21 @@ for i in range(int(sys.argv[2])):
         else:
             out_dir = op.join(isilon, out_name)
 
-        ef_cmd = [op.join(exp_dir, 'generate_ef.sh'), in_dir, out_dir, str(c['delay'])]
-        print(ef_cmd)
-        p = subprocess.Popen(ef_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        print(p.communicate())
+        if len(sys.argv) < 4:
 
-        ef_exec = op.join(ef_dir, '{}-ef.sh'.format(op.basename(out_dir)))
+            ef_cmd = [op.join(exp_dir, 'generate_ef.sh'), in_dir, out_dir, str(c['delay'])]
+            print(ef_cmd)
+            p = subprocess.Popen(ef_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            print(p.communicate())
 
-        drop_caches()
-        cmd = cmd_template.format(c['ncpus'], ef_exec)
+            ef_exec = op.join(ef_dir, '{}-ef.sh'.format(op.basename(out_dir)))
+
+            drop_caches()
+            cmd = cmd_template.format(c['ncpus'], ef_exec)
+
+        else:
+            drop_caches()
+            cmd = cmd_template_spark.format(c['ncpus'], in_dir, out_dir)
 
         print(cmd)
 
@@ -111,5 +124,10 @@ for i in range(int(sys.argv[2])):
         out,err = p.communicate()
         print('COMMAND OUTPUT:\n', out.decode('utf-8'), '\n\nCOMMAND ERR:\n', err.decode('utf-8'))
 
-        delete_output_files(mem_in_dir, out_dir)
-        get_results(out_dir, out_name)
+        try:
+            delete_output_files(mem_in_dir, out_dir)
+            get_results(out_dir, out_name)
+        except Exception as e:
+            pass
+
+        sleep(10)
