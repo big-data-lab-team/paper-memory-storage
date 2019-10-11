@@ -1,0 +1,52 @@
+START DATE:1568413204
+/bin/sh: line 0: type: docker: not found
+[32mShell command
+[0mmkdir -p disk-5/outputs/SWU_2_0027194; /run.py data/corr/RawDataBIDS/SWU_2 disk-5/outputs/SWU_2_0027194 participant --participant_label 0027194 
+[32mContainer location
+[0mLocal (bids-example.simg)
+[32mContainer command
+[0msingularity exec --cleanenv -B /home/val/tristan:/home/val/tristan -W /home/val/tristan /home/val/tristan/bids-example.simg /home/val/tristan/temp-1406973331122-1568413228778.localExec.boshjob.sh
+[32mExit code
+[0m0
+[32mStd out
+[0m	1: This file is not part of the BIDS specification, make sure it isn't included in the dataset by accident. Data derivatives (processed data) should be placed in /derivatives folder. (code: 1 - NOT_INCLUDED)
+		/.datalad/.gitattributes
+			Evidence: .gitattributes
+		/.datalad/config
+			Evidence: config
+		/.datalad/crawl/crawl.cfg
+			Evidence: crawl.cfg
+		/.datalad/crawl/versions/master.json
+			Evidence: master.json
+		/.datalad/meta/meta.json
+			Evidence: meta.json
+		/.datalad/metadata/aggregate_v1.json
+			Evidence: aggregate_v1.json
+		/.datalad/metadata/objects/d5/cn-ea64fc868507061c15e909207139b9.xz
+			Evidence: cn-ea64fc868507061c15e909207139b9.xz
+		/.datalad/metadata/objects/d5/ds-ea64fc868507061c15e909207139b9
+			Evidence: ds-ea64fc868507061c15e909207139b9
+		/.gitattributes
+			Evidence: .gitattributes
+
+        Summary:                 Available Tasks:        Available Modalities: 
+        605 Files, 4.19GB        rest                    T1w                   
+        27 - Subjects                                    bold                  
+        2 - Sessions                                                           
+
+
+bet data/corr/RawDataBIDS/SWU_2/sub-0027194/ses-1/anat/sub-0027194_ses-1_run-1_T1w.nii.gz disk-5/outputs/SWU_2_0027194/sub-0027194_ses-1_run-1_brain.nii.gz
+
+
+[32mError message
+[0m[31m[0m
+[32mOutput files
+[0m	- disk-5/outputs/SWU_2_0027194 (output_dir, Required)
+[32mMissing files
+[0m[31m[0m
+
+
+real	0m28.891s
+user	0m11.541s
+sys	0m2.770s
+END DATE:1568413233

@@ -1,0 +1,6 @@
+{
+    "bids_dir" : "data/corr/RawDataBIDS/Utah_1",
+    "output_dir_name" : "pmem-5/outputs/Utah_1_0026025",
+    "analysis_level": "participant",
+    "participant_label": [ "0026025" ]
+}

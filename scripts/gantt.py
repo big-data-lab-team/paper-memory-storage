@@ -11,7 +11,7 @@ import time
 import argparse
 
 
-def gantt_increment(df, data_file):
+def gantt_increment(df, data_file, ncpus):
     color = {
         "read_file": "turquoise",
         "increment_file": "crimson",
@@ -28,11 +28,23 @@ def gantt_increment(df, data_file):
             data = r[1][["Start", "Duration"]]
             ax.broken_barh(data.values, (i - 0.4, 0.8), color=color[r[0]])
 
-    # ax.set_yticks(range(len(labels)))
-    # ax.set_yticklabels(labels)
+    r_read = mpatch.Patch(facecolor='turquoise', label='Read')
+    r_inc = mpatch.Patch(facecolor='crimson', label='Increment')
+    r_write = mpatch.Patch(facecolor='purple', label='Write')
+    ax.legend(handles=[r_read, r_inc, r_write], loc='upper center',
+              bbox_to_anchor=(0.5, 1.07), ncol=3, fancybox=True,
+              fontsize='x-small', framealpha=1)
+    ax.set_yticks(range(len(labels)))
+    ax.set_yticklabels([])
     ax.set_xlabel("time [s]")
+
+    if ncpus == 25:
+        ax.set_xlim(0, 1200)
+    else:
+        ax.set_xlim(0, 140)
+    ax.tick_params(axis='both', which='major', labelsize=8)
     plt.tight_layout()
-    plt.savefig("gantt-{}.pdf".format(op.basename(data_file)))
+    plt.savefig("gantt-{}.pdf".format(op.basename(data_file).strip('.out')))
 
 
 def gantt_bids(df, data_file):
@@ -76,7 +88,7 @@ def main():
     data_file = None
 
     if args.incrementation_tf is not None:
-        data_file = args["incrementation_tf"]
+        data_file = args.incrementation_tf
         df = pd.read_csv(
             data_file,
             delim_whitespace=True,
@@ -85,7 +97,7 @@ def main():
         df["Duration"] = df["End"] - df["Start"]
         df["Start"] = df["Start"] - df["Start"].min()
 
-        gantt_increment(df, data_file)
+        gantt_increment(df, data_file, args.cpus)
 
     else:
         data_file = args.bids_tf
