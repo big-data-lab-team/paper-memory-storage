@@ -69,8 +69,11 @@ def read_img(filename, data, benchmark, start, bench_dir=None):
 
     print('Reading image')
     # load binary data into Nibabel
-    fh = nib.FileHolder(fileobj=BytesIO(data))
-    im = nib.Nifti1Image.from_file_map({'header': fh, 'image': fh})
+    if data is not None:
+        fh = nib.FileHolder(fileobj=BytesIO(data))
+        im = nib.Nifti1Image.from_file_map({'header': fh, 'image': fh})
+    else:
+        im = nib.load(filename)
 
     data = np.asanyarray(im.dataobj)
 
@@ -186,6 +189,8 @@ def main():
                         help='task duration time (in s)')
     parser.add_argument('--benchmark', action='store_true',
                         help='benchmark results')
+    parser.add_argument('--emulate', action='store_true', help='emulate missing' +
+                                                                'images')
 
     args = parser.parse_args()
 
@@ -210,12 +215,21 @@ def main():
     except Exception as e:
         pass
 
-    # read binary data stored in folder and create an RDD from it
-    imRDD = sc.binaryFiles('file://' + os.path.abspath(args.bb_dir) + '/bigbrain*')
-    imRDD = imRDD.map(lambda x: read_img(x[0], x[1],
-                                         args.benchmark,
-                                         start,
-                                         bench_dir=benchmark_dir))
+    if not args.emulate:
+        # read binary data stored in folder and create an RDD from it
+        imRDD = sc.binaryFiles('file://' + os.path.abspath(args.bb_dir) + '/bigbrain*')
+        imRDD = imRDD.map(lambda x: read_img(x[0], x[1],
+                                             args.benchmark,
+                                             start,
+                                             bench_dir=benchmark_dir))
+    else:
+        available_files = glob(os.path.abspath(args.bb_dir + '/bigbrain*'))
+        file_list = (available_files * 1000)[:1000]
+        imRDD = sc.parallelize(file_list)
+        imRDD = imRDD.map(lambda x: read_img(x, None,
+                                             args.benchmark,
+                                             start,
+                                             bench_dir=benchmark_dir))
 
     for i in range(args.iterations):
         imRDD = imRDD.map(lambda x: increment_data(x[0], x[1], x[2],

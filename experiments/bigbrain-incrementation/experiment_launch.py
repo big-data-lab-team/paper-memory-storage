@@ -26,7 +26,11 @@ tmpfs_ad = '/dev/shm/val'
 ef_dir = op.join(exp_dir, 'experiment_files')
 results_dir = op.join(exp_dir, 'results')
 cmd_template = 'time $(parallel --jobs {} < {})'
-cmd_template_spark = 'time $(spark-submit --conf spark.network.timeout=10000000 --master local[{}] --driver-memory 700G spark_inc.py {} {} 1 --benchmark)'
+if 'em' in sys.argv[3]:
+    cmd_template_spark = 'time $(spark-submit --conf spark.network.timeout=10000000 --master local[{}] --driver-memory 700G spark_inc.py {} {} 1 --benchmark --emulate)'
+else:
+    cmd_template_spark = 'time $(spark-submit --conf spark.network.timeout=10000000 --master local[{}] --driver-memory 700G spark_inc.py {} {} 1 --benchmark)'
+
 im_size_b = 646461552 
 
 with open(sys.argv[3], 'r') as f:
@@ -71,7 +75,9 @@ for i in range(int(sys.argv[2])):
         print(mem_size)
         start = int(time())
 
-        if len(sys.argv) < 4:
+        spark = 'spark' in sys.argv[-1]
+
+        if not spark:
             out_name = '{0}-{1}-{2}'.format(start, c['id'], i)
         else:
             out_name = '{0}-{1}-{2}-{3}'.format('spark', start, c['id'], i)
@@ -101,7 +107,8 @@ for i in range(int(sys.argv[2])):
         else:
             out_dir = op.join(isilon, out_name)
 
-        if len(sys.argv) < 4:
+        if not spark:
+            c['delay'] = 0
 
             ef_cmd = [op.join(exp_dir, 'generate_ef.sh'), in_dir, out_dir, str(c['delay'])]
             print(ef_cmd)
