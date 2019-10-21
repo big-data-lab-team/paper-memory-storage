@@ -27,9 +27,9 @@ ef_dir = op.join(exp_dir, 'experiment_files')
 results_dir = op.join(exp_dir, 'results')
 cmd_template = 'time $(parallel --jobs {} < {})'
 if 'em' in sys.argv[3]:
-    cmd_template_spark = 'time $(spark-submit --conf spark.network.timeout=10000000 --master local[{}] --driver-memory 700G spark_inc.py {} {} 1 --benchmark --emulate)'
+    cmd_template_spark = 'time $(spark-submit --conf spark.network.timeout=10000000 --master local[{}] --driver-memory 700G spark_inc.py {} {} 1 --delay {} --benchmark --emulate)'
 else:
-    cmd_template_spark = 'time $(spark-submit --conf spark.network.timeout=10000000 --master local[{}] --driver-memory 700G spark_inc.py {} {} 1 --benchmark)'
+    cmd_template_spark = 'time $(spark-submit --conf spark.network.timeout=10000000 --master local[{}] --driver-memory 700G spark_inc.py {} {} 1 --delay {} --benchmark)'
 
 im_size_b = 646461552 
 
@@ -108,7 +108,6 @@ for i in range(int(sys.argv[2])):
             out_dir = op.join(isilon, out_name)
 
         if not spark:
-            c['delay'] = 0
 
             ef_cmd = [op.join(exp_dir, 'generate_ef.sh'), in_dir, out_dir, str(c['delay'])]
             print(ef_cmd)
@@ -122,7 +121,7 @@ for i in range(int(sys.argv[2])):
 
         else:
             drop_caches()
-            cmd = cmd_template_spark.format(c['ncpus'], in_dir, out_dir)
+            cmd = cmd_template_spark.format(c['ncpus'], in_dir, out_dir, c['delay'])
 
         print(cmd)
 
