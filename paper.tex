@@ -17,11 +17,12 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage{xspace}
 \usepackage[binary-units]{siunitx}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
-\newcommand{\bigdata}{Big Data }
-\newcommand{\bigbrain}{BigBrain }
+\newcommand{\bigdata}{Big Data\xspace}
+\newcommand{\bigbrain}{BigBrain\xspace}
 
 \newcommand{\valerie}[1]{\color{blue}\textbf{Note from Valerie}:
       #1 \color{black}}
@@ -331,9 +332,9 @@ When observing the total task breakdown (Figure~\ref{fig:stacked-25cpus}), it is
 apparent that the differences between the makespans arise from difference in incrementation
 time between all devices except Isilon. In addition, while tmpfs and local disk have comparable write times, Optane
 has a more significant write time difference. Whereas, Isilon has more significant read and
-write time compared to all other devices, it's incrementation time is comparable to that
+write time compared to all other devices, its incrementation time is comparable to that
 of local disk. Further inspection of each storage device's Gantt chart (see Figure~\ref{fig:gantt25})
-show that increased duration of tasks stagger the execution of each individual tasks. This, in turn,
+shows that increased duration of tasks stagger the execution of each individual tasks. This, in turn,
 results in better performance towards the end of the execution, where tasks are significantly more staggered.
 Only tmpfs appears to be able to execute each task efficiently with little staggering.
 \subsubsection{96 Processes}
@@ -370,7 +371,7 @@ mode is even faster than Optane, by a factor of 1.7. Tmpfs was also found to per
 the performance difference is not significant. Only Isilon's performance did not vary between the
 two execution modes.
 
-As with 25 process, the main cause of performance variability appears to be the incrementation
+As with 25 processes, the main cause of performance variability appears to be the incrementation
 time (Figure~\ref{fig:stacked-96cpus}). Local disk running in App Direct Mode has an average
 incrementation time that is nearly 15~x faster than in Memory Mode. The incrementation time
 for local disk is, on average, 6~x faster than on Optane.
@@ -578,8 +579,8 @@ for faster visualization of larger datasets.
 
 \subsection{Added value of persistent memory}
 
-The added value of Optane a persistent storage device depend on the amount of parallelism
-of the application. For instance, Optane performs better than local disk at 25 Processes,
+The added value of Optane as a persistent storage device depends on the amount of parallelism
+of the application. For instance, Optane performs better than local disk at 25 processes,
 but worse than local disk at 96 processes. This can be explained by the fact that it performs
 I/O on the memory bus. While this may reduce overall latency to Optane, the bandwidth of 
 writing to Optane is still significantly less than DRAM. Despite Optane having a similar bandwidth
