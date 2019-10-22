@@ -14,16 +14,16 @@ import numpy as np
 
 def gantt_increment(df, data_file, ncpus, spark=False):
     color = {
-        "read_file": "turquoise",
-        "increment_file": "crimson",
-        "write_file": "purple",
+        "read_file": "red",
+        "increment_file": "blue",
+        "write_file": "green",
     }
 
     if spark:
         color = {
-            "load_img": "turquoise",
-            "increment_data": "crimson",
-            "save_incremented": "purple",
+            "load_img": "red",
+            "increment_data": "blue",
+            "save_incremented": "green",
         }
 
     fig, ax = plt.subplots(figsize=(6, 3))
@@ -41,27 +41,9 @@ def gantt_increment(df, data_file, ncpus, spark=False):
         df1 = pd.merge(df,df.reset_index(),on=['tmp'])
         df = df.drop('tmp', axis=1)
         df1 = df1[(df1["Start_x"]<=df1["Start_y"])  & (df1["End_x"]> df1["Start_y"])]
-        #df1 = df1[((df1["Start_x"]>=df1["Start_y"]) & (df1["Start_x"] <= df1["End_y"]))]
         df['overlaps'] = df1.groupby('index').size()
         return (df)
 
-    '''
-    for idx, rw in df.iterrows():
-        overlaps = 0
-        for index, row in df.iterrows():
-            if not rw.equals(row):
-                start_idx_row = row['Start']
-                end_idx_row = row['Duration'] + start_idx_row
-                start_idx_rw = rw['Start']
-                end_idx_rw = rw['Duration'] + start_idx_rw
-
-                if ((start_idx_rw >= start_idx_row and start_idx_rw <= end_idx_row) or
-                    (end_idx_rw >= start_idx_row and end_idx_rw <= end_idx_row)):
-                    overlaps += 1
-
-        if overlaps > max_overlaps:
-            max_overlaps = overlaps
-    '''
     print('Avg number of overlaps:', count_overlaps(df)['overlaps'].mean())
 
     print('Number of threads:', len(df.groupby("ThreadId")))
@@ -69,11 +51,11 @@ def gantt_increment(df, data_file, ncpus, spark=False):
         labels.append(task[0])
         for r in task[1].groupby("Task"):
             data = r[1][["Start", "Duration"]]
-            ax.broken_barh(data.values, (i - 0.4, 0.8), color=color[r[0]])
+            ax.broken_barh(data.values, (i - 0.4, 0.8), color=color[r[0]], alpha=0.4)
 
-    r_read = mpatch.Patch(facecolor='turquoise', label='Read')
-    r_inc = mpatch.Patch(facecolor='crimson', label='Increment')
-    r_write = mpatch.Patch(facecolor='purple', label='Write')
+    r_read = mpatch.Patch(facecolor='red', alpha=0.4, label='Read')
+    r_inc = mpatch.Patch(facecolor='blue', alpha=0.4, label='Increment')
+    r_write = mpatch.Patch(facecolor='green', alpha=0.4, label='Write')
     ax.legend(handles=[r_read, r_inc, r_write], loc='upper center',
               bbox_to_anchor=(0.5, 1.07), ncol=3, fancybox=True,
               fontsize='x-small', framealpha=1)

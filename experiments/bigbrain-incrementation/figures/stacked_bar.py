@@ -51,9 +51,9 @@ def get_mean_std(df, r_task, i_task, w_task):
 
 def stacked_bar(df, spark=False):
 
-    labels = ["tmpfs", "Optane", "local disk", "Isilon"]
+    labels = ["DRAM", "Optane", "local disk", "Isilon"]
     ind = np.arange(len(labels))
-    ind_mem = np.delete(ind, 1)
+    ind_mem = np.delete(ind, 0)
 
     r_task = "read_file"
     i_task = "increment_file"
@@ -131,8 +131,6 @@ def stacked_bar(df, spark=False):
         df_mean_ad = prep_ad_df(df_mean)
         df_std_ad = prep_ad_df(df_std)
     else:
-        ind_mem_r = np.delete(ind_mem, 1)
-        ind_ad_r = np.delete(ind, [0, 2])
         df_mean_ad_r = prep_ad_df(df_mean, "real")
         df_mean_ad_em = prep_ad_df(df_mean, "em")
         df_std_ad_r = prep_ad_df(df_std, "real")
@@ -379,6 +377,11 @@ def stacked_bar(df, spark=False):
 
         ax.legend(handles=[r_mem_em, r_ad_em, r_smem_em, r_sad_em, r_read, r_inc, r_write])
         plt.savefig("stacked-emulated-{}.pdf".format(sys.argv[2]))
+
+        labels = ["Optane", "Isilon"]
+        ind = np.arange(len(labels))
+        ind_mem_r = ind
+        ind_ad_r = ind
 
         figure, ax = plt.subplots()
         #### REAL

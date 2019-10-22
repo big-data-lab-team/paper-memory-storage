@@ -44,7 +44,7 @@ def get_makespans(conditions):
 mksp_96 = get_makespans(conditions_96_jobs)
 plt.ylabel("Makespan (s)")
 plt.ylim((0,5000))
-plt.bar([1, 2, 3, 4], mksp_96[0], tick_label=condition_ticks, width=width, yerr=mksp_96[1])
+plt.bar([1, 2, 3, 4], mksp_96[0], tick_label=condition_ticks, width=width, yerr=mksp_96[1], alpha=0.4, color='gray')
 plt.savefig("96cores.pdf")
 
 plt.clf()
@@ -52,7 +52,7 @@ plt.clf()
 mksp_25 = get_makespans(conditions_25_jobs)
 plt.ylabel("Makespan (s)")
 plt.ylim((0,5000))
-plt.bar([1, 2, 3, 4], mksp_25[0], tick_label=condition_ticks, width=width, yerr=mksp_25[1])
+plt.bar([1, 2, 3, 4], mksp_25[0], tick_label=condition_ticks, width=width, yerr=mksp_25[1], alpha=0.4, color='gray')
 plt.savefig("25cores.pdf")
 
 def time_to_secs(t):
@@ -113,8 +113,10 @@ plt.clf()
 res_96 = get_cpu_io_times(conditions_96_jobs)
 plt.ylabel("Total time (s)")
 plt.ylim(0, 400000)
-p1 = plt.bar([1, 2, 3, 4], res_96[2], tick_label=condition_ticks, width=width, yerr=res_96[3])
-p2 = plt.bar([1, 2, 3, 4], res_96[0], bottom=res_96[2], width=width, yerr=res_96[1])
+p1 = plt.bar([1, 2, 3, 4], res_96[2], tick_label=condition_ticks, width=width,
+        yerr=res_96[3], alpha=0.4, color='red', hatch='+++', edgecolor='green')
+p2 = plt.bar([1, 2, 3, 4], res_96[0], bottom=res_96[2], width=width,
+        yerr=res_96[1], alpha=0.4, color='blue')
 
 plt.legend((p1[0], p2[0]), ('I/O', 'CPU'))
 plt.savefig('96cores-sum.pdf')
@@ -125,7 +127,9 @@ plt.ylabel("Total time (s)")
 plt.ylim(0, 400000)
 res_25 = get_cpu_io_times(conditions_25_jobs)
 
-p1 = plt.bar([1, 2, 3, 4], res_25[2], tick_label=condition_ticks, width=width, yerr=res_25[3])
-p2 = plt.bar([1, 2, 3, 4], res_25[0], bottom=res_25[2], width=width, yerr=res_25[1])
+p1 = plt.bar([1, 2, 3, 4], res_25[2], tick_label=condition_ticks, width=width,
+        yerr=res_25[3], alpha=0.4, color='red', hatch='+++', edgecolor='green')
+p2 = plt.bar([1, 2, 3, 4], res_25[0], bottom=res_25[2], width=width, yerr=res_25[1],
+        alpha=0.4, color='blue')
 plt.legend((p1[0], p2[0]), ('I/O', 'CPU'))
 plt.savefig('25cores-sum.pdf')

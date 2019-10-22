@@ -288,12 +288,12 @@ I/O time.
 \subsection{40~$\mu$m \bigbrain incrementation}
 \subsubsection{25 Processes}
 \begin{figure}
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-25cpus-120delay-1it.pdf}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-25cpus-120delay-1it.pdf}
     \captionsetup{width=\columnwidth}
     \caption{Makespan of \bigbrain Incrementation using 25 processes with a sleep delay of 120s on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:makespan-25cpus}
 \end{figure}
 \begin{figure}
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-25cpus-120delay-1it.pdf}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-25cpus-120delay-1it.pdf}
     \captionsetup{width=\columnwidth}
     \caption{Total read/increment/write breakdown of \bigbrain Incrementation using 25 processes with a sleep delay of 120s on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:stacked-25cpus}
 \end{figure}
@@ -401,8 +401,17 @@ The read/increment/write breakdown (Figure~\ref{fig:20stackedp25}) shows that tm
 spends the least amount of time executing all the tasks, however, it spends more
 time than Optane incrementing the data. Otherwise, tmpfs is nearly 470x faster with
 reading and nearly 11x faster at writing than Optane. Despite not reaching memory
-speeds, Optane is significantly faster than other persistent storage devices. 
+speeds, Optane is significantly faster than other persistent storage devices.
+For instance, it can be almost up to 10x faster in reads than Isilon and almost 
+9x faster in writes. It is important, however, to note that total read times in App
+Direct mode for the Spark execution on Isilon are almost twice as fast as their 
+equivalent Optane counterpart. On the other hand, this decrease read time is offset
+by the write time which are 9x slower.
 
+Emulated breakdown results also agree that the bulk of the differences in makespans
+can be attributed to write time, with local disk writes being notably slower than
+Optane. In fact, local disk write speeds nearly match that of Isilon. Isilon results
+in a longer makespan due to increase read and incrementation time.
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
         \centering
@@ -434,6 +443,15 @@ speeds, Optane is significantly faster than other persistent storage devices.
 \end{figure*}
 
 \subsubsection{96 Processes}
+
+With nearly a four-fold increase in parallelization, the makespan generally did
+not improve other but a few 100s on Isilon. Overall, the general trend is similar
+than with 25 cpus. As can be seen in Figure~\ref{fig:20mksp96}, tmpfs is the
+fastest storage device. Regardless, Optane remains significantly faster than the
+other storage devices (e.g. Isilon). However, emulated disk results appear to 
+imply that the speedup difference between Optane and local disk will be smaller.
+
+
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
         \centering
