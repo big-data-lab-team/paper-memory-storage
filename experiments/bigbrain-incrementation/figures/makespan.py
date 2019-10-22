@@ -17,7 +17,6 @@ def configure_df(df):
     df_data["disk"] = df_data.index.map(
         lambda x: x.split("_")[0].split("-")[-1] + ("-em" if "_em" in x else "-real")
     )
-
     s_mean = (
         df_data.rename(columns={"makespan": "mean"})
         .set_index("disk")
@@ -68,11 +67,15 @@ def makespan(df, task="task_duration", spark=False):
             },
             inplace=True,
         )
-        print(df_pres_mem)
     else:
         df_sres = configure_df(dfs)
         df_peres = configure_df(dfpe)
         df_seres = configure_df(dfse)
+
+        print(df_pres)
+        print(df_sres)
+        print(df_peres)
+        print(df_seres)
 
 
         df_pres_mem = df_pres[
@@ -135,8 +138,8 @@ def makespan(df, task="task_duration", spark=False):
         ind_ad_real = np.delete(ind, [0, 2])
         labels = ["tmpfs", "optane", "local", "isilon"]
 
-        print(ind_mem_em)
-        print(df_pres_mem_em)
+        #print(ind_mem_em)
+        #print(df_pres_mem_em)
         pmem_pem = ax.bar(
             ind_mem_em - 3 * width / 2,
             df_pres_mem_em["mean"],
@@ -147,8 +150,18 @@ def makespan(df, task="task_duration", spark=False):
             label="Memory mode - GNU Parallel",
         )
 
+        '''pad_read_real = ax.bar(
+            ind_ad_real - width / 2,
+            df_res_ad["mean"],
+            width,
+            alpha=0.4,
+            color="orange",
+            yerr=df_res_ad["std"],
+            label="App Direct real",
+        )'''
+
         pmem_sem = ax.bar(
-            ind_mem_em - width / 2,
+            ind_mem_em + width / 2,
             df_sres_mem_em["mean"],
             width,
             alpha=0.4,
@@ -157,15 +170,7 @@ def makespan(df, task="task_duration", spark=False):
             label="Memory mode - Spark",
         )
 
-        '''pad_read_real = ax.bar(
-            ind_ad_real + width / 2,
-            df_res_ad["mean"],
-            width,
-            alpha=0.4,
-            color="orange",
-            yerr=df_res_ad["std"],
-            label="App Direct real",
-        )'''
+
         pad_sem = ax.bar(
             ind + 1.5 * width,
             df_sres_ad_em["mean"],
@@ -181,12 +186,12 @@ def makespan(df, task="task_duration", spark=False):
         ax.set_xlabel("Storage type")
         ax.set_xticks(ind)
         ax.set_xticklabels(labels)
+        ax.set_ylim([0, 12000])
         plt.legend()
         plt.savefig("makespan-em-{}.pdf".format(sys.argv[2]))
 
 
         fig, ax = plt.subplots()
-        print(df_pres_mem)
         pmem_real = ax.bar(
             ind_mem_real - 3 * width / 2,
             df_pres_mem["mean"],
@@ -196,17 +201,9 @@ def makespan(df, task="task_duration", spark=False):
             yerr=df_pres_mem["std"],
             label="Memory mode - GNU Parallel",
         )
-        pmem_sreal = ax.bar(
-            ind_mem_real - width / 2,
-            df_sres_mem["mean"],
-            width,
-            alpha=0.4,
-            color="b",
-            yerr=df_sres_mem["std"],
-            label="Memory mode - Spark",
-        )
+
         '''pad_read_real = ax.bar(
-            ind_ad_real + width / 2,
+            ind_ad_real - width / 2,
             df_res_ad["mean"],
             width,
             alpha=0.4,
@@ -214,6 +211,16 @@ def makespan(df, task="task_duration", spark=False):
             yerr=df_res_ad["std"],
             label="App Direct real",
         )'''
+
+        pmem_sreal = ax.bar(
+            ind_mem_real + width / 2,
+            df_sres_mem["mean"],
+            width,
+            alpha=0.4,
+            color="b",
+            yerr=df_sres_mem["std"],
+            label="Memory mode - Spark",
+        )
         pad_sreal = ax.bar(
             ind_ad_real + 1.5 * width,
             df_sres_ad["mean"],
@@ -223,6 +230,7 @@ def makespan(df, task="task_duration", spark=False):
             yerr=df_sres_ad["std"],
             label="App Direct - Spark",
         )
+        ax.set_ylim([0, 12000])
 
     # plt.ylim(0, 13000)
     ax.set_ylabel("Mean makespan (s)")

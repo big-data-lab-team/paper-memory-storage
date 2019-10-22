@@ -230,7 +230,8 @@ This application
 enables us to read and write to different storage devices and ensure that written
 data could not have been previously cache
 in-memory, by ensuring that read and written data are not the same. This application
-will be parallelized using both GNU Parallel and Apache Spark 2.4.3 and implemented in Python 3.6 \tristan{In a subsequent 
+was parallelized us in two different ways: using both GNU Parallel and Apache Spark 2.4.3 (PySpark). 
+All task code was implemented in Python 3.6 \tristan{In a subsequent 
 version you could give more details about implementations, including containerization, etc}. While the GNU Parallel application
 is currently limited to 1 incrementation step, the Apache Spark implementation allows us to increase
 the number of incrementation steps by a variable amount, thereby increasing the amount of intermediate
@@ -239,17 +240,29 @@ data generated.
 Time is measured within the application using Python's \texttt{time} module 
 called before and after any reads, increments or writes.
 
-We plan to execute this pipeline on both the $\SI{76}{\gibi\byte}$ 40~$\mu$m 
+We have executed this pipeline on both the $\SI{76}{\gibi\byte}$ 40~$\mu$m 
 \bigbrain split into 125 $\SI{617}{\mega\byte}$ blocks and the $\SI{603}{\gibi\byte}$
 \bigbrain at 20~$\mu$m split into 1000 $\SI{617}{\mebi\byte}$ blocks.
 
-At this moment, we have executed the application using GNU Parallel for parallelization
+For the 40~$\mu$m \bigbrain, we have executed the application using GNU Parallel for parallelization
 using 25 and 96 processes on the 125 40$\mu$m \bigbrain blocks. Data was read and written to either
 tmpfs, Optane (App Direct only), local disk and Isilon. In all configurations (25 and 96 processes)
 only 1 iteration was performed. At 25 processes, a sleep delay of 120 seconds was added at the
 incrementation step, which would emulate tasks of longer duration and ensure that we satisfy Equation~\ref{eq:page-cache-inequality} for all devices.
 At 96 processes with 0 sleep delay, we estimate being above the inequality for local disk and Isilon.
-All experiments were repeated 5x in each environment (App Direct and Memory Mode)
+All experiments were repeated 5x in each environment (App Direct and Memory Mode).
+
+For the 20~$\mu$m \bigbrain, we used the same application, however in this case, it was executed
+using both Apache Spark and GNU Parallel. The configuration was also generally the same, having 
+experiments using both 25 and 96 cpus. As the previous experiments would have already shown how
+page cache availability for the dirty writes can compare with Optane, we did not include
+a task duration delay. Rather, we just measure the performance differences between the various
+storage devices, in addition to comparing how each device scales by modifying the cluster size.
+
+Since storage was limited on tmpfs and local disk and was not large enough to process the entire
+20~$\mu$m \bigbrain, we had to emulate the reading and writing to these devices. We achieved this
+by copying only 70 of the 1000 blocks onto the storage devices, but used 1000 tasks to read, increment and
+write these 70 blocks.
 
 \subsubsection{BIDS App Example}
 
@@ -272,7 +285,7 @@ whereas \texttt{User - (Real + Sys)} was used to measure
 I/O time.
 \section{Results}
 
-\subsection{\bigbrain incrementation}
+\subsection{40~$\mu$m \bigbrain incrementation}
 \subsubsection{25 Processes}
 \begin{figure}
     \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-25cpus-120delay-1it.pdf}
@@ -313,7 +326,6 @@ performance still varies according to selected storage device. As expected, Opta
 slightly better than local disk and significantly better than Isilon. Tmpfs outperforms all
 devices, with only slightly better performance than Optane and local disk, in both App Direct Mode and Memory Mode.
 There is no apparent difference between the two modes on the given devices.
-\tristan{You should explain why Optane is not reported in memory mode.}
 
 When observing the total task breakdown (Figure~\ref{fig:stacked-25cpus}), it is
 apparent that the differences between the makespans arise from difference in incrementation
@@ -326,12 +338,12 @@ results in better performance towards the end of the execution, where tasks are 
 Only tmpfs appears to be able to execute each task efficiently with little staggering.
 \subsubsection{96 Processes}
 \begin{figure}
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-96cpus-0delay-1it.pdf}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-96cpus-0delay-1it.pdf}
     \captionsetup{width=\columnwidth}
     \caption{Makespan of \bigbrain Incrementation using 96 processes on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:makespan-96cpus}
 \end{figure}
 \begin{figure}
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-96cpus-0delay-1it.pdf}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-96cpus-0delay-1it.pdf}
     \captionsetup{width=\columnwidth}
     \caption{total read/increment/write breakdown of \bigbrain incrementation using 96 processes on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:stacked-96cpus}
 \end{figure}
@@ -371,6 +383,85 @@ shows that the sole difference between the two modes is the duration of the incr
 While both modes have an increased incrementation time, the incrementation duration in
 Memory Mode is much more important than that of App Direct Mode.
 
+\subsection{20~$\mu$ \bigbrain incrementation}
+\subsubsection{25 Processes}
+
+Although tmpfs offers the best performance in terms of makespan duration, Optane
+is a close contender. While tmpfs is approximately 5x faster than Optane, Optane can be
+as much as 12x faster than on Isilon (Figure~\ref{fig:20mksp25}). By using the results of 
+our emulation, we can speculate that Optane will also be significantly faster than 
+local disk in a real scenario. The real Optane execution is almost 3x faster than
+the fastest local disk emulation configuration (i.e. Memory mode - Spark). As the
+emulation results have been found to be faster than the real results, potentially as a side-effect
+of increased accessed to cached data, it is expected
+that the true makespan of the application running on local disk would be significantly
+greater.
+
+The read/increment/write breakdown (Figure~\ref{fig:20stackedp25}) shows that tmpfs
+spends the least amount of time executing all the tasks, however, it spends more
+time than Optane incrementing the data. Otherwise, tmpfs is nearly 470x faster with
+reading and nearly 11x faster at writing than Optane. Despite not reaching memory
+speeds, Optane is significantly faster than other persistent storage devices. 
+
+\begin{figure*}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-20bb_25cpus.pdf}
+    \caption{real}
+\end{subfigure}
+\begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-em-20bb_25cpus.pdf}
+    \caption{emulated}
+\end{subfigure}
+\caption{Makespan of the incrementation algorithm processing the 20~$\mu$m BigBrain using
+25 processes}\label{fig:20mksp25}
+\end{figure*}
+
+\begin{figure*}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-20bb_25cpus.pdf}
+    \caption{real}
+\end{subfigure}
+\begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-emulated-20bb_25cpus.pdf}
+    \caption{emulated}
+\end{subfigure}
+\caption{Total read/increment/write breakdown of the  incrementation algorithm processing the 20~$\mu$m BigBrain using
+25 processes}\label{fig:20stackedp25}
+\end{figure*}
+
+\subsubsection{96 Processes}
+\begin{figure*}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-20bb_96cpus.pdf}
+    \caption{real}
+\end{subfigure}
+\begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-em-20bb_96cpus.pdf}
+    \caption{emulated}
+\end{subfigure}
+\caption{Makespan of the incrementation algorithm processing the 20~$\mu$m BigBrain using
+96 processes}\label{fig:20mksp96}
+\end{figure*}
+
+\begin{figure*}
+    \begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-20bb_96cpus.pdf}
+    \caption{real}
+\end{subfigure}
+\begin{subfigure}{\columnwidth}
+        \centering
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-emulated-20bb_96cpus.pdf}
+    \caption{emulated}
+\end{subfigure}
+\caption{Total read/increment/write breakdown of the  incrementation algorithm processing the 20~$\mu$m BigBrain using 96 processes}\label{fig:20stackedp96}
+\end{figure*}
 \subsection{BIDS App Example}
 \begin{figure*}
     \begin{subfigure}{\columnwidth}

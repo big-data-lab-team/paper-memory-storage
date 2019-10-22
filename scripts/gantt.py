@@ -9,19 +9,62 @@ from json import load
 from datetime import datetime
 import time
 import argparse
+import numpy as np
 
 
-def gantt_increment(df, data_file, ncpus):
+def gantt_increment(df, data_file, ncpus, spark=False):
     color = {
         "read_file": "turquoise",
         "increment_file": "crimson",
         "write_file": "purple",
     }
 
+    if spark:
+        color = {
+            "load_img": "turquoise",
+            "increment_data": "crimson",
+            "save_incremented": "purple",
+        }
+
     fig, ax = plt.subplots(figsize=(6, 3))
     labels = []
 
-    df = df[df["Task"] != "task_duration"]
+    df = df[~df["Task"].str.contains("task_duration") & ~df["Task"].str.contains("driver_program")]
+
+
+    program_start = df.Start.min()
+    program_end = df.End.max() - program_start
+    
+    def count_overlaps(df):
+        #df = df[df['Task'].str.contains("increment_file")]
+        df['tmp'] = 1
+        df1 = pd.merge(df,df.reset_index(),on=['tmp'])
+        df = df.drop('tmp', axis=1)
+        df1 = df1[(df1["Start_x"]<=df1["Start_y"])  & (df1["End_x"]> df1["Start_y"])]
+        #df1 = df1[((df1["Start_x"]>=df1["Start_y"]) & (df1["Start_x"] <= df1["End_y"]))]
+        df['overlaps'] = df1.groupby('index').size()
+        return (df)
+
+    '''
+    for idx, rw in df.iterrows():
+        overlaps = 0
+        for index, row in df.iterrows():
+            if not rw.equals(row):
+                start_idx_row = row['Start']
+                end_idx_row = row['Duration'] + start_idx_row
+                start_idx_rw = rw['Start']
+                end_idx_rw = rw['Duration'] + start_idx_rw
+
+                if ((start_idx_rw >= start_idx_row and start_idx_rw <= end_idx_row) or
+                    (end_idx_rw >= start_idx_row and end_idx_rw <= end_idx_row)):
+                    overlaps += 1
+
+        if overlaps > max_overlaps:
+            max_overlaps = overlaps
+    '''
+    print('Avg number of overlaps:', count_overlaps(df)['overlaps'].mean())
+
+    print('Number of threads:', len(df.groupby("ThreadId")))
     for i, task in enumerate(df.groupby("ThreadId")):
         labels.append(task[0])
         for r in task[1].groupby("Task"):
@@ -38,10 +81,11 @@ def gantt_increment(df, data_file, ncpus):
     ax.set_yticklabels([])
     ax.set_xlabel("time [s]")
 
-    if ncpus == 25:
-        ax.set_xlim(0, 1200)
-    else:
-        ax.set_xlim(0, 140)
+    if not spark:
+        if ncpus == 25:
+            ax.set_xlim(0, 1200)
+        else:
+            pass #ax.set_xlim(0, 140)
     ax.tick_params(axis='both', which='major', labelsize=8)
     plt.tight_layout()
     plt.savefig("gantt-{}.pdf".format(op.basename(data_file).strip('.out')))
@@ -89,15 +133,18 @@ def main():
 
     if args.incrementation_tf is not None:
         data_file = args.incrementation_tf
+        spark = 'spark' in data_file
         df = pd.read_csv(
             data_file,
-            delim_whitespace=True,
+            delim_whitespace=not spark,
             names=["Task", "Start", "End", "File", "ThreadId"],
         )
+
         df["Duration"] = df["End"] - df["Start"]
         df["Start"] = df["Start"] - df["Start"].min()
+        df["End"] = df["Start"] + df["Duration"]
 
-        gantt_increment(df, data_file, args.cpus)
+        gantt_increment(df, data_file, args.cpus, spark)
 
     else:
         data_file = args.bids_tf
