@@ -447,10 +447,24 @@ in a longer makespan due to increase read and incrementation time.
 
 With nearly a four-fold increase in parallelization, the makespan generally did
 not improve other but a few 100s on Isilon. Overall, the general trend is similar
-than with 25 cpus. As can be seen in Figure~\ref{fig:20mksp96}, tmpfs is the
-fastest storage device. Regardless, Optane remains significantly faster than the
-other storage devices (e.g. Isilon). However, emulated disk results appear to 
-imply that the speedup difference between Optane and local disk will be smaller.
+than with 25 cpus. As can be seen in Figure~\ref{fig:20mksp96}, Optane in Memory
+mode is the fastest storage device. Furthermore, Optane in App Direct mode 
+remains significantly faster than the other storage devices (e.g. Isilon).
+However, emulated disk results appear to imply that the speedup difference
+between Optane in App Direct mode and local disk will be smaller than at 25 cpus.
+
+The vast majority of processing time appears to be spent on writing to the 
+respective storage device with the exception of Optane in Memory Mode, which 
+spends most of its time incrementing (Figure~\ref{fig:20stackedp96}). App Direct
+mode executions appear to have reduced incrementation time coupled with increased
+write times when compared to their memory mode equivalents. Furthermore, read
+times appear to be increased for Isilon memory mode executions. These events are
+not reflected in the emulated executions.
+
+Emulated breakdowns demonstrate that local disk executions will remain slower 
+than Optane in both App Direct and Memory modes. Results show that both 
+incrementation and write times will be generally be longer on local disk than
+on Optane.
 
 
 \begin{figure*}
@@ -523,6 +537,27 @@ tmpfs spends the least amount of time on I/O and CPU, followed by local disk, Op
 Isilon.
 \section{Discussion}
 \subsection{Memory vs App Direct Mode}
+
+Memory mode was found to result in increased computation time. When processing 
+the 20~$\mu$m \bigbrain, Memory mode results indicate that more time was spent on
+the incrementation tasks than its App Direct counterparts. Unlike App Direct mode,
+which relies exclusively on DRAM for working memory, Memory mode relies on Optane
+with a DRAM cache. Optane, while faster than other persistent storage devices, 
+still lacks the bandwidth of DRAM. Should anonymous memory need to access Optane
+for computation, it is not surprising that it would be slower than a DRAM-only
+access. However, whereas Memory mode experienced increased computation during the
+processing of the 20~$\mu$m \bigbrain, this was not always found to be the case
+with the processing of the 40~$\mu$m \bigbrain. In fact, incrementation time was
+largely similar between the two modes, with the notable exception of Optane in
+Memory mode expending significantly less computation time than in App Direct when
+processing the 40~$\mu$m \bigbrain with both 25 and 96 processes. Optane in 
+Memory mode executing on local disk using 96 cpus, however, required significant
+computation time as compared to App Direct. 
+- Conclusion: memory mode should only be used when there's a requirement for additional memory
+-App Direct mode results in increased I/O time for Optane
+- conclusion: Optane might benefit from the DRAM cache
+
+
 
 While Memory Mode provides a cost-effective solution to increasing the total memory
 size, it is slower than App Direct Mode for embarrassingly parallel applications such

@@ -9,10 +9,13 @@ import numpy as np
 
 
 def configure_df(df):
-    df_end = df.End.max()
-    df_start = df.Start.min()
+    df_end = df.End.apply(lambda x: x.max())
+    df_start = df.Start.apply(lambda x: x.min())
+
+    #print(df.End.apply(lambda x: x.max()))
 
     df_data = pd.concat([df_start, df_end], axis=1)
+    print(df_data.head(5))
     df_data["makespan"] = df_data.End - df_data.Start
     df_data["disk"] = df_data.index.map(
         lambda x: x.split("_")[0].split("-")[-1] + ("-em" if "_em" in x else "-real")
@@ -67,6 +70,7 @@ def makespan(df, task="task_duration", spark=False):
             },
             inplace=True,
         )
+        print(df_pres)
     else:
         df_sres = configure_df(dfs)
         df_peres = configure_df(dfpe)
