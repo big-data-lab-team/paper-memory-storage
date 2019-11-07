@@ -37,14 +37,21 @@ def gantt_increment(df, data_file, ncpus, spark=False):
     
     def count_overlaps(df):
         #df = df[df['Task'].str.contains("increment_file")]
-        df['tmp'] = 1
-        df1 = pd.merge(df,df.reset_index(),on=['tmp'])
-        df = df.drop('tmp', axis=1)
-        df1 = df1[(df1["Start_x"]<=df1["Start_y"])  & (df1["End_x"]> df1["Start_y"])]
-        df['overlaps'] = df1.groupby('index').size()
-        return (df)
+       
+        df_over = df.rename(columns={'Start':'Time'})
+        df_over['Start'] = 1
+        df1 = pd.DataFrame(df_over[['File','Time','Start']])
+        df_over['Start'] = -1
+        df2 = pd.DataFrame(df_over[['File','End', 'Start']]).rename(columns={'End':'Time'})
+        df_tasks = pd.concat([df1, df2], axis=0).sort_values(by='Time')
+        df_tasks['R'] = df_tasks.Start.cumsum()
+        df_tasks['Time0'] = df_tasks['Time'].shift(periods=1, fill_value=0)
+        df_tasks['R0'] = df_tasks['R'].shift(periods=1, fill_value=0)
+        df_tasks['C'] = df_tasks['R0'] * (df_tasks['Time'] - df_tasks['Time0'])
+        print(df_tasks)
+        return df_tasks['C'].sum()/df_tasks['Time'].max()
 
-    print('Avg number of overlaps:', count_overlaps(df)['overlaps'].mean())
+    print('number of overlaps:', count_overlaps(df))
 
     print('Number of threads:', len(df.groupby("ThreadId")))
     for i, task in enumerate(df.groupby("ThreadId")):
@@ -61,13 +68,19 @@ def gantt_increment(df, data_file, ncpus, spark=False):
               fontsize='x-small', framealpha=1)
     ax.set_yticks(range(len(labels)))
     ax.set_yticklabels([])
+    #ax.set_xlim([0,100])
     ax.set_xlabel("time [s]")
 
     if not spark:
         if ncpus == 25:
-            ax.set_xlim(0, 1200)
+            pass
+            #ax.set_xlim(0, 1200)
+            #ax.set_xlim(140, 190)
         else:
             pass #ax.set_xlim(0, 140)
+    else:
+        pass
+        #ax.set_xlim([0, 1200])
     ax.tick_params(axis='both', which='major', labelsize=8)
     plt.tight_layout()
     plt.savefig("gantt-{}.pdf".format(op.basename(data_file).strip('.out')))
