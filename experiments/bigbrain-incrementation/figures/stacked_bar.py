@@ -9,6 +9,13 @@ from os import path as op
 import numpy as np
 
 
+ad_bench = '../../system_conf/ad_diskbench.out'
+mem_bench = '../../system_conf/mem_diskbench.out'
+data_size = 614 * 125
+total_1000 = 617 * 1000
+bb20 = '20bb' in sys.argv[1]
+
+
 def add_disk_col(df):
     df["disk"] = df.index.map(
         lambda x: x.split("_")[0].split("-")[-1] + ("-em" if "_em" in x else "-real")
@@ -147,15 +154,68 @@ def stacked_bar(df, spark=False):
 
     figure, ax = plt.subplots()
 
+    df_adb = pd.read_csv(ad_bench)
+    convert_gb = lambda x: float(x.strip(' GB/s')) * 1024 if 'GB/s' in x else float(x.strip(' MB/s'))
+    df_adb['Write'] = df_adb['Write'].apply(convert_gb)
+    df_adb['Read'] = df_adb['Read'].apply(convert_gb)
+
+    if bb20:
+        df_adb = df_adb[df_adb['Device'].str.contains('isilon') | df_adb['Device'].str.contains('optane')]
+
+    df_adb['WriteTime'] = data_size / df_adb['Write']
+    df_adb['ReadTime'] = data_size / df_adb['Read']
+    df_adb_mean = df_adb.groupby(['Device']).mean().sort_index(ascending=False)
+    df_adb_std = df_adb.groupby(['Device']).std().sort_index(ascending=False)
+
+    df_memb = pd.read_csv(mem_bench)
+    convert_gb = lambda x: float(x.strip(' GB/s')) * 1024 if 'GB/s' in x else float(x.strip(' MB/s'))
+    df_memb['Write'] = df_memb['Write'].apply(convert_gb)
+    df_memb['Read'] = df_memb['Read'].apply(convert_gb)
+
+    if bb20:
+        df_memb = df_memb[df_memb['Device'].str.contains('isilon') | df_memb['Device'].str.contains('tmpfs')]
+
+    df_memb['WriteTime'] = data_size / df_memb['Write']
+    df_memb['ReadTime'] = data_size / df_memb['Read']
+    df_memb_mean = df_memb.groupby(['Device']).mean().sort_index(ascending=False)
+    df_memb_std = df_memb.groupby(['Device']).std().sort_index(ascending=False)
+
+    if not bb20:
+        df_memb_mean.at['local', 'WriteTime'] = df_memb_mean.at['tmpfs', 'WriteTime']
+        df_memb_std.at['local', 'WriteTime'] = df_memb_std.at['tmpfs', 'WriteTime']
+        df_adb_mean.at['localAD', 'WriteTime'] = df_adb_mean.at['tmpfsAD', 'WriteTime']
+        df_adb_std.at['localAD', 'WriteTime'] = df_adb_std.at['tmpfsAD', 'WriteTime']
+
+    if bb20:
+        ind = np.asarray([0, 1])
+        ind_mem = ind
+        labels = ['Optane', 'Isilon']
+
+    print(df_memb_mean)
+    print(df_memb_std)
+    print(df_adb_mean)
+    print(df_adb_std)
+    print(df_mean_mem)
+
     if not spark:
         p_read_mem = ax.bar(
-            ind_mem - width / 2,
+            ind_mem - 3*width / 2,
             df_mean_mem["read_time"],
             width,
             color="r",
-            label="read",
+            label="load header",
             alpha=alpha,
             yerr=df_std_mem["read_time"],
+            edgecolor="black",
+        )
+        p_expread_mem = ax.bar(
+            ind_mem - width / 2,
+            df_memb_mean["ReadTime"],
+            width,
+            color="pink",
+            label="Expected Read Time",
+            alpha=alpha,
+            yerr=df_memb_std["ReadTime"],
             edgecolor="black",
         )
         p_read_ad = ax.bar(
@@ -168,14 +228,24 @@ def stacked_bar(df, spark=False):
             yerr=df_std_ad["read_time"],
             edgecolor="black",
         )
+        p_expread_ad = ax.bar(
+            ind + 3*width / 2,
+            df_adb_mean["ReadTime"],
+            width,
+            color="pink",
+            hatch="//",
+            alpha=alpha,
+            yerr=df_adb_std["ReadTime"],
+            edgecolor="black",
+        )
         p_inc_mem = ax.bar(
-            ind_mem - width / 2,
+            ind_mem - 3*width / 2,
             df_mean_mem["increment_time"],
             width,
             bottom=np.array(df_mean_mem["read_time"]),
-            color="b",
-            label="increment",
-            alpha=alpha,
+            color="r",
+            label="read/increment",
+            alpha=alpha + 0.2,
             yerr=df_std_mem["increment_time"],
             edgecolor="black",
         )
@@ -184,14 +254,14 @@ def stacked_bar(df, spark=False):
             df_mean_ad["increment_time"],
             width,
             bottom=np.array(df_mean_ad["read_time"]),
-            color="b",
+            color="r",
             hatch="//",
-            alpha=alpha,
+            alpha=alpha + 0.2,
             yerr=df_std_ad["increment_time"],
             edgecolor="black",
         )
         p_write_mem = ax.bar(
-            ind_mem - width / 2,
+            ind_mem - 3*width / 2,
             df_mean_mem["write_time"],
             width,
             bottom=np.array(df_mean_mem["read_time"])
@@ -200,6 +270,17 @@ def stacked_bar(df, spark=False):
             label="write",
             alpha=alpha,
             yerr=df_std_mem["write_time"],
+            edgecolor="black",
+        )
+        p_expwrite_mem = ax.bar(
+            ind_mem - width / 2,
+            df_memb_mean["WriteTime"],
+            width,
+            bottom=df_memb_mean["ReadTime"],
+            color="orange",
+            label="Expected Write Time",
+            alpha=alpha,
+            yerr=df_memb_std["WriteTime"],
             edgecolor="black",
         )
         p_write_ad = ax.bar(
@@ -214,10 +295,29 @@ def stacked_bar(df, spark=False):
             yerr=df_std_ad["write_time"],
             edgecolor="black",
         )
+        p_expwrite_ad = ax.bar(
+            ind + 3*width / 2,
+            df_adb_mean["WriteTime"],
+            width,
+            bottom=df_adb_mean["ReadTime"],
+            color="orange",
+            hatch="//",
+            alpha=alpha,
+            yerr=df_adb_std["WriteTime"],
+            edgecolor="black",
+        )
+
+        ax.set_ylabel("Average total execution time (s)")
+        ax.set_xlabel("Storage type")
+        ax.set_xticks(ind)
+        ax.set_xticklabels(labels)
+        #ax.set_ylim([0,8000])
+        plt.show()
+        plt.savefig("stacked-real-{}.pdf".format(sys.argv[2]))
 
     else:
         ### EMULATED
-        p_read_mem_em = ax.bar(
+        '''p_read_mem_em = ax.bar(
             ind_mem - 3*width / 2,
             df_mean_mem_em["read_time"],
             width,
@@ -226,7 +326,7 @@ def stacked_bar(df, spark=False):
             alpha=alpha,
             yerr=df_std_mem_em["read_time"],
             edgecolor="black",
-        )
+        )'''
         '''p_read_ad_em = ax.bar(
             ind - width / 2,
             df_mean_ad_em["read_time"],
@@ -237,7 +337,7 @@ def stacked_bar(df, spark=False):
             yerr=df_std_ad_em["read_time"],
             edgecolor="black",
         )'''
-        p_sread_mem_em = ax.bar(
+        '''p_sread_mem_em = ax.bar(
             ind_mem + width / 2,
             df_smean_mem_em["read_time"],
             width,
@@ -268,7 +368,7 @@ def stacked_bar(df, spark=False):
             alpha=alpha,
             yerr=df_std_mem_em["increment_time"],
             edgecolor="black",
-        )
+        )'''
         '''p_inc_ad_em = ax.bar(
             ind - width / 2,
             df_mean_ad_em["increment_time"],
@@ -280,7 +380,7 @@ def stacked_bar(df, spark=False):
             yerr=df_std_ad_em["increment_time"],
             edgecolor="black",
         )'''
-        p_sinc_mem_em = ax.bar(
+        '''p_sinc_mem_em = ax.bar(
             ind_mem + width / 2,
             df_smean_mem_em["increment_time"],
             width,
@@ -314,7 +414,7 @@ def stacked_bar(df, spark=False):
             alpha=alpha,
             yerr=df_std_mem_em["write_time"],
             edgecolor="black",
-        )
+        )'''
         '''p_write_ad_em = ax.bar(
             ind - width / 2,
             df_mean_ad_em["write_time"],
@@ -327,7 +427,7 @@ def stacked_bar(df, spark=False):
             yerr=df_std_ad_em["write_time"],
             edgecolor="black",
         )'''
-        p_swrite_mem_em = ax.bar(
+        '''p_swrite_mem_em = ax.bar(
             ind_mem + width / 2,
             df_smean_mem_em["write_time"],
             width,
@@ -352,7 +452,7 @@ def stacked_bar(df, spark=False):
             yerr=df_sstd_ad_em["write_time"],
             edgecolor="black",
         )
-
+        
         r_read = mpatch.Patch(facecolor="r", alpha=alpha, label="read")
         r_inc = mpatch.Patch(facecolor="b", alpha=alpha, label="increment")
         r_write = mpatch.Patch(facecolor="g", alpha=alpha, label="write")
@@ -368,15 +468,16 @@ def stacked_bar(df, spark=False):
         r_sad_em = mpatch.Patch(
             facecolor="gray", alpha=alpha, hatch=r"...", label="App Direct mode - Spark"
         )
-
+        '''
         ax.set_ylabel("Average total execution time (s)")
         ax.set_xlabel("Storage type")
         ax.set_xticks(ind)
         ax.set_xticklabels(labels)
-        ax.set_ylim([0, 300000])
+        #ax.set_ylim([0, 300000])
 
         ax.legend(handles=[r_mem_em, r_ad_em, r_smem_em, r_sad_em, r_read, r_inc, r_write])
         plt.savefig("stacked-emulated-{}.pdf".format(sys.argv[2]))
+        
 
         labels = ["Optane", "Isilon"]
         ind = np.arange(len(labels))
@@ -395,7 +496,7 @@ def stacked_bar(df, spark=False):
             yerr=df_std_mem_r["read_time"],
             edgecolor="black",
         )
-        '''p_read_ad_r = ax.bar(
+        p_read_ad_r = ax.bar(
             ind_ad_r - width / 2,
             df_mean_ad_r["read_time"],
             width,
@@ -405,7 +506,7 @@ def stacked_bar(df, spark=False):
             alpha=alpha,
             yerr=df_std_ad_r["read_time"],
             edgecolor="black",
-        )'''
+        )
         p_sread_mem_r = ax.bar(
             ind_mem_r + width / 2,
             df_smean_mem_r["read_time"],
@@ -417,7 +518,7 @@ def stacked_bar(df, spark=False):
             yerr=df_sstd_mem_r["read_time"],
             edgecolor="black",
         )
-        p_read_ad_r = ax.bar(
+        p_sread_ad_r = ax.bar(
             ind_ad_r + 3*width / 2,
             df_smean_ad_r["read_time"],
             width,
@@ -439,7 +540,7 @@ def stacked_bar(df, spark=False):
             yerr=df_std_mem_r["increment_time"],
             edgecolor="black",
         )
-        '''p_inc_ad_r = ax.bar(
+        p_inc_ad_r = ax.bar(
             ind_ad_r - width / 2,
             df_mean_ad_r["increment_time"],
             width,
@@ -450,7 +551,7 @@ def stacked_bar(df, spark=False):
             alpha=alpha,
             yerr=df_std_ad_r["increment_time"],
             edgecolor="black",
-        )'''
+        )
         p_sinc_mem_r = ax.bar(
             ind_mem_r + width / 2,
             df_smean_mem_r["increment_time"],
@@ -487,7 +588,7 @@ def stacked_bar(df, spark=False):
             yerr=df_std_mem_r["write_time"],
             edgecolor="black",
         )
-        '''p_write_ad_r = ax.bar(
+        p_write_ad_r = ax.bar(
             ind_ad_r - width / 2,
             df_mean_ad_r["write_time"],
             width,
@@ -499,7 +600,7 @@ def stacked_bar(df, spark=False):
             alpha=alpha,
             yerr=df_std_ad_r["write_time"],
             edgecolor="black",
-        )'''
+        )
         p_swrite_mem_r = ax.bar(
             ind_mem_r + width / 2,
             df_smean_mem_r["write_time"],
@@ -548,7 +649,7 @@ def stacked_bar(df, spark=False):
     if not spark:
         ax.legend(handles=[r_mem, r_ad, r_read, r_inc, r_write])
     else:
-        ax.set_ylim([0, 300000])
+        #ax.set_ylim([0, 300000])
         r_mem = mpatch.Patch(facecolor="gray", alpha=alpha, label="Memory mode - GNU Parallel")
         r_ad = mpatch.Patch(
             facecolor="gray", alpha=alpha, hatch=r"///", label="App Direct mode - GNU Parallel"
@@ -593,6 +694,7 @@ df = pd.concat(
     )
     for i, f in enumerate(all_files)
 )
+
 
 df["Duration"] = df.End - df.Start
 stacked_bar(df, spark)

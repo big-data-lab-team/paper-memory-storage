@@ -1,0 +1,11 @@
+Filesystem                                    1K-blocks         Used    Available Use% Mounted on
+/dev/sdb5                                      71268352      4549432     66718920   7% /
+devtmpfs                                     1559611772            0   1559611772   0% /dev
+tmpfs                                        1559622768      1091736   1558531032   1% /dev/shm
+tmpfs                                        1559622768        27456   1559595312   1% /run
+tmpfs                                        1559622768            0   1559622768   0% /sys/fs/cgroup
+/dev/sdb2                                       1038336       161968       876368  16% /boot
+/dev/sdb3                                     157209600      2622952    154586648   2% /home
+/dev/sdb1                                        204580         9880       194700   5% /boot/efi
+192.168.1.68:/ifs/data/lab/ace-lab-1/users 673987461120 557108934656 108590372864  84% /home/users
+tmpfs                                         311924556            0    311924556   0% /run/user/61218

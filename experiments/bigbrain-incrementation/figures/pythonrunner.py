@@ -8,6 +8,11 @@ import json
 
 
 sl_fldr = '../home/val/spark-logs/'
+res_fldr = '../results/20bb_redo/'
+ad_bench = '../../system_conf/ad_diskbench.out'
+mem_bench = '../../system_conf/mem_diskbench.out'
+total_1000 = 617*1000
+total_125 = 614*125
 
 def get_json(log):
     data = []
@@ -53,6 +58,21 @@ for fn, sl in slogs:
     else:
         df_sl = pd.concat([df_sl, pd.DataFrame(data)])
 
+df_res = pd.concat(
+    (
+        pd.read_csv(
+            f,
+            delim_whitespace='spark' not in f,
+            names=["Task", "Start", "End", "File", "ThreadId"],
+        ).assign(
+            filename="{0}-{1}".format(i, op.basename(f)),
+            disk=op.basename(f).split("_")[0].split("-")[-1],
+        )
+    )
+    for i, f in enumerate(glob(op.join(res_fldr, 'spark*' + sys.argv[2] + '*')))
+)
+
+
 df_mksp = pd.DataFrame(smakespans)
 df_mksp_mem = df_mksp[~df_mksp['filename'].str.contains("AD")].groupby(['storage'])
 df_mksp_mem_mean = df_mksp_mem.mean()
@@ -94,6 +114,15 @@ df_ad['storage'] = df_ad['filename'].apply(lambda x: x.split('_')[0].split('-')[
 df_ad_mean = df_ad.groupby(['storage']).mean()
 df_ad_std = df_ad.groupby(['storage']).std()
 
+
+
+df_res['Duration'] = df_res['End'] - df_res['Start'] 
+
+df_res_mem_mean = df_res[~df_res["filename"].str.contains("AD")].groupby(['filename', 'disk'])['Duration'].sum().reset_index().groupby(['disk']).mean()
+df_res_ad_mean = df_res[df_res["filename"].str.contains("AD")].groupby(['filename', 'disk'])['Duration'].sum().reset_index().groupby(['disk']).mean()
+
+print(df_res_mem_mean)
+print(df_res_ad_mean)
 
 print('***Python Runner***\n\n*Memory Mode*\n\nMean:')
 print(df_mem_mean)
@@ -243,12 +272,29 @@ ax.set_xticklabels(['Isilon', 'Optane'])
 ax.legend()
 plt.savefig('sparklogs-{}.pdf'.format(sys.argv[2]))
 
+df_adb = pd.read_csv(ad_bench)
+convert_gb = lambda x: float(x.strip(' GB/s')) * 1024 if 'GB/s' in x else float(x.strip(' MB/s'))
+df_adb['Write'] = df_adb['Write'].apply(convert_gb)
+df_adb['Read'] = df_adb['Read'].apply(convert_gb)
+df_adb_mean = df_adb[df_adb['Device'].str.contains('isilon') | df_adb['Device'].str.contains('optane')].groupby(['Device']).mean()
+df_adb_mean['totalwrite'] = total_1000 / df_adb_mean['Write']
+df_adb_mean['totalread'] = total_1000 / df_adb_mean['Read']
+df_memb = pd.read_csv(mem_bench)
+convert_gb = lambda x: float(x.strip(' GB/s')) * 1024 if 'GB/s' in x else float(x.strip(' MB/s'))
+df_memb['Write'] = df_memb['Write'].apply(convert_gb)
+df_memb['Read'] = df_memb['Read'].apply(convert_gb)
+df_memb_mean = df_memb[df_memb['Device'].str.contains('isilon') | df_memb['Device'].str.contains('tmpfs')].groupby(['Device']).mean()
+df_memb_mean['totalwrite'] = total_1000 / df_memb_mean['Write']
+df_memb_mean['totalread'] = total_1000 / df_memb_mean['Read']
+
+read = []
+
 figure, ax = plt.subplots()
-width = 0.4
+width = 0.2
 ind = np.asarray([2, 1])
 
 p_total = ax.bar(
-    ind - width/2,
+    ind - 3*width/2,
     df_mksp_mem_mean['makespan'],
     width,
     color="g",
@@ -256,13 +302,45 @@ p_total = ax.bar(
     yerr=df_mksp_mem_std['makespan']
 )
 p_total_ad = ax.bar(
-    ind + width/2,
+    ind - width/2,
     df_mksp_ad_mean['makespan'],
     width,
     color="g",
     label="total AD",
     alpha=0.4,
     yerr=df_mksp_ad_std['makespan']
+)
+p_exp_ad_read = ax.bar(
+        ind + 3*width/2,
+        df_adb_mean['totalread'],
+        width,
+        color='r',
+        alpha=0.4,
+        label="AD mode exp read"
+)
+p_exp_mem_read = ax.bar(
+        ind + width/2,
+        df_memb_mean['totalread'],
+        width,
+        color='r',
+        label="Mem mode exp read"
+)
+p_exp_mem_write = ax.bar(
+        ind + width/2,
+        df_memb_mean['totalwrite'],
+        width,
+        color='b',
+        bottom=df_memb_mean['totalread'],
+        label="Mem mode exp write"
+)
+p_exp_ad_write = ax.bar(
+        ind + 3*width/2,
+        df_adb_mean['totalwrite'],
+        width,
+        color='b',
+        bottom=df_adb_mean['totalread'],
+        alpha=0.4,
+        label="AD mode exp write"
 )
 
 ax.set_ylabel("Average run time (s)")

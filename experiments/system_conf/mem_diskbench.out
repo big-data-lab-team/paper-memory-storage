@@ -1,0 +1,16 @@
+Device,Write,Read,CacheRead
+isilon,111 MB/s,117 MB/s,3.5 GB/s
+isilon,111 MB/s,117 MB/s,3.5 GB/s
+isilon,111 MB/s,117 MB/s,3.5 GB/s
+isilon,111 MB/s,117 MB/s,3.5 GB/s
+isilon,111 MB/s,117 MB/s,3.5 GB/s
+local,216 MB/s,530 MB/s,3.9 GB/s
+local,197 MB/s,526 MB/s,3.9 GB/s
+local,196 MB/s,524 MB/s,3.9 GB/s
+local,206 MB/s,530 MB/s,3.9 GB/s
+local,198 MB/s,522 MB/s,4.0 GB/s
+tmpfs,2.3 GB/s,5.2 GB/s,4.9 GB/s
+tmpfs,3.3 GB/s,5.2 GB/s,4.9 GB/s
+tmpfs,3.3 GB/s,5.2 GB/s,5.0 GB/s
+tmpfs,3.3 GB/s,5.2 GB/s,5.0 GB/s
+tmpfs,3.3 GB/s,5.2 GB/s,4.9 GB/s
