@@ -4,14 +4,14 @@ curr_dir=`pwd`
 cd ./experiments/bids-app-example
 ./plot.py
 cd $curr_dir/experiments/bigbrain-incrementation/figures
-./makespan.py '../results/*25cpus*' 25cpus-120delay-1it
-./stacked_bar.py '../results/*25cpus*' 25cpus-120delay-1it
-./makespan.py '../results/*96cpus*' 96cpus-0delay-1it
-./stacked_bar.py '../results/*96cpus*' 96cpus-0delay-1it
-./makespan.py '../results/20bb_experiments/*25cpus*' 20bb_25cpus spark
-./stacked_bar.py '../results/20bb_experiments/*25cpus*' 20bb_25cpus spark
-./makespan.py '../results/20bb_experiments/*96cpus*' 20bb_96cpus spark
-./stacked_bar.py '../results/20bb_experiments/*96cpus*' 20bb_96cpus spark
+./makespan.py '../results/40bb_red0/*25cpus*' 25cpus-120delay-1it
+./stacked_bar.py '../results/40bb_redo/*25cpus*' 25cpus-120delay-1it
+./makespan.py '../results/40bb_redo/*96cpus*' 96cpus-0delay-1it
+./stacked_bar.py '../results/40bb_redo/*96cpus*' 96cpus-0delay-1it
+./makespan.py '../results/20bb_redo/*25cpus*' 20bb_25cpus spark
+./stacked_bar.py '../results/20bb_redo/*25cpus*' 20bb_25cpus spark
+./makespan.py '../results/20bb_redo/*96cpus*' 20bb_96cpus spark
+./stacked_bar.py '../results/20bb_redo/*96cpus*' 20bb_96cpus spark
 cd $curr_dir
 echo 'GNU Parallel: 75BB local App Direct 25 cpus - 1567704324-localAD_1it_25cpus_120delay_withpc-2.out:'
 ./scripts/gantt.py --incrementation_tf ./experiments/bigbrain-incrementation/results/1567704324-localAD_1it_25cpus_120delay_withpc-2.out --cpus 25
