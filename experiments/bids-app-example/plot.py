@@ -6,7 +6,7 @@ from statistics import mean, stdev
 
 conditions_96_jobs = ["in-mem-1", "pmem-1", "disk-1", "isilon-1"]
 conditions_25_jobs = ["in-mem-4", "pmem-4", "disk-4", "isilon-4"]
-condition_ticks = ["tmpfs", "Optane", "disk", "Isilon"]
+condition_ticks = ["Optane MM", "Optane ADM", "local SSD MM", "Isilon MM"]
 width = 0.35
 
 def get_makespans(conditions):
@@ -44,7 +44,7 @@ def get_makespans(conditions):
 mksp_96 = get_makespans(conditions_96_jobs)
 plt.ylabel("Makespan (s)")
 plt.ylim((0,5000))
-plt.bar([1, 2, 3, 4], mksp_96[0], tick_label=condition_ticks, width=width, yerr=mksp_96[1], alpha=0.4, color='gray')
+plt.bar([1, 2, 3, 4], mksp_96[0], tick_label=condition_ticks, width=width, yerr=mksp_96[1], alpha=0.4, color='purple')
 plt.savefig("96cores.pdf")
 
 plt.clf()
@@ -52,7 +52,7 @@ plt.clf()
 mksp_25 = get_makespans(conditions_25_jobs)
 plt.ylabel("Makespan (s)")
 plt.ylim((0,5000))
-plt.bar([1, 2, 3, 4], mksp_25[0], tick_label=condition_ticks, width=width, yerr=mksp_25[1], alpha=0.4, color='gray')
+plt.bar([1, 2, 3, 4], mksp_25[0], tick_label=condition_ticks, width=width, yerr=mksp_25[1], alpha=0.4, color='purple')
 plt.savefig("25cores.pdf")
 
 def time_to_secs(t):

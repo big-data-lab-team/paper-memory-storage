@@ -15,8 +15,13 @@ import numpy as np
 def gantt_increment(df, data_file, ncpus, spark=False):
     color = {
         "read_file": "red",
-        "increment_file": "blue",
+        "increment_file": "red",
         "write_file": "green",
+    }
+    alpha = {
+        "read_file": 0.4,
+        "increment_file": 1,
+        "write_file": 0.4,
     }
 
     if spark:
@@ -51,24 +56,31 @@ def gantt_increment(df, data_file, ncpus, spark=False):
         print(df_tasks)
         return df_tasks['C'].sum()/df_tasks['Time'].max()
 
-    print('number of overlaps:', count_overlaps(df))
+    #print('number of overlaps:', count_overlaps(df))
 
-    print('Number of threads:', len(df.groupby("ThreadId")))
+    #print('Number of threads:', len(df.groupby("ThreadId")))
     for i, task in enumerate(df.groupby("ThreadId")):
         labels.append(task[0])
         for r in task[1].groupby("Task"):
             data = r[1][["Start", "Duration"]]
-            ax.broken_barh(data.values, (i - 0.4, 0.8), color=color[r[0]], alpha=0.4)
+            ax.broken_barh(data.values, (i - 0.4, 0.8), color=color[r[0]], alpha=alpha[r[0]], edgecolor='none')
 
-    r_read = mpatch.Patch(facecolor='red', alpha=0.4, label='Read')
-    r_inc = mpatch.Patch(facecolor='blue', alpha=0.4, label='Increment')
-    r_write = mpatch.Patch(facecolor='green', alpha=0.4, label='Write')
+    r_read = mpatch.Patch(facecolor='red', alpha=0.4, label='load header')
+    r_inc = mpatch.Patch(facecolor='red', alpha=1, label='read/increment')
+    r_write = mpatch.Patch(facecolor='green', alpha=0.4, label='write')
     ax.legend(handles=[r_read, r_inc, r_write], loc='upper center',
               bbox_to_anchor=(0.5, 1.07), ncol=3, fancybox=True,
               fontsize='x-small', framealpha=1)
-    ax.set_yticks(range(len(labels)))
-    ax.set_yticklabels([])
-    #ax.set_xlim([0,100])
+    #ax.set_yticks(range(len(labels)))
+    #ax.set_yticklabels([])
+    ax.set_yticks([], [])
+    ax.set_ylabel("thread")
+
+    if not spark:
+        if '25cpu' in data_file:
+            ax.set_xlim([0,1250])
+        else:
+            ax.set_xlim([0,100])
     ax.set_xlabel("time [s]")
 
     if not spark:

@@ -65,11 +65,11 @@ df_res = pd.concat(
             delim_whitespace='spark' not in f,
             names=["Task", "Start", "End", "File", "ThreadId"],
         ).assign(
-            filename="{0}-{1}".format(i, op.basename(f)),
+            filename="{0}".format(op.basename(f)),
             disk=op.basename(f).split("_")[0].split("-")[-1],
         )
     )
-    for i, f in enumerate(glob(op.join(res_fldr, 'spark*' + sys.argv[2] + '*')))
+    for f in glob(op.join(res_fldr, 'spark*' + sys.argv[2] + '*'))
 )
 
 
@@ -142,210 +142,286 @@ print('\nSTD:')
 print(dfsl_ad_std)
 
 
-figure, ax = plt.subplots()
-width = 0.4
-ind = np.asarray([2, 1])
+def plot_figs():
 
-p_total = ax.bar(
-    ind - width/2,
-    df_mem_mean['total'],
-    width,
-    color="g",
-    label="total",
-    yerr=df_mem_std['total']
-)
-p_total_ad = ax.bar(
-    ind + width/2,
-    df_ad_mean['total'],
-    width,
-    color="g",
-    label="total AD",
-    alpha=0.4,
-    yerr=df_ad_std['total']
-)
-p_init = ax.bar(
-    ind - width/2,
-    df_mem_mean['init'],
-    width,
-    color="r",
-    label="init",
-    yerr=df_mem_std['init']
-)
-p_init_ad = ax.bar(
-    ind + width/2,
-    df_ad_mean['init'],
-    width,
-    color="r",
-    label="init AD",
-    alpha=0.4,
-    yerr=df_ad_std['init']
-)
-p_finish = ax.bar(
-    ind - width/2,
-    df_mem_mean['finish'],
-    width,
-    bottom=df_mem_mean['init'],
-    color="b",
-    label="finish",
-    yerr=df_mem_std['finish']
-)
-p_finish_ad = ax.bar(
-    ind + width/2,
-    df_ad_mean['finish'],
-    width,
-    bottom=df_ad_mean['init'],
-    color="b",
-    label="finish AD",
-    alpha=0.4,
-    yerr=df_ad_std['finish']
-)
+    figure, ax = plt.subplots()
+    width = 0.4
+    ind = np.asarray([2, 1])
 
-ax.set_ylabel("Average total execution time (s)")
-ax.set_xlabel("Storage type")
-ax.set_xticks(ind)
-ax.set_xticklabels(['Isilon', 'Optane'])
-ax.legend()
-plt.savefig('pythonrunner-{}.pdf'.format(sys.argv[2]))
-
-figure, ax = plt.subplots()
-width = 0.4
-ind = np.asarray([2, 1])
-
-p_total = ax.bar(
-    ind - width/2,
-    dfsl_mem_mean['Executor Run Time'],
-    width,
-    color="g",
-    label="total",
-    yerr=dfsl_mem_std['Executor Run Time']
-)
-p_total_ad = ax.bar(
-    ind + width/2,
-    dfsl_ad_mean['Executor Run Time'],
-    width,
-    color="g",
-    label="total AD",
-    alpha=0.4,
-    yerr=dfsl_ad_std['Executor Run Time']
-)
-p_init = ax.bar(
-    ind - width/2,
-    dfsl_mem_mean['Executor CPU Time'],
-    width,
-    color="r",
-    label="CPU",
-    yerr=dfsl_mem_std['Executor CPU Time']
-)
-p_init_ad = ax.bar(
-    ind + width/2,
-    dfsl_ad_mean['Executor CPU Time'],
-    width,
-    color="r",
-    label="CPU AD",
-    alpha=0.4,
-    yerr=dfsl_ad_std['Executor CPU Time']
-)
-p_finish = ax.bar(
-    ind - width/2,
-    dfsl_mem_mean['JVM GC Time'],
-    width,
-    bottom=dfsl_mem_mean['Executor CPU Time'],
-    color="b",
-    label="GC",
-    yerr=dfsl_mem_std['JVM GC Time']
-)
-p_finish_ad = ax.bar(
-    ind + width/2,
-    dfsl_ad_mean['JVM GC Time'],
-    width,
-    bottom=dfsl_ad_mean['Executor CPU Time'],
-    color="b",
-    label="GC AD",
-    alpha=0.4,
-    yerr=dfsl_ad_std['JVM GC Time']
-)
-
-ax.set_ylabel("Average total execution time (s)")
-ax.set_xlabel("Storage type")
-ax.set_xticks(ind)
-ax.set_xticklabels(['Isilon', 'Optane'])
-ax.legend()
-plt.savefig('sparklogs-{}.pdf'.format(sys.argv[2]))
-
-df_adb = pd.read_csv(ad_bench)
-convert_gb = lambda x: float(x.strip(' GB/s')) * 1024 if 'GB/s' in x else float(x.strip(' MB/s'))
-df_adb['Write'] = df_adb['Write'].apply(convert_gb)
-df_adb['Read'] = df_adb['Read'].apply(convert_gb)
-df_adb_mean = df_adb[df_adb['Device'].str.contains('isilon') | df_adb['Device'].str.contains('optane')].groupby(['Device']).mean()
-df_adb_mean['totalwrite'] = total_1000 / df_adb_mean['Write']
-df_adb_mean['totalread'] = total_1000 / df_adb_mean['Read']
-df_memb = pd.read_csv(mem_bench)
-convert_gb = lambda x: float(x.strip(' GB/s')) * 1024 if 'GB/s' in x else float(x.strip(' MB/s'))
-df_memb['Write'] = df_memb['Write'].apply(convert_gb)
-df_memb['Read'] = df_memb['Read'].apply(convert_gb)
-df_memb_mean = df_memb[df_memb['Device'].str.contains('isilon') | df_memb['Device'].str.contains('tmpfs')].groupby(['Device']).mean()
-df_memb_mean['totalwrite'] = total_1000 / df_memb_mean['Write']
-df_memb_mean['totalread'] = total_1000 / df_memb_mean['Read']
-
-read = []
-
-figure, ax = plt.subplots()
-width = 0.2
-ind = np.asarray([2, 1])
-
-p_total = ax.bar(
-    ind - 3*width/2,
-    df_mksp_mem_mean['makespan'],
-    width,
-    color="g",
-    label="Memory mode",
-    yerr=df_mksp_mem_std['makespan']
-)
-p_total_ad = ax.bar(
-    ind - width/2,
-    df_mksp_ad_mean['makespan'],
-    width,
-    color="g",
-    label="total AD",
-    alpha=0.4,
-    yerr=df_mksp_ad_std['makespan']
-)
-p_exp_ad_read = ax.bar(
-        ind + 3*width/2,
-        df_adb_mean['totalread'],
+    p_total = ax.bar(
+        ind - width/2,
+        df_mem_mean['total'],
         width,
-        color='r',
-        alpha=0.4,
-        label="AD mode exp read"
-)
-p_exp_mem_read = ax.bar(
+        color="g",
+        label="total",
+        yerr=df_mem_std['total']
+    )
+    p_total_ad = ax.bar(
         ind + width/2,
-        df_memb_mean['totalread'],
+        df_ad_mean['total'],
         width,
-        color='r',
-        label="Mem mode exp read"
-)
-p_exp_mem_write = ax.bar(
-        ind + width/2,
-        df_memb_mean['totalwrite'],
-        width,
-        color='b',
-        bottom=df_memb_mean['totalread'],
-        label="Mem mode exp write"
-)
-p_exp_ad_write = ax.bar(
-        ind + 3*width/2,
-        df_adb_mean['totalwrite'],
-        width,
-        color='b',
-        bottom=df_adb_mean['totalread'],
+        color="g",
+        label="total AD",
         alpha=0.4,
-        label="AD mode exp write"
-)
+        yerr=df_ad_std['total']
+    )
+    p_init = ax.bar(
+        ind - width/2,
+        df_mem_mean['init'],
+        width,
+        color="r",
+        label="init",
+        yerr=df_mem_std['init']
+    )
+    p_init_ad = ax.bar(
+        ind + width/2,
+        df_ad_mean['init'],
+        width,
+        color="r",
+        label="init AD",
+        alpha=0.4,
+        yerr=df_ad_std['init']
+    )
+    p_finish = ax.bar(
+        ind - width/2,
+        df_mem_mean['finish'],
+        width,
+        bottom=df_mem_mean['init'],
+        color="b",
+        label="finish",
+        yerr=df_mem_std['finish']
+    )
+    p_finish_ad = ax.bar(
+        ind + width/2,
+        df_ad_mean['finish'],
+        width,
+        bottom=df_ad_mean['init'],
+        color="b",
+        label="finish AD",
+        alpha=0.4,
+        yerr=df_ad_std['finish']
+    )
 
-ax.set_ylabel("Average run time (s)")
-ax.set_xlabel("Storage type")
-ax.set_xticks(ind)
-ax.set_xticklabels(['Isilon', 'Optane'])
-ax.legend()
-plt.savefig('spark-makespan-{}.pdf'.format(sys.argv[2]))
+    ax.set_ylabel("Average total execution time (s)")
+    ax.set_xlabel("Storage type")
+    ax.set_xticks(ind)
+    ax.set_xticklabels(['Isilon', 'Optane'])
+    ax.legend()
+    plt.savefig('pythonrunner-{}.pdf'.format(sys.argv[2]))
+
+    figure, ax = plt.subplots()
+    width = 0.4
+    ind = np.asarray([2, 1])
+
+    p_total = ax.bar(
+        ind - width/2,
+        dfsl_mem_mean['Executor Run Time'],
+        width,
+        color="g",
+        label="total",
+        yerr=dfsl_mem_std['Executor Run Time']
+    )
+    p_total_ad = ax.bar(
+        ind + width/2,
+        dfsl_ad_mean['Executor Run Time'],
+        width,
+        color="g",
+        label="total AD",
+        alpha=0.4,
+        yerr=dfsl_ad_std['Executor Run Time']
+    )
+    p_init = ax.bar(
+        ind - width/2,
+        dfsl_mem_mean['Executor CPU Time'],
+        width,
+        color="r",
+        label="CPU",
+        yerr=dfsl_mem_std['Executor CPU Time']
+    )
+    p_init_ad = ax.bar(
+        ind + width/2,
+        dfsl_ad_mean['Executor CPU Time'],
+        width,
+        color="r",
+        label="CPU AD",
+        alpha=0.4,
+        yerr=dfsl_ad_std['Executor CPU Time']
+    )
+    p_finish = ax.bar(
+        ind - width/2,
+        dfsl_mem_mean['JVM GC Time'],
+        width,
+        bottom=dfsl_mem_mean['Executor CPU Time'],
+        color="b",
+        label="GC",
+        yerr=dfsl_mem_std['JVM GC Time']
+    )
+    p_finish_ad = ax.bar(
+        ind + width/2,
+        dfsl_ad_mean['JVM GC Time'],
+        width,
+        bottom=dfsl_ad_mean['Executor CPU Time'],
+        color="b",
+        label="GC AD",
+        alpha=0.4,
+        yerr=dfsl_ad_std['JVM GC Time']
+    )
+
+    ax.set_ylabel("Average total execution time (s)")
+    ax.set_xlabel("Storage type")
+    ax.set_xticks(ind)
+    ax.set_xticklabels(['Isilon', 'Optane'])
+    ax.legend()
+    plt.savefig('sparklogs-{}.pdf'.format(sys.argv[2]))
+
+    df_adb = pd.read_csv(ad_bench)
+    convert_gb = lambda x: float(x.strip(' GB/s')) * 1024 if 'GB/s' in x else float(x.strip(' MB/s'))
+    df_adb['Write'] = df_adb['Write'].apply(convert_gb)
+    df_adb['Read'] = df_adb['Read'].apply(convert_gb)
+    df_adb_mean = df_adb[df_adb['Device'].str.contains('isilon') | df_adb['Device'].str.contains('optane')].groupby(['Device']).mean()
+    df_adb_mean['totalwrite'] = total_1000 / df_adb_mean['Write']
+    df_adb_mean['totalread'] = total_1000 / df_adb_mean['Read']
+    df_memb = pd.read_csv(mem_bench)
+    convert_gb = lambda x: float(x.strip(' GB/s')) * 1024 if 'GB/s' in x else float(x.strip(' MB/s'))
+    df_memb['Write'] = df_memb['Write'].apply(convert_gb)
+    df_memb['Read'] = df_memb['Read'].apply(convert_gb)
+    df_memb_mean = df_memb[df_memb['Device'].str.contains('isilon') | df_memb['Device'].str.contains('tmpfs')].groupby(['Device']).mean()
+    df_memb_mean['totalwrite'] = total_1000 / df_memb_mean['Write']
+    df_memb_mean['totalread'] = total_1000 / df_memb_mean['Read']
+
+    read = []
+
+    figure, ax = plt.subplots()
+    width = 0.2
+    ind = np.asarray([2, 1])
+
+    p_total = ax.bar(
+        ind - 3*width/2,
+        df_mksp_mem_mean['makespan'],
+        width,
+        color="g",
+        label="Memory mode",
+        yerr=df_mksp_mem_std['makespan']
+    )
+    p_total_ad = ax.bar(
+        ind - width/2,
+        df_mksp_ad_mean['makespan'],
+        width,
+        color="g",
+        label="total AD",
+        alpha=0.4,
+        yerr=df_mksp_ad_std['makespan']
+    )
+    p_exp_ad_read = ax.bar(
+            ind + 3*width/2,
+            df_adb_mean['totalread'],
+            width,
+            color='r',
+            alpha=0.4,
+            label="AD mode exp read"
+    )
+    p_exp_mem_read = ax.bar(
+            ind + width/2,
+            df_memb_mean['totalread'],
+            width,
+            color='r',
+            label="Mem mode exp read"
+    )
+    p_exp_mem_write = ax.bar(
+            ind + width/2,
+            df_memb_mean['totalwrite'],
+            width,
+            color='b',
+            bottom=df_memb_mean['totalread'],
+            label="Mem mode exp write"
+    )
+    p_exp_ad_write = ax.bar(
+            ind + 3*width/2,
+            df_adb_mean['totalwrite'],
+            width,
+            color='b',
+            bottom=df_adb_mean['totalread'],
+            alpha=0.4,
+            label="AD mode exp write"
+    )
+
+    ax.set_ylabel("Average run time (s)")
+    ax.set_xlabel("Storage type")
+    ax.set_xticks(ind)
+    ax.set_xticklabels(['Isilon', 'Optane'])
+    ax.legend()
+    plt.savefig('spark-makespan-{}.pdf'.format(sys.argv[2]))
+
+
+def get_avg_workers(df, df_sl):
+
+
+    df['stimestamp'] = df['filename'].transform(lambda x: int(x.strip('spark-').split('-')[0]))
+    df_sl = df_sl[['filename', 'Launch Time', 'Finish Time']].sort_values(by=['filename', 'Finish Time'])
+    df_saves = df[df['Task'].str.contains('save')].sort_values(by=['filename', 'End']).set_index(['filename', 'File'])
+    df_reads = df[df['Task'].str.contains('load')].set_index(['filename', 'File'])
+
+    #df_durations = df_durations[['filename', 'End']].groupby(['filename'])['End'].sum().sort_index()
+
+    #print(df_durations.head(20))
+    df_saves = df_saves.join(df_reads[['Start', 'End']], rsuffix='_read')
+    df_saves['End_r'] = ((df_saves['End'] + df_saves['stimestamp']) * 1000).astype(int)
+    df_saves['Start_read_r'] = ((df_saves['Start_read'] + df_saves['stimestamp']) * 1000).astype(int)
+    df_saves = df_saves.reset_index()
+    df_sl = df_sl.reset_index()
+
+    print(df_saves)
+    print(df_sl)
+
+    df_saves['start_diff'] = df_saves['Start_read_r'] - (df_sl['Launch Time'])
+    df_saves['end_diff'] = (df_sl['Finish Time']) - df_saves['End_r']
+
+    print(df_saves)
+    df_times = df_saves[['filename', 'disk', 'start_diff', 'end_diff']]
+    print(df_times.groupby(['filename', 'disk']).sum().reset_index().groupby(['disk']).mean())
+
+    #print(df_durations.sort_values(by=['filename', 'End']))
+    #print(df_sl.sort_values(by=['filename', 'Finish Time']['filename', 'Launch Time', 'Finish Time']))
+
+    def count_concurrent(df):
+
+        df_over = df.rename(columns={'Launch Time':'Time'})
+        df_over['Start'] = 1 
+        df1 = pd.DataFrame(df_over[['filename', 'Time', 'Start']])
+        df_over['Start'] = -1
+        df2 = pd.DataFrame(df_over[['filename','Finish Time', 'Start']]).rename(columns={'Finish Time':'Time'})
+        df_tasks = pd.concat([df1, df2], axis=0).groupby(['filename']).apply(lambda x: x.sort_values(by=['Time', 'Start']))
+        df_tasks['Time'] = df_tasks['Time'] / 1000
+        df_tasks['R'] = df_tasks['Start'].transform(pd.Series.cumsum)
+        df_tasks['T1'] = df_tasks['Time'].shift(periods=-1)
+        df_tasks['Time0'] = df_tasks['Time'].shift(periods=1)
+        df_tasks['Time0'].fillna(df_tasks['Time'], inplace=True)
+        df_tasks['T1'].fillna(df_tasks['Time'], inplace=True)
+        df_tasks['R0'] = df_tasks['R'].shift(periods=1, fill_value=0)
+        df_tasks['C'] = df_tasks['R0'] * (df_tasks['Time'] - df_tasks['Time0'])
+        df_tasks = df_tasks.reset_index(drop=True)
+
+        return df_tasks
+
+    #df_sl['filename'] = df_sl['filename'].transform(lambda x: x.str.replace('-nohup', ''))
+    #df_sl = count_concurrent(df_sl).groupby(['filename'])['C'].sum().sort_index()
+    #print(df_sl)
+    #df_concurrent = df_sl / df_durations
+    #print(df_concurrent)
+    
+get_avg_workers(df_res, df_sl)
+
+'''
+def gantt(df):
+
+    fig, ax = plt.subplots(figsize=(6, 3))
+    labels = []
+
+    for i, task in enumerate(df.groupby("ThreadId")):
+        labels.append(task[0])
+        for r in task[1].groupby("Task"):
+            data = r[1][["Start", "Duration"]]
+            ax.broken_barh(data.values, (i - 0.4, 0.8), color="purple", alpha=0.4)
+
+    r_read = mpatch.Patch(facecolor='purple', alpha=0.4, label='Executing')
+'''

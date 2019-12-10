@@ -30,6 +30,8 @@
 \newcommand{\tristan}[1]{\color{orange}\textbf{Note from Tristan}:
       #1 \color{black}}
 
+
+
 \begin{document}
 
 \title{Performance benefits of Intel Optane DC storage for the parallel processing of large neuroimaging data}
@@ -58,15 +60,13 @@
     We employ a synthetic algorithm on the $\SI{76}{\gibi\byte}$ \bigbrain
     and a real neuroimaging application on the Consortium for Reliability and Reproducibility (CoRR)
     dataset using 25 and 96 parallel
-    processes in both cases. Our results show that performance of all available storage
-    devices (e.g. tmpfs, local disk and Isilon) is somewhat deteriorated by memory mode
-    when compared to App Direct Mode. In contrast, Optane in App Direct Mode was
-    found to be slower than local disk, when the load on the bus was high due to sheer
-    amount of concurrent processes and short task duration. It is believed that
-    Optane would likely be useful in the accessing of typically larger-than-memory
-    data in a limited-parallelism manner, such as with visualization applications.
-    Further experiments with larger datasets remain to be performed.
-
+    processes in both cases. Our results show that performance of applications executing on
+    Optane is superior to that of other storage devices, with the exception of DRAM. This is
+    the case in both Memory and App Direct Mode and irrespective of the amount of data and 
+    parallelism. Furthermore, Optane in App Direct Mode is believed to benefit from the use
+    of memory as a cache for writing in cases where output data is significantly smaller than
+    available memory. We believe the use of Optane will be beneficial to both neuroimaging applications
+    running on HPC or visualization of large, high-resolution images.
 \end{abstract}
 
 \section{Introduction}
@@ -147,7 +147,9 @@ devices, resulting in total of \SI{3}{\tebi\byte} of Intel Optane DC Memory. The
 of DRAM is estimated to be around \SI{275}{\gibi\byte}~/s whereas for Optane, it is
 estimated to be around \SI{250}{\gibi\byte}~/s.
 Other storage devices included a \SI{240}{\gibi\byte} Micron SATA SSD, of which
-only \SI{149}{\gibi\byte} where available for the experiments, and a \SI{628}{\tebi\byte} shared Dell EMC Isilon cluster. The local disk
+only \SI{149}{\gibi\byte} where available for the experiments, and a
+\SI{720}{\tebi\byte} shared Dell EMC Isilon cluster. The Isilon cluster is an nsf4 mounted
+cluster (10Gb network) consisting of 5 nodes of 36 hard disk drives (HDD). The local disk
 was the only storage device set up as a writeback device. Both Isilon and Optane in
 App Direct mode were configured as write-through devices, meaning they did not leverage
 DRAM as a cache for writes. This was achieved in Optane by configuring the xfs filesystem with
@@ -260,6 +262,28 @@ in-memory, by ensuring that read and written data are not the same. This applica
 was parallelized us in two different ways: using both GNU Parallel and Apache Spark 2.4.3 (PySpark). 
 All code was implemented in Python 3.6.
 
+There are some notable differences between the GNU Parallel and Apache Spark implementations.
+For instance, in the GNU Parallel implementation, all operations (i.e. reading, incrementing and writing)
+are done within the same task. The same task is applied to all the \bigbrain blocks and GNU Parallel is 
+provided with all the different command-line calls, processing a subset of them at a time,
+depending on the level of parallelism provided. Reading in the GNU Parallel implementation 
+is achieved using the popular neuroimaging I/O: Nibabel. When provided with a filename, as is the case
+for the GNU Parallel implementation, Nibabel will simply load the header in memory, and memmap the data
+using Numpy. This step will be referred to as ``load header''. It is only when the data is actually required
+(i.e. during incrementation), that the data will be loaded into memory.
+
+The Apache Spark implementation differs from that of GNU Parallel in that scheduling decisions
+were entirely differed to Spark. That is, rather than simply parallelizing the filenames, to be
+loaded in a similar fashion to that of GNU Parallel, we chose to load the using Spark's built-in
+\texttt{BinaryFiles}, which loads whole files, in binary format, into Spark partitions. As the
+data would have been pre-loaded by Spark, ``loading header'' only measures the time to
+convert the binary images into Nibabel objects, and ``incrementation'' consists purely
+of the time it took to increment the data. Therefore, only the write time would be
+comparable between the two implementations, as it is achieved using the same method.
+Furthermore, the Spark implementation also differs in that read, increment and write
+were separated into three map tasks, which can enable shuffling between the tasks should 
+it be determined as necessary by the Spark scheduler.
+
 Time is measured within the application using Python's \texttt{time} module 
 called before and after any read and writes.
 
@@ -306,8 +330,8 @@ I/O time.
 \subsection{40~$\mu$m \bigbrain incrementation}
 \subsubsection{25 Processes}
 \begin{figure}
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-40bb_25cpu.pdf}
-    \captionsetup{width=\columnwidth}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-40bb_25cpus.pdf}
+    \captionsetup{belowskip=-10pt}
     \caption{Makespan of the \bigbrain Incrementation application using 25 
              processes on the 125 blocks on the 40~$\mu$m image given different
              storage configurations. Anticipated read and write duration was 
@@ -317,32 +341,34 @@ I/O time.
     writing of the last few blocks due to storage limitations.}\label{fig:makespan-25cpus}
 \end{figure}
 \begin{figure}
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/violin-read-20bb_25cpu.pdf}
-    \captionsetup{width=\columnwidth}
-    \caption{Total read/increment/write breakdown of \bigbrain Incrementation using 2. 3 repetitions were performed.}\label{fig:stacked-25cpus}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-40bb_25cpus.pdf}
+    \captionsetup{belowskip=0pt}
+    \caption{Total read/increment/write breakdown of \bigbrain Incrementation using 25 cpus. 3 repetitions were performed. *Local SSD did not
+             complete the writing of the last few blocks due to storage limitations}\label{fig:stacked-25cpus}
 \end{figure}
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1567709282-tmpfsAD_1it_25cpus_120delay_withpc-2.pdf}
-    \caption{tmpfs}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1572380543-tmpfsAD_1it_25cpus_40bb-1.pdf}
+    \caption{DRAM}
 \end{subfigure}
 \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1567705458-optaneAD_1it_25cpus_120delay_withpc-2.pdf}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1572382482-optaneAD_1it_25cpus_40bb-1.pdf}
     \caption{Optane}
 \end{subfigure}
 \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1567704324-localAD_1it_25cpus_120delay_withpc-2.pdf}
-    \caption{local disk}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1572382794-localAD_1it_25cpus_40bb-1.pdf}
+    \caption{local SSD*}
 \end{subfigure}
 \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1567707833-isilonAD_1it_25cpus_120delay_withpc-2.pdf}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1572388118-isilonAD_1it_25cpus_40bb-2.pdf}
     \caption{Isilon}\label{fig:gantt25isilon}
 \end{subfigure}
-\caption{Gantt charts for each storage device (App Direct Mode) processing 125 blocks of the 40$\mu$m BigBrain using 25 processes and a sleep delay of 120s}\label{fig:gantt25}
+    \captionsetup{belowskip=-10pt}
+\caption{Gantt charts for each storage device (App Direct Mode) processing 125 blocks of the 40$\mu$m BigBrain using 25 processes. *Some local SSD writes did not complete due to storage limitations.}\label{fig:gantt25}
 \end{figure*}
 
 As can be seen in Figure~\ref{fig:makespan-25cpus}, DRAM (App Direct Mode) is the 
@@ -361,172 +387,193 @@ had a smaller difference, with it being 3.8x faster than expected. Isilon in App
 mode had a larger difference than Memory mode, with it being 1.1x faster than expected.
 
 
-When observing the total task breakdown (Figure~\ref{fig:stacked-25cpus}), it is
-apparent that the differences between the makespans arise from difference in incrementation
-time between all devices except Isilon. In addition, while tmpfs and local disk have comparable write times, Optane
-has a more significant write time difference. Whereas, Isilon has more significant read and
-write time compared to all other devices, its incrementation time is comparable to that
-of local disk. Further inspection of each storage device's Gantt chart (see Figure~\ref{fig:gantt25})
-shows that increased duration of tasks stagger the execution of each individual tasks. This, in turn,
-results in better performance towards the end of the execution, where tasks are significantly more staggered.
-Only tmpfs appears to be able to execute each task efficiently with little staggering.
+The total task duration breakdowns for each device (Figure~\ref{fig:stacked-25cpus})
+shows that, as expected, I/O times vary greatly between devices, with DRAM having the
+best total read and write speeds. Optane in Memory Mode is very close to DRAM in speed,
+whereas Optane in App Direct mode 7x slower in terms of reading and 23x slower in terms
+of writing. Local SSD, on the other hand, exhibits similar write times as DRAM, but is
+approximately 96x that DRAM with respect to reads. Header loading for local SSD is also 90x longer
+than that of DRAM, however, remains negligible compared to other tasks. Isilon, on the 
+other hand, has non negligible header load times, with it being more than 5000 times
+slower than that of DRAM. Interestingly enough, the read/increment times on Isilon are
+slower than that of the local SSD, although Isilon makes up for its speedier reads with 
+writes that are around 184x slower than DRAM.
+
+
+The App Direct mode Gantt charts (Figure~\ref{fig:gantt25}) also reflect what is observed in Figure~\ref{fig:stacked-25cpus}.
+DRAM is significantly faster than all other storage, leading it to barely appear within the Gantt chart.
+DRAM was measured to have an average of 17.2 parallel tasks throughout the execution. Optane takes
+significantly longer than DRAM and appears to spend a significant amount of time writing. The average
+parallelism measured for Optane was 24. Unlike Optane, local SDD spends the vast majority of its time
+reading, while spending a negligible amount of time writing. Like Optane, it averages 24 parallel tasks
+throughout its execution. Unlike the other three storages, Isilon shows spacing between the loading of the header,
+read and increment and write. Isilon was measured to have an average parallelism of 14. Overall, each storage device
+execution displayed that some tasks took longer than others.
+
 \subsubsection{96 Processes}
 \begin{figure}
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-96cpus-0delay-1it.pdf}
-    \captionsetup{width=\columnwidth}
-    \caption{Makespan of \bigbrain Incrementation using 96 processes on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:makespan-96cpus}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-40bb_96cpus.pdf}
+    \captionsetup{belowskip=-10pt}
+    \caption{Makespan of the \bigbrain Incrementation application using 96 
+             processes on the 125 blocks on the 40~$\mu$m image given different
+             storage configurations. Anticipated read and write duration was 
+             measured by applying the perceived bandwidths Table~\ref{table:bandwidths}
+             to Eq.~\ref{eq:makespan}. 3 
+             repetitions were performed. *Local SSD did not complete the
+    writing of the last few blocks due to storage limitations.}\label{fig:makespan-96cpus}
 \end{figure}
 \begin{figure}
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-96cpus-0delay-1it.pdf}
-    \captionsetup{width=\columnwidth}
-    \caption{total read/increment/write breakdown of \bigbrain incrementation using 96 processes on 125 blocks on the 40~$\mu$m image given different storage configurations. 5 repetitions were performed.}\label{fig:stacked-96cpus}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-40bb_96cpus.pdf}
+    \captionsetup{belowskip=-10pt}
+    \caption{Total read/increment/write breakdown of \bigbrain Incrementation using 25 cpus. 3 repetitions were performed. *Local SSD did not
+             complete the writing of the last few blocks due to storage limitations}\label{fig:stacked-96cpus}
 \end{figure}
 
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1568150082-local_1it_96cpus_0delay_npc-3.pdf}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1572306855-tmpfs_1it_96cpus_40bb-2.pdf}
     \caption{Memory Mode}
 \end{subfigure}
 \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1567714252-localAD_1it_96cpus_0delay_npc-3.pdf}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1572379747-optaneAD_1it_96cpus_40bb-1.pdf}
     \caption{App Direct Mode}
 \end{subfigure}
-\caption{Gantt charts for local disk processing 125 blocks of the 40$\mu$m BigBrain using 96 processes with no delay}\label{fig:gantt96}
+    \captionsetup{belowskip=-10pt}
+\caption{Gantt charts for Optane processing 125 blocks of the 40$\mu$m BigBrain using 96 processes}\label{fig:gantt96}
 \end{figure*}
 
-At 96 processes, it was expected that the application would not satisfy the inequality.
-In Figure~\ref{fig:makespan-96cpus} we see that there is now a greater disparity between the
-makespans of experiments executed in Memory and App Direct Mode, given the same storage. Local disk
-in App Direct Mode is significantly faster than its Memory Mode counterpart. Local disk in App Direct
-mode is even faster than Optane, by a factor of 1.7. Tmpfs was also found to perform better in App Direct Mode, although
-the performance difference is not significant. Only Isilon's performance did not vary between the
-two execution modes.
+Despite having increased parallelism by a factor of 3.84, we see no visible reduction
+in makespan (Figure~\ref{fig:makespan-96cpus}). At 96 cpus, DRAM and Optane in Memory Mode are the only storage
+devices that did better than the anticipated I/O, with a makespan duration of
+5.7 and 9s, respectively (total read and write estimate for both was measured to be around 39s). While
+Optane in App Direct Mode and local SSD both performed worse than the anticipated I/O estimates, Isilon
+performed as expected. Variance was found to be high on the local SSD.
 
-As with 25 processes, the main cause of performance variability appears to be the incrementation
-time (Figure~\ref{fig:stacked-96cpus}). Local disk running in App Direct Mode has an average
-incrementation time that is nearly 15~x faster than in Memory Mode. The incrementation time
-for local disk is, on average, 6~x faster than on Optane.
+The total task duration breakdowns (Figure~\ref{fig:stacked-96cpus}) show that total task durations
+have nearly quadrupled. Whereas most devices decreased in performance in both reading and writing,
+Isilon only appeared to display a performance decrease with respect to writes. Furthermore, while both
+read and writes decreased for Optane in App Direct Mode, read duration was nearly 6x slower with more threads,
+while write duration was only about 2x slower. For local SSD and Isilon, there does not appear to 
+be any significant difference between App Direct and Memory mode.
 
-Isilon in App Direct generally performed the same as in memory mode, however, the write
-was almost 4000~seconds slower, on average, in App Direct Mode.
+When analyzing the average parallelism during the workload, only Optane in App Direct mode
+came close to 96 parallel tasks, having an average parallelism of 88 tasks. Optane in Memory mode,
+DRAM and local SSD all averaged between 61-66 tasks. Isilon performed the worst with 38 tasks in Memory 
+mode and 45 tasks in App Direct mode.
 
-A further look at the Gantt charts between Memory Mode and App Direct Mode (Figure~\ref{fig:gantt96})
-shows that the sole difference between the two modes is the duration of the incrementation step.
-While both modes have an increased incrementation time, the incrementation duration in
-Memory Mode is much more important than that of App Direct Mode.
+A further look at the Gantt charts between Optane in Memory Mode and App Direct Mode (Figure~\ref{fig:gantt96})
+show that both read and write time of tasks are worse in App Direct mode as compare with Memory mode.
+While some reads tasks in App Direct mode appear to be of similar duration to the average read task time
+of Memory mode, the vast majority of read tasks are significantly slower. Futhermore, not write tasks in App
+Direct mode is capable of reaching the performance of equivalent tasks in Memory mode.
 
 \subsection{20~$\mu$ \bigbrain incrementation}
 \subsubsection{25 Processes}
 
-Although tmpfs offers the best performance in terms of makespan duration, Optane
-is a close contender. While tmpfs is approximately 5x faster than Optane, Optane can be
-as much as 12x faster than on Isilon (Figure~\ref{fig:20mksp25}). By using the results of 
-our emulation, we can speculate that Optane will also be significantly faster than 
-local disk in a real scenario. The real Optane execution is almost 3x faster than
-the fastest local disk emulation configuration (i.e. Memory mode - Spark). As the
-emulation results have been found to be faster than the real results, potentially as a side-effect
-of increased accessed to cached data, it is expected
-that the true makespan of the application running on local disk would be significantly
-greater.
+The anticipated I/O estimates did not correctly predict the makespan for 25 parallel
+processes (Figure~\ref{fig:20mksp25}). Both Optane in Memory Mode and Isilon appear 
+to be under the estimates: Optane in Memory Mode is approximately twice as fast as the
+estimates whereas Isilon is around 1.1x faster. Optane was 1.8x slower than anticipated.
+Once again, Memory and App Direct Mode appear to only affect performance for Optane.
 
-The read/increment/write breakdown (Figure~\ref{fig:20stackedp25}) shows that tmpfs
-spends the least amount of time executing all the tasks, however, it spends more
-time than Optane incrementing the data. Otherwise, tmpfs is nearly 470x faster with
-reading and nearly 11x faster at writing than Optane. Despite not reaching memory
-speeds, Optane is significantly faster than other persistent storage devices.
-For instance, it can be almost up to 10x faster in reads than Isilon and almost 
-9x faster in writes. It is important, however, to note that total read times in App
-Direct mode for the Spark execution on Isilon are almost twice as fast as their 
-equivalent Optane counterpart. On the other hand, this decrease read time is offset
-by the write time which are 9x slower.
+Total task duration breakdowns (Figure~\ref{fig:20total25}) show that for Optane in
+App Direct Mode spends significantly more time writing than its Memory Mode counterpart.
+In fact, it spends almost 12x more time writing. Isilon also appears to vary slightly
+between Memory and App Direct Mode, spending around 1.4x more time reading and incrementing
+in App Direct Mode. While the read and write duration appeared to be more-or-less balanced in
+Isilon (as was anticipated), Optane in App Direct Mode spent significantly more time writing, whereas the 
+inverse was apparent in Memory Mode
 
-Emulated breakdown results also agree that the bulk of the differences in makespans
-can be attributed to write time, with local disk writes being notably slower than
-Optane. In fact, local disk write speeds nearly match that of Isilon. Isilon results
-in a longer makespan due to increase read and incrementation time.
+Unlike the GNU Parallel executions, the Spark executions appear to be in better accordance with
+the I/O estimates (Figure~\ref{fig:20mkspspark25}. Only Optane in App Direct Mode appears
+to have significantly exceeded the estimates, by a factor of 2. Total write duration all appear
+to be longer in the Spark implementation than with GNU Parallel (Figure~\ref{fig:20totalspark:25}).
+Spark's writes are 1.4-1.6x longer with Optane and 1.1x longer with Isilon. Due to differences in
+how data is loaded in Spark, it is not possible to comment on how read times are affected. However, it
+is possible to note that data conversion (binary string to Numpy array) takes almost twice as 
+much time in Optane than it does with Isilon. Furthermore, the act of incrementation can take
+up to twice as much time with Isilon.
+
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
         \centering
     \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-20bb_25cpus.pdf}
-    \caption{real}
+    \caption{Makespan}\label{fig:20mksp25}
 \end{subfigure}
 \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-em-20bb_25cpus.pdf}
-    \caption{emulated}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-20bb_25cpus.pdf}
+    \caption{Total read/increment/write breakdown}\label{fig:20total25}
 \end{subfigure}
-\caption{Makespan of the incrementation algorithm processing the 20~$\mu$m BigBrain using
-25 processes}\label{fig:20mksp25}
+\captionsetup{belowskip=-10pt}
+\caption{GNU Parallel incrementation application processing the 20~$\mu$m BigBrain using
+25 processes. 3 repetitions were performed.}\label{fig:2025}
 \end{figure*}
 
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-20bb_25cpus.pdf}
-    \caption{real}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-spark_20bb_25cpus.pdf}
+    \caption{Makespan}\label{fig:20mkspspark25}
 \end{subfigure}
 \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-emulated-20bb_25cpus.pdf}
-    \caption{emulated}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-spark-20bb_25cpus.pdf}
+    \caption{Total convert/increment/write breadown}\label{fig:20totalspark:25}
 \end{subfigure}
-\caption{Total read/increment/write breakdown of the  incrementation algorithm processing the 20~$\mu$m BigBrain using
-25 processes}\label{fig:20stackedp25}
+\caption{Spark incrementation application processing the 20~$\mu$m BigBrain using 25 processes. 3 repetitions wereperformed}\label{fig:20spark25}
 \end{figure*}
 
 \subsubsection{96 Processes}
 
-With nearly a four-fold increase in parallelization, the makespan generally did
-not improve other but a few 100s on Isilon. Overall, the general trend is similar
-than with 25 cpus. As can be seen in Figure~\ref{fig:20mksp96}, Optane in Memory
-mode is the fastest storage device. Furthermore, Optane in App Direct mode 
-remains significantly faster than the other storage devices (e.g. Isilon).
-However, emulated disk results appear to imply that the speedup difference
-between Optane in App Direct mode and local disk will be smaller than at 25 cpus.
+A very slight performance improvement (1-1.3x faster) can be witnessed in Optane. In 
+contrast, Isilon 
+experienced a slight performance decrease (1.1x slower). Whereas Isilon makespan appears to match
+estimated I/O times, Optane once again has a superior Memory Mode makespan and an inferior App Direct
+Mode makespan (Figure~\ref{fig:20mksp96}). As previously observed with 25 processes,
+the bulk of the processing time is taken up by writing for Optane in App Direct Mode and 
+Isilon in both modes (Figure~\ref{fig:20total96}). Reading takes more time in the case of Optane in Memory mode. 
 
-The vast majority of processing time appears to be spent on writing to the 
-respective storage device with the exception of Optane in Memory Mode, which 
-spends most of its time incrementing (Figure~\ref{fig:20stackedp96}). App Direct
-mode executions appear to have reduced incrementation time coupled with increased
-write times when compared to their memory mode equivalents. Furthermore, read
-times appear to be increased for Isilon memory mode executions. These events are
-not reflected in the emulated executions.
 
-Emulated breakdowns demonstrate that local disk executions will remain slower 
-than Optane in both App Direct and Memory modes. Results show that both 
-incrementation and write times will be generally be longer on local disk than
-on Optane.
-
+A notable difference in the Spark execution is that Optane in Memory and App Direct Mode
+exhibit the same performance (Figure~\ref{20mkspnspark96}). Both of which also performed
+significantly worse than the estimated I/O duration. Performance on Isilon, however, did
+not really differ. The total task breakdown shows that, as expected, write times are more
+significant on Isilon than on Optane and Optane in App Direct Mode spends more time writing
+than in Memory Mode (Figure~\ref{20fig:20totalspark96}). When comparing GNU Parallel and 
+Spark implementations, Spark spent nearly half as much time writing as GNU Parallel. However,
+it was found that Optane spent more time converting the data to Nibabel than GNU Parallel spent
+in loading the header.
 
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
         \centering
     \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-20bb_96cpus.pdf}
-    \caption{real}
+    \caption{Makespan}\label{fig:20mksp96}
 \end{subfigure}
 \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-em-20bb_96cpus.pdf}
-    \caption{emulated}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-20bb_96cpus.pdf}
+    \caption{Total read/increment/write breakdown}\label{fig:20total96}
 \end{subfigure}
-\caption{Makespan of the incrementation algorithm processing the 20~$\mu$m BigBrain using
-96 processes}\label{fig:20mksp96}
+\caption{GNU Parallel incrementation application processing the 20~$\mu$m BigBrain using
+96 processes. 3 repetitions were performed.}\label{fig:2096}
 \end{figure*}
 
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-20bb_96cpus.pdf}
-    \caption{real}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/makespan-real-spark-20bb_96cpus.pdf}
+    \caption{Makespan}\label{fig:20mkspspark96}
 \end{subfigure}
 \begin{subfigure}{\columnwidth}
         \centering
-    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-emulated-20bb_96cpus.pdf}
-    \caption{emulated}
+    \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-spark-20bb_96cpus.pdf}
+    \caption{Total convert/increment/write breakdown}\label{fig:20totalspark96}
 \end{subfigure}
-\caption{Total read/increment/write breakdown of the  incrementation algorithm processing the 20~$\mu$m BigBrain using 96 processes}\label{fig:20stackedp96}
+\caption{Spark incrementation application processing the 20~$\mu$m BigBrain using 96 processes. 3 repetitions were performed}\label{fig:20stackedp96}
 \end{figure*}
 \subsection{BIDS App Example}
 \begin{figure*}
@@ -556,10 +603,10 @@ on Optane.
 \end{subfigure}
 \caption{I/O and CPU breakdown of BIDS App Example 25 and 96 processes on all storage devices. 3 repetitions were performed}\label{fig:bbd}
 \end{figure*}
-Unlike the BigBrain incrementation at 25 Processes, the makespan of the BIDS App Example
+Unlike the BigBrain incrementation, the makespan of the BIDS App Example
 executing on Optane is longer than local disk (Figure~\ref{fig:bm25}). However, similarly
-to the BigBrain Incrementation, tmpfs has a slight lead over local disk and Isilon performs the
-worst. The same pattern can be found with 96 process (Figure~\ref{fig:bm96}). When comparing
+to the BigBrain Incrementation, Optane in Memory Mode performs better than the other storage devices
+while Isilon has the longest makespan. The same pattern can be found with 96 process (Figure~\ref{fig:bm96}). When comparing
 the executions of 25 and 96 processes, the performance improved by a similar factor on all
 storage devices.
 
@@ -571,112 +618,133 @@ Isilon.
 \section{Discussion}
 \subsection{Memory vs App Direct Mode}
 
-Memory mode was found to result in increased computation time. When processing 
-the 20~$\mu$m \bigbrain, Memory mode results indicate that more time was spent on
-the incrementation tasks than its App Direct counterparts. Unlike App Direct mode,
-which relies exclusively on DRAM for working memory, Memory mode relies on Optane
-with a DRAM cache. Optane, while faster than other persistent storage devices, 
-still lacks the bandwidth of DRAM. Should anonymous memory need to access Optane
-for computation, it is not surprising that it would be slower than a DRAM-only
-access. However, whereas Memory mode experienced increased computation during the
-processing of the 20~$\mu$m \bigbrain, this was not always found to be the case
-with the processing of the 40~$\mu$m \bigbrain. In fact, incrementation time was
-largely similar between the two modes, with the notable exception of Optane in
-Memory mode expending significantly less computation time than in App Direct when
-processing the 40~$\mu$m \bigbrain with both 25 and 96 processes. Optane in 
-Memory mode executing on local disk using 96 cpus, however, required significant
-computation time as compared to App Direct mode. For all GNU Parallel runs, the 
-read only consisted of loading metadata into
-- Conclusion: memory mode should only be used when there's a requirement for additional memory
--App Direct mode results in increased I/O time for Optane
-- conclusion: Optane might benefit from the DRAM cache
+In general, the selection of storage mode did not affect overall performance. This can be
+due to several reasons. For instance, the amount of available DRAM was abundant and exceeded 
+all our dataset sizes. While total memory used by the application may have exceeded DRAM, as is the
+case with the 20~$\mu$ \bigbrain, the amount of memory required by the application at any 
+given moment did not exceed the amount of available DRAM. Although GNU Parallel would have
+been able to load all the blocks in memory, had we increased the block size, it would have been unlikely
+that total available DRAM would have been exceeded, though it would have occurred in Memory Mode
+for the devices that leverage memory as a write cache. In our case, only the local SSD was set up to do so.
 
+Optane was the only device affected by the choice of storage mode. In all cases, with the 
+exception of the Spark incrementation of the 20~$\mu$ \bigbrain, Memory Mode was superior to 
+App Direct Mode. This is a result of Optane using DRAM as cache in Memory Mode, whereas Optane
+was configured as a writethrough device in App Direct Mode. It is believed that had Optane been
+configured to use DRAM as a writeback cache in App Direct Mode, we  would have observed a similar
+performance between the two. However, for the 40~$\mu$ \bigbrain executions, read time on Optane in
+App Direct Mode appeared to be slower than Memory Mode, potentially indicating that the Optane was able
+to keep the input data cached in DRAM whereas in App Direct Mode, the data had to be loaded from Optane.
+Therefore, it is expected the Optane in App Direct mode may always have longer read times than Memory Mode
+if the data is already cached in DRAM in Memory Mode.
 
-
-While Memory Mode provides a cost-effective solution to increasing the total memory
-size, it is slower than App Direct Mode for embarrassingly parallel applications such
-as \bigbrain incrementation. This is likely due to the Page Cache being composed of a
-combination of both DRAM and Optane in Memory Mode. Since the data produced by the application should be
-able to fit within DRAM, writing to a slower bandwidth device such as Optane inevitably
-deteriorates performance. As App Direct separates usage of DRAM and Optane, devices only utilize DRAM in this mode.
-The only device that performed better in Memory Mode was 
-Isilon, however the difference is minimal.
-%This may be explained by a larger Page Cache in Memory Mode, enabling Isilon to
-%store more data in memory prior to initiating synchronous writes to Isilon.
-
-I/O-less task duration also seem to be affected by the execution mode, with those tasks
-also performing significantly better in App Direct. A potential explanation for this may be 
-that all memory accesses to Optane are slower due to the device's bandwidth, meaning that
-tasks that do not perform I/O, but access data loaded into memory are slower in Memory Mode. Another explanation might be that the kernel is throttling the processes
-as they are producing significant amounts of output, thereby increasing the
-incrementation time.
-This can be seen in Figure~\ref{fig:gantt96} where for local disk, incrementation in App Direct
-mode is significantly shorter. Only when the memory bus is overwhelmed does incrementation take
-longer for App Direct, however, it is nothing compared to the average duration of the incrementation
-tasks in Memory Mode. 
-
-Once again, Isilon is the only device which does not experience an increase in duration for
-I/O-less tasks. In fact, the incrementation duration is less than that of local disk in Memory Mode
-and Optane in App Direct Mode. It may be that since even the reads are staggered
-(Figure~\ref{fig:gantt25isilon}), the memory bus is less strained by all the parallel processes,
-therefore incurring less of an overall delay for all memory accesses.
-
+The Apache Spark and GNU Parallel implementations differed vastly in makespan 
+for Optane in Memory Mode, particularly at 96 processes. After taking a closer look at
+the captured Spark metrics, it was for that what really varied between the Spark runs on
+the different storage was garbage collection, with garbage collection taking longer on Optane 
+than on Isilon. Furthermore, garbage collection was longer in Optane Memory Mode than in 
+Optane App Direct Mode. It is suspected that, in these cases, task duration was so short
+that garbage collection could not keep up. Moreover, Optane in Memory Mode may have longer
+garbage collection if old anonymous data cannot be located in the DRAM cache due to overall memory 
+requirements, therefore requiring garbage collection to occur on slower memory.
 
 \subsection{Effect of Page Cache}
 
-As long as all the written data does not exceed the dirty ratio, there is little 
-benefit brought by the use of Optane. This is the case with both
-our applications writing less than $\SI{1}{\gibi\byte}$ to storage on a system with 
-$\SI{768}{\gibi\byte}$ of DRAM and a dirty ratio of 20. However, it is expected 
-that as the memory footprints of applications increase to the point where the kernel
-would be forced to perform synchronous writes to disk if it were to rely on DRAM alone,
-the benefit of using Optane in Memory Mode will become more apparent. 
+The use of Optane in Memory Mode would enable more dirty data to be written to available memory
+rather than directly to slower storage devices. In our 40~$\mu$ \bigbrain experiments, it was found
+that read times were less important in Isilon than the local SSD (Figures~\ref{fig:stacked-25cpus}
+and~\ref{fig:stacked-96cpus}). Should Isilon have been given the opportunity to benefit from a 
+writeback cache like the SSD, it is believed that performance on Isilon could have been superior 
+to that of the SSD. Having Optane as a node-local burst buffer to shared network storage 
+may prove to be very beneficial in the case of Big Data neuroimaging pipelines running on
+High Performance Computing clusters.
 
-However, depending on the neuroimaging application, the amount of data that could be
-loaded in parallel would be limited by the amount of parallelism possible on the system.
-For instance, typical fMRI tasks process many small images (100s of MB in size) in parallel.
-While the datasets themselves can reach PB in size, the amount of data that can be processed in
-parallel can be $\SI{10}{\giga\byte}$ if each take processes $\SI{100}{\mega\byte}$ and the 
-maximum amount of parallelism is 100. 
+For App Direct Mode applications (although also applicable to Memory Mode), the 
+choice of using the writeback cache depends on total amount of available memory, application
+memory usage and I/O. Should the application be able to use the page cache without ever being
+I/O-throttled, using a write-back cache will significantly improve performance. This can 
+be seen in Figure~\ref{fig:stacked-25cpus}, for instance, where the local SSD is writing
+entirely to memory, reducing significantly the total write time. However, should write operations
+become throttled, this may significantly slow down the write task duration. In such cases,
+it may be preferable to set them up as write-through devices. As Big Data neuroimaging applications
+tend to generate temporary data files that are larger than input size, it is likely that maintaining the
+devices as write-through is preferable. Furthermore, despite that Optane in App Direct Mode does
+not leverage the writeback cache like the local SSD, is it still found to be superior in performance.
+Therefore, the while the performance of Optane may not be enhanced by DRAM, it is still superior to that of
+SSDs using the writeback cache and scalable network storage.
 
-On the other hand, Memory Mode can be very useful for applications operating on
-ultra-high resolution images, like the \bigbrain. For instance, visualization applications
-many need to load significant amounts of data in memory. Given the size of these datasets, 
-extending the amount of available memory using Optane could be quite beneficial and allow
-for faster visualization of larger datasets.
+\subsection{Device scalability}
+The number of storage devices attached to a particular filesystem mountpoint varied between
+each storage device. For instance, DRAM consisted of 12 devices, whereas although there were 
+12 Optane devices, only 6 were accessible by the mountpoint selected in App Direct Mode. Furthermore,
+local SSD only consisted of a single device, whereas the Optane server was made up of 180 SSDs. The differences
+in number of storage devices would account for the attainable amount of parallel writes. For instance, 
+Isilon would have been the most scalable, followed by DRAM, Optane and the local SSD, which would
+only be able to process I/O sequentially. This explains why the anticipated I/O time, is sometimes greater
+than the real makespan of the pipeline.
 
+For instance, taking into consideration the total number of DRAM devices, the expected makespan of the
+40~$\mu$ \bigbrain is estimated to take around 3s, whereas sequentially it was measured to take
+around 37.5s. At 25 processes, we found the DRAM makespan to be around 7s, which is much closer to the 3s
+estimate than the 37.5s. Reasons for why it took longer that estimated could be due to application
+overheads, or even that some DRAM devices were occupied, and therefore, the maximum amount of parallelism 
+was not achievable. 
+
+Despite the fact that only sequential I/O was considered for the anticipated I/O times, 
+Optane in App Direct Mode always took more time than its sequential estimates. The cause
+of the longer-than-expected makespan seems to be due to write times. While there may be application overheads,
+they should, in theory, affect Optane in App Direct Mode as much DRAM. While it is unknown
+why Optane writes are performing so poorly, it could be a result of filesystem configuration or 
+inaccurate benchmarking of the disk. Otherwise, Optane does not appear to scale very well with respect to
+writes. Using the storage benchmarks found in Table~\ref{table:bandwidths}, it is found that with an equivalent
+number of storage devices, processing the 40~$\mu$ \bigbrain using 25 processes would be faster using
+local disk when compared to the real times obtained on Optane. As there are overheads with both Optane and local
+SSD, it is uncertain that it would, in fact, be the case.
+
+While Isilon is, in theory, the most scalable device, its performance is expected. The Isilon
+server is made up entirely of Hard Disks Drives, which are the slowest type of device compared to
+the others, as seen in Table~\ref{table:bandwidths}. While Isilon displays a sufficient amount of
+scalability to read and write the data in a few seconds, it is a network-backed device. As a result,
+performance of this device is limited by the network speed of 10Gbps. Consequently, Isilon performs at around
+the same rate as sequential writes.
+
+Another interesting aspect of Isilon is the spacing that was observed between the read and writes
+(Figure~\ref{fig:gantt25isilon}). What occurred between the read/increment and
+write operations was simply writing the previous task's benchmarks to a unique
+file. This did not appear to affect any other storage device. This appears to imply
+that the latency alone of writing to Isilon was quite significant.
 
 \subsection{Added value of persistent memory}
 
-The added value of Optane as a persistent storage device depends on the amount of parallelism
-of the application. For instance, Optane performs better than local disk at 25 processes,
-but worse than local disk at 96 processes. This can be explained by the fact that it performs
-I/O on the memory bus. While this may reduce overall latency to Optane, the bandwidth of 
-writing to Optane is still significantly less than DRAM. Despite Optane having a similar bandwidth
-to local disk, local disk uses DRAM as cache whereas Optane does not. This fact is 
-particularly evident with the amount of data that is written in parallel at 96 processes. With 25 processes
-and at least a 2 min
-delay between each write, the load on the memory bus is low enough to be efficiently handled.
+Our results show that Optane has superior performance to that of other storage devices, with the
+exception of DRAM. Optane as a persistent memory storage device is expected to bring significant
+performance improvements to the processing of neuroimaging data. Input datasets to neuroimaging pipelines
+are increasing rapidly in size. Storing such datasets directly on Optane would significantly reduce the
+impacts of I/O on the processing. If Optane is located as a persistent memory storage device in HPC clusters,
+it could also be used as a burst buffer to network-attached storage devices. This would vastly
+improve the performance of standard neuroimaging pipelines, as they produce temporary data files that 
+are larger than the input dataset. Writing these temporary files to slow, network-attached storage, can have
+significant impacts on the performance of a pipeline.
 
-fMRI application will generally attempt to leverage as much parallelism as possible. As this
-is the case, it is not believed that App Direct Mode would bring a significant performance advantage
-unless the server's CPUs are limited, in which case there is less concurrent accesses on the device.
-The same would apply to ultra-high resolution application unless they are sequential, as may be the case with
-visualization.
+In the case of high-resolution images, Optane can be leveraged to enable the users to rapidly
+extract their regions of interest with minimal I/O costs. Futhermore, Optane would improve the
+speed and fluidity of visualization applications on these datasets.
+
 \section{Conclusion}
 
-The benefits of Optane for neuroimaging applications are limited to large memory
-accesses with limited parallelism, as would be the case for visualization. This is
-the case for both Memory Mode and App Direct Mode.
+Optane has been found to drastically reduce the processing time of neuroimaging applications and
+can bring the performance close to DRAM speeds. Extending available memory using Optane is also 
+expected to help reduce I/O times of write-back devices by potentially extending available cache space.
+It is unclear, however, if traditional SSDs can perform just as well as Optane with additional storage devices
+attached.
 
-While Memory Mode leads to deterioration in performance of non-Optane storage devices,
-they act as expected in App Direct Mode. It is currently unknown by how much performance
-of a non-Optane storage device would be affected by a large memory access.
-
-To be able to fully determine the benefits of Optane for neuroimaging application,
-it is necessary to process larger datasets. We plan to execute incrementation pipeline on the 
-20~$\mu$m BigBrain using Apache Spark. 
+It is believe Optane can be useful for a variety of neuroimaging applications. For
+instance, typically applications executing in HPC environments can benefit from 
+the speedups provided by Optane. Furthermore, image visualization servers will be able
+to display higher resolution images at significantly greater speeds.
 \section{Acknowledgement}
+We are thankful to Intel and Dell
+for the 90-day trial of the Intel Optane DC Server and high-quality technical support.
 \bibliographystyle{IEEEtran} 
 \bibliography{biblio}
 
