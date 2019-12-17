@@ -736,6 +736,18 @@ In the case of high-resolution images, Optane DCPMM can be leveraged to enable t
 extract their regions of interest with minimal I/O costs. Futhermore, Optane DCPMM would improve the
 speed and fluidity of visualization applications on these datasets.
 
+\subsection{Other comments}
+
+Storage performance when scaling the application from 25 to 96 cores could have been improved using a
+NUMA-aware application, since memory is tied to the CPUs. Should a task requiring memory
+stored on one CPU socket be sent to another CPU, this would incur some overheads, reducing overall application
+and storage performance. Furthermore, Intel optimized Python and NumPy libraries could have been used to improve 
+performance.
+
+While these experiments may not accurately reflect the maximum performance of the storage devices for the applications,
+they are meant to reflect the performance that would be obtained by the average neuroimaging researcher
+executing standardized tools on infrastructure made available to them.
+
 \section{Conclusion}
 
 Optane DCPMM has been found to drastically reduce the processing time of neuroimaging applications and
