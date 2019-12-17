@@ -53,23 +53,24 @@ The ability to leverage the entirety of these datasets is limited to a restricte
 number of labs with both the capacity and infrastructure to
 process the data. Whereas Big Data engines have significantly
 reduced application performance penalties with respect to data
-movement, their applied strategies are not necessarily practical
+movement, their applied strategies (e.g. data locality, in-memory computing and lazy evaluation)
+are not necessarily practical
 within neuroimaging workflows where intermediary results may
 need to be materialized to shared storage for post-processing
 analysis. In this paper we evaluate the performance advantage
 brought by Intel\textsuperscript{textregistered}~Optane\texttrademark~DC persistent memory for the
 processing of large neuroimaging datasets using the two available
-configurations modes: Memory Mode and App Direct Mode. We
+configurations modes: Memory mode and App Direct mode. We
 employ a synthetic algorithm on the 76 GiB and 603 GiB BigBrain, as well as apply a
 standard neuroimaging application on the Consortium for Reliability
 and Reproducibility (CoRR) dataset using 25 and 96 parallel
 processes in both cases. Our results show that the performance of
 the applications leveraging persistent memory is superior to that of other
 storage devices, with the exception of DRAM. This is the case
-in both Memory and App Direct Mode and irrespective of the
+in both Memory and App Direct mode and irrespective of the
 amount of data and parallelism. Furthermore, persistent memory in App
-Direct Mode is believed to benefit from the use of memory as
-a cache for writing in cases where output data is significantly
+Direct mode is believed to benefit from the use of DRAM as
+a cache for writing when output data is significantly
 smaller than available memory. We believe the use of persistent memory
 will be beneficial to both neuroimaging applications running on
 HPC or visualization of large, high-resolution images.
@@ -84,7 +85,7 @@ at 20$\mu$m resolution; the UK Biobank~\cite{ukbiobank}, a repository expected t
 contain approximately $\SI{0.2}{\peta\byte}$ of data (including various magnetic
 resonance (MR) imaging modalities) from 500,000 individuals living in the UK;
 the Human Connectome Project~\cite{HCP}, a repository containing MR scans from
-1,200 healthy adults, which is expected to exceed $\SI{2}{\peta\byte}$ in size; 
+1,200 healthy adults, expected to exceed $\SI{2}{\peta\byte}$ in size; 
 and the Consortium for Reliability and Reproducibility (CoRR)~\cite{corr}, an
 initiative which aggregates MR data from various centres around the world, 
 of which 32 are currently available and make up about $\SI{937}{\giga\byte}$ of
@@ -94,7 +95,7 @@ Due to storage limitations, only subsets of such neuroimaging repositories
 can be processed in a typical research laboratory. Moreover, as these datasets 
 are extremely large and are only increasing in size, they are typically stored 
 in higher-capacity, slower storage devices, such as hard disk drives, or external
-parallel file systems, such as Lustre. In such conditions, large-scale 
+parallel file systems, such as Lustre~\cite{lustre}. In such conditions, large-scale 
 studies in neuroimaging remain limited to labs with access to adequate 
 infrastructures.
 
@@ -103,10 +104,10 @@ any performance benefits that can arise from volatile in-memory computing as int
 results need to be materialized onto persistent storage. As neuroimaging datasets continue
 to increase in size, the movement of data will significantly increase the processing time.
 
-To mitigate the effects of data writes, kernel-based
-strategies, such as the writeback cache, have been developed. The writeback cache
-allows processes to use the memory as a cache for writing. The cache size,
-however,
+To mitigate the effects of data writes, the Linux kernel has implemented
+strategies, such as the writeback cache. The writeback cache
+allows processes to use the memory as a cache for writing. This strategy contrasts writethrough, which 
+writes data directly to the device. The writeback cache size
 is configurable, but nevertheless limited. When writes approach the cache's capacity,
 processes performing writes start to be throttled. Once the cache capacity is reached,
 processes can no longer use the cache until all cached written data is flushed
@@ -122,11 +123,11 @@ remains the same. However, as noted by \cite{nvdimms}, a severe performance degr
 can be experienced by having memory traffic and I/O placed on the same bus.
 
 
-Intel Optane DC Persistent Memory~\cite{optanebrief} is a high-performance
+Intel Optane DC Persistent Memory Module~\cite{optanebrief} (DCPMM) is a high-performance
 storage technology that resides on the DIMMs to reduce latency to the device.
-The first generation of Intel Optane DC persistent memory offers capabities of 128~GB,
+The first generation of Intel Optane DCPMM offers capabities of 128~GB,
 256~GB, and 512~GB, enabling it to be more cost effective than DRAM storage.
-There are two configuration modes, Memory Mode and App Direct Mode,
+There are two configuration modes, Memory mode and App Direct mode,
 that enable the storage to either be accessed as an extension of volatile main memory
 or as a non-volatile memory storage device\footnote{https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/}.
 
@@ -136,7 +137,7 @@ In this paper, we aim to:
         \item Quantify the added value of Intel Optane DC persistent memory on 
             processing large neuroimaging data using representative pipelines; and
         \item Determine when a given Intel Optane DC persistent memory configuration (Memory 
-            and App Direct Mode) is preferable.
+            and App Direct mode) is preferable.
 \end{itemize}
 
 \section{Materials and Methods}
@@ -147,22 +148,22 @@ further inspection and reproducibility.
 
 \subsection{Infrastructure}
 
-The server used for the experiments consisted of 12X~\SI{64}{\gibi\byte} DRAM devices,
-resulting in a total of \SI{768}{\gibi\byte} of DRAM, and 12X~\SI{256}{\giga\byte} Intel Optane DC persistent memory
+The server used consisted of 12X~\SI{64}{\gibi\byte} DRAM devices,
+resulting in a total of \SI{768}{\gibi\byte} of DRAM, and 12X~\SI{256}{\giga\byte} Optane DCPMM
 modules, resulting in total of \SI{3}{\tebi\byte} of Intel Optane DC persistent memory.
 Other storage devices included a \SI{240}{\gibi\byte} Micron SATA SSD, of which
 only \SI{149}{\gibi\byte} where available for the experiments, and a
-\SI{720}{\tebi\byte} shared Dell EMC Isilon cluster. The Isilon cluster is an nsf4 mounted
+\SI{720}{\tebi\byte} shared Dell EMC Isilon network-attached storage platform. Isilon is an nsf4 mounted
 cluster (10Gb network) consisting of 5 nodes of 36 hard disk drives (HDD). The local disk
-was the only storage device set up as a writeback device. Both Isilon and Optane DC persistent memory in
+was the only storage device set up as a writeback device. Both Isilon and Optane DCPMM in
 App Direct mode were configured as write-through devices, meaning they did not leverage
 DRAM as a cache for writes. For Optane DC persistent memory, this was achieved by configuring the xfs filesystem with
-DAX. All storage devices were benchmarked using the following \href{https://github.com/ValHayot/paper-memory-storage/scripts/bench_disks.sh}{script}.
+direct access (DAX). DAX enables persistent memory to be byte addressable, bypassing the page cache. All storage devices were benchmarked using the following script: \url{https://github.com/ValHayot/paper-memory-storage/scripts/bench_disks.sh}.
 The result of the benchmarks can be seen in Table \ref{table:bandwidths}.
 
 For processing,
 2 Intel(R) Xeon(R) Platinum 8260M CPU @ 2.40GHz where installed, enabling use of up to 96 threads.
-The server was running Red Hat Enterprise Linux 7.6 release (Maipo). 
+The server was running Red Hat Enterprise Linux 7.6 (Maipo) kernel version 3.10.0-957. 
 
 
 \begin{table}
@@ -185,7 +186,7 @@ The server was running Red Hat Enterprise Linux 7.6 release (Maipo).
 
 \subsection{Storage configuration}
 
-\subsubsection{Memory Mode}
+\subsubsection{Memory mode}
 
 Memory mode leverages Intel Optane DC persistent memory (DCPMM) to extend the system's available
 memory. In this mode, Optane DCPMM uses DRAM as a cache and is accessible as
@@ -195,16 +196,16 @@ fast access of large volumes of data. For instance, Memory mode on our server en
 leveraged. Although DRAM is used as cache by Optane DCPMM, it is not visible to the operating system. 
 
 While enabling access to a larger amount of memory than typically accessible otherwise,
-it is anticipated that Memory mode will be slower than App Direct mode for all memory accessed that
-are not cached in DRAM. We evaluated all available devices (Optane DCPMM through tmpfs, local disk and Isilon)
+it is anticipated that Memory mode will be slower than App Direct mode for all memory accesses that
+are not cached in DRAM, due to reduced storage bandwidth. We evaluated all available devices (Optane DCPMM through tmpfs, local SSD and Isilon)
 in Memory mode.
 
-\subsubsection{App Direct Mode}
+\subsubsection{App Direct mode}
 
 App Direct mode enables Optane DCPMM to be accessed as a high-performance storage device.
 Unlike Memory mode, the OS is able to differentiate between DRAM and Optane DCPMM,
 treating them as two distinct memory tiers. Optane DCPMM
-does not use the DRAM as cache in App Direct Mode if configured with DAX.
+does not use the DRAM as cache in App Direct Mode when configured with DAX, as is our case.
 
 Similarly to Memory Mode, our experiments evaluated all available filesystems in App Direct
 Mode. In other words, we evaluated DRAM (tmpfs mount), Optane DCPMM (\SI{1.5}{\tebi\byte} persistent
@@ -213,7 +214,7 @@ memory mount), local SSD and Isilon.
 
 \subsection{Performance model}
 
-We characterize the performance of our experiments using the following model:
+We characterize the performance of our data-intensive experiments using the following model:
 
 \begin{equation}
     M \geq \frac{D}{R} + \frac{D}{W} \label{eq:makespan}
@@ -230,10 +231,10 @@ where,
 For applications which have negligible CPU time, as is the case with our experiments, 
 it is expected that the I/O duration can estimate the total makespan. However, there
 are certain instances where the makespan may be below the I/O duration. This is expected
-to occur with storage devices that scale well with increased parallelism, as should be the
-case for DRAM, Optane DCPMM and Isilon, which all consist of multiple devices. Should the
+to occur with scalable devices, as should be the
+case for DRAM, Optane DCPMM and Isilon, which can support parallel I/O. Should the
 scalable storage devices predict the makespan accurately, it is believed that other overheads
-would be at play making the device unfavourable for parallel processing.
+would be at play, making the device unfavourable for parallel processing.
 
 \subsection{Applications}
 \subsubsection{ \bigbrain Incrementation}
@@ -260,9 +261,9 @@ on such a dataset, we have implemented a naive synthetic application that takes
 the image, split into blocks, and increments all the voxels within each block, in parallel (Algorithm~\ref{alg:incrementation}).
 This application
 enables us to read and write to different storage devices and ensure that written
-data could not have been previously cache
+data could not have been previously cached
 in-memory, by ensuring that read and written data are not the same. This application
-was parallelized in two different ways: using both GNU Parallel and Apache Spark 2.4.3 (PySpark). 
+was parallelized in two different ways: using both GNU Parallel~\cite{gnuparallel} and Apache Spark 2.4.3 (PySpark)~\cite{spark}. 
 All code was implemented in Python 3.6.
 
 There are some notable differences between the GNU Parallel and Apache Spark implementations.
@@ -270,14 +271,14 @@ For instance, in the GNU Parallel implementation, all operations (i.e. reading, 
 are done within a single task. This task is applied to all the \bigbrain blocks using GNU Parallel,
 processing a subset of them at a time,
 depending on the level of parallelism provided. Reading in the GNU Parallel implementation 
-is achieved using the popular neuroimaging I/O: \href{https://nipy.org/nibabel/}{NiBabel}. When provided with a filename, as is the case
+is achieved using the popular neuroimaging I/O library: \href{https://nipy.org/nibabel/}{NiBabel}. When provided with a filename, as is the case
 for the GNU Parallel implementation, Nibabel will simply load the header in memory, and memory map the data
 using \href{https://numpy.org/}{NumPy}. This step will be referred to as ``load header''. It is only when the data is actually required
 (i.e. during incrementation), that the data will be loaded into memory.
 
-The Apache Spark implementation differs from that of GNU Parallel in that scheduling decisions
-were entirely differed to Spark. That is, rather than simply parallelizing over the \bigbrain block filenames,
-we opted to read the data using Spark's built-in
+The Apache Spark implementation differs from that of GNU Parallel. Whereas GNU Parallel will
+simply forks processes for each task and defers scheduling to the kernel, Spark is responsible for 
+task scheduling decisions. Furthermore, in our Spark implementation, we opted to read the data using Spark's built-in
 \texttt{BinaryFiles}, loading whole files, in binary format, into Spark partitions. As the
 data would have been pre-loaded by Spark, ``loading header'' only measures the time to
 convert the binary images into NiBabel objects, and ``incrementation'' consists solely
@@ -313,18 +314,18 @@ Since storage was limited on DRAM and local disk and was not large enough to pro
 
 The BIDS App Example is a template example for creating a Brain Imaging Data Structure (BIDS)
 compliant application. It runs a standard neuroimaging brain extraction application (FSL BET) 
-on all the anatomical (T1W) images of dataset containing numerous subjects. This step is 
+on all the anatomical (T1W) images of datasets containing numerous subjects. This step is 
 referred to as Participant analysis within the application. An optional
 step of the BIDS App example, referred to as Group analysis, computes the average brain
 mask size of the entire dataset.
 
-For our experiments, we used the entire CoRR dataset, made available on \href{}{DataLad} and
+For our experiments, we used the entire CoRR dataset, made available on \href{https://www.datalad.org/}{DataLad} and
 applied Participant analysis to it. The BIDS App Example was executed using a Singularity container stored on
 Isilon. As in the BigBrain Incrementation, the experiment was parallelized 
 using GNU Parallel with 25 and 96 processes. The conditions were executed in both App Direct and Memory Mode,
 where Isilon and the local SSD were only evaluated in Memory Mode. Each experiment was repeated 3x.
 
-Time in this application was obtained using Linux's \texttt{time(1)} application.
+Time in this application was obtained using Linux's \texttt{time()} application.
 \texttt{Real + Sys} was used to measure CPU time,
 whereas \texttt{User - (Real + Sys)} was used to measure
 I/O time.
@@ -339,15 +340,15 @@ I/O time.
              processes on the 125 blocks on the 40~$\mu$m image given different
              storage configurations. Anticipated read and write duration was 
              measured by applying the perceived bandwidths Table~\ref{table:bandwidths}
-             to Eq.~\ref{eq:makespan}. 3 
+             to Eq.~\ref{eq:makespan}. Three 
              repetitions were performed. *Local SSD did not complete the
-    writing of the last few blocks due to storage limitations.}\label{fig:makespan-25cpus}
+         writing of the last few blocks (approximately 5-10) due to storage limitations.}\label{fig:makespan-25cpus}
 \end{figure}
 \begin{figure}
     \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-40bb_25cpus.pdf}
     \captionsetup{belowskip=0pt}
-    \caption{Total read/increment/write breakdown of \bigbrain Incrementation using 25 cpus. 3 repetitions were performed. *Local SSD did not
-             complete the writing of the last few blocks due to storage limitations}\label{fig:stacked-25cpus}
+    \caption{Total read/increment/write breakdown of \bigbrain Incrementation using 25 cpus. Three repetitions were performed. *Local SSD did not
+    complete the writing of the last few blocks (approximately 5-10) due to storage limitations}\label{fig:stacked-25cpus}
 \end{figure}
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
@@ -371,7 +372,7 @@ I/O time.
     \caption{Isilon}\label{fig:gantt25isilon}
 \end{subfigure}
     \captionsetup{belowskip=-10pt}
-\caption{Gantt charts for each storage device (App Direct Mode) processing 125 blocks of the 40$\mu$m BigBrain using 25 processes. *Some local SSD writes did not complete due to storage limitations.}\label{fig:gantt25}
+    \caption{Gantt charts for each storage device (App Direct Mode) processing 125 blocks of the 40$\mu$m BigBrain using 25 processes. *Some local SSD writes (approximately 5-10 writes) did not complete due to storage limitations.}\label{fig:gantt25}
 \end{figure*}
 
 As can be seen in Figure~\ref{fig:makespan-25cpus}, DRAM (App Direct mode) is the 
@@ -409,10 +410,10 @@ DRAM is significantly faster than all other storage, leading it to barely appear
 DRAM was measured to have an average of 17.2 parallel tasks throughout the execution. Optane DCPMM takes
 significantly longer than DRAM and appears to spend a significant amount of time writing. The average
 parallelism measured for Optane DCPMM was 24. Unlike Optane DCPMM, local SSD spends the vast majority of its time
-reading, while spending a negligible amount of time writing. Like Optane DCPMM, it averages 24 parallel tasks
+reading, while spending a negligible amount of time writing, due to writeback to DRAM. Like Optane DCPMM, it averages 24 parallel tasks
 throughout its execution. Unlike the other three storage, Isilon shows spacing between the loading of the header,
 read and increment and write. Isilon was measured to have an average parallelism of 14. Overall, each storage device
-execution displayed that some tasks took longer than others.
+execution displayed heterogeneous task durations.
 
 \subsubsection{96 Processes}
 \begin{figure}
@@ -422,34 +423,34 @@ execution displayed that some tasks took longer than others.
              processes on the 125 blocks on the 40~$\mu$m image given different
              storage configurations. Anticipated read and write duration was 
              measured by applying the perceived bandwidths Table~\ref{table:bandwidths}
-             to Eq.~\ref{eq:makespan}. 3 
+             to Eq.~\ref{eq:makespan}. Three 
              repetitions were performed. *Local SSD did not complete the
-    writing of the last few blocks due to storage limitations.}\label{fig:makespan-96cpus}
+         writing of the last few blocks (approximately 5-10) due to storage limitations.}\label{fig:makespan-96cpus}
 \end{figure}
 \begin{figure}
     \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-40bb_96cpus.pdf}
     \captionsetup{belowskip=-10pt}
-    \caption{Total read/increment/write breakdown of \bigbrain Incrementation using 25 cpus. 3 repetitions were performed. *Local SSD did not
-             complete the writing of the last few blocks due to storage limitations}\label{fig:stacked-96cpus}
+    \caption{Total read/increment/write breakdown of \bigbrain Incrementation using 25 cpus. Three repetitions were performed. *Local SSD did not
+    complete the writing of the last few blocks (approximately 5-10) due to storage limitations}\label{fig:stacked-96cpus}
 \end{figure}
 
 \begin{figure*}
     \begin{subfigure}{\columnwidth}
         \centering
     \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1572306855-tmpfs_1it_96cpus_40bb-2.pdf}
-    \caption{Memory Mode}
+    \caption{Memory mode}
 \end{subfigure}
 \begin{subfigure}{\columnwidth}
         \centering
     \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/gantt-1572379747-optaneAD_1it_96cpus_40bb-1.pdf}
-    \caption{App Direct Mode}
+    \caption{App Direct mode}
 \end{subfigure}
     \captionsetup{belowskip=-10pt}
 \caption{Gantt charts for Optane DCPMM processing 125 blocks of the 40$\mu$m BigBrain using 96 processes}\label{fig:gantt96}
 \end{figure*}
 
 Despite having increased parallelism by a factor of 3.84, we see no visible reduction
-in makespan (Figure~\ref{fig:makespan-96cpus}). At 96 cpus, DRAM and Optane DCPMM in Memory mode are the only devices that did better than the anticipated I/O, with a makespan duration of
+in makespan (Figure~\ref{fig:makespan-96cpus}). At 96 processes, DRAM and Optane DCPMM in Memory mode are the only devices that did better than the anticipated I/O, with a makespan duration of
 5.7s and 9s, respectively (total read and write estimate for both was measured to be around 39s). While
 Optane DCPMM in App Direct mode and local SSD both performed worse than the anticipated I/O estimates, Isilon
 performed as expected. Variance was found to be high on the local SSD.
@@ -467,7 +468,7 @@ DRAM and local SSD all averaged between 61-66 tasks. Isilon performed the worst 
 mode and 45 tasks in App Direct mode.
 
 A further look at the Gantt charts between Optane DCPMM in Memory mode and App Direct mode (Figure~\ref{fig:gantt96})
-show that both read and write time of tasks are worse in App Direct mode as compare with Memory mode.
+shows that both read and write time of tasks are worse in App Direct mode as compared to Memory mode.
 While some read tasks in App Direct mode appear to be of similar duration to the average read task time
 of Memory mode, the vast majority of read tasks are significantly slower. Furthermore, no write tasks in App
 Direct mode is capable of reaching the performance of equivalent tasks in Memory mode.
@@ -488,7 +489,7 @@ between Memory and App Direct Mode, spending around 1.4x more time reading and i
 in App Direct Mode. 
 
 Unlike the GNU Parallel executions, the Spark executions appear to be in better accordance with
-the I/O estimates (Figure~\ref{fig:20mkspspark25}. Only Optane DCPMM in App Direct mode appears
+the I/O estimates (Figure~\ref{fig:20mkspspark25}). Only Optane DCPMM in App Direct mode appears
 to have significantly exceeded the estimates, by a factor of 2. Total write duration all appear
 to be longer in the Spark implementation than with GNU Parallel (Figure~\ref{fig:20totalspark:25}).
 Spark's writes are 1.4-1.6x longer with Optane DCPMM and 1.1x longer with Isilon. Due to differences in
@@ -510,7 +511,7 @@ up to twice as much time on Isilon.
 \end{subfigure}
 \captionsetup{belowskip=-10pt}
 \caption{GNU Parallel incrementation application processing the 20~$\mu$m BigBrain using
-25 processes. 3 repetitions were performed.}\label{fig:2025}
+25 processes. Three repetitions were performed.}\label{fig:2025}
 \end{figure*}
 
 \begin{figure*}
@@ -524,7 +525,7 @@ up to twice as much time on Isilon.
     \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-spark-20bb_25cpus.pdf}
     \caption{Total convert/increment/write breadown}\label{fig:20totalspark:25}
 \end{subfigure}
-\caption{Spark incrementation application processing the 20~$\mu$m BigBrain using 25 processes. 3 repetitions wereperformed}\label{fig:20spark25}
+\caption{Spark incrementation application processing the 20~$\mu$m BigBrain using 25 processes. Three repetitions wereperformed}\label{fig:20spark25}
 \end{figure*}
 
 \subsubsection{96 Processes}
@@ -561,7 +562,7 @@ in loading the header.
     \caption{Total read/increment/write breakdown}\label{fig:20total96}
 \end{subfigure}
 \caption{GNU Parallel incrementation application processing the 20~$\mu$m BigBrain using
-96 processes. 3 repetitions were performed.}\label{fig:2096}
+96 processes. Three repetitions were performed.}\label{fig:2096}
 \end{figure*}
 
 \begin{figure*}
@@ -575,7 +576,7 @@ in loading the header.
     \includegraphics[width=\columnwidth]{./experiments/bigbrain-incrementation/figures/stacked-real-spark-20bb_96cpus.pdf}
     \caption{Total convert/increment/write breakdown}\label{fig:20totalspark96}
 \end{subfigure}
-\caption{Spark incrementation application processing the 20~$\mu$m BigBrain using 96 processes. 3 repetitions were performed}\label{fig:20stackedp96}
+\caption{Spark incrementation application processing the 20~$\mu$m BigBrain using 96 processes. Three repetitions were performed}\label{fig:20stackedp96}
 \end{figure*}
 \subsection{BIDS App Example}
 \begin{figure*}
@@ -589,7 +590,7 @@ in loading the header.
     \includegraphics[width=\columnwidth]{./experiments/bids-app-example/96cores.pdf}
     \caption{96 processes}\label{fig:bm96}
 \end{subfigure}
-\caption{Makespan of BIDS App Example 25 and 96 processes on all storage devices. 3 repetitions were performed}
+\caption{Makespan of BIDS App Example 25 and 96 processes on all storage devices. Three repetitions were performed}
 \end{figure*}
 
 \begin{figure*}
@@ -603,10 +604,10 @@ in loading the header.
     \includegraphics[width=\columnwidth]{./experiments/bids-app-example/96cores-sum.pdf}
     \caption{96 processes}\label{fig:bb96}
 \end{subfigure}
-\caption{I/O and CPU breakdown of BIDS App Example 25 and 96 processes on all storage devices. 3 repetitions were performed}\label{fig:bbd}
+\caption{I/O and CPU breakdown of BIDS App Example 25 and 96 processes on all storage devices. Three repetitions were performed}\label{fig:bbd}
 \end{figure*}
 Unlike the BigBrain incrementation, the makespan of the BIDS App Example
-executing on Optane DCPMM is longer than local disk (Figure~\ref{fig:bm25}). However, similarly
+executing on Optane DCPMM in App Direct mode is longer than local disk in Memory mode (Figure~\ref{fig:bm25}). However, similarly
 to the BigBrain Incrementation, Optane DCPMM in Memory mode performs better than other storage devices
 while Isilon has the longest makespan. The same pattern can be found with 96 process (Figure~\ref{fig:bm96}). When comparing
 the executions of 25 and 96 processes, the performance improved by a similar factor on all
@@ -636,7 +637,7 @@ App Direct mode. This is a result of Optane DCPMM using DRAM as cache in Memory 
 DCPMM 
 was configured as a writethrough device in App Direct mode. It is believed that had Optane DCPMM been
 configured to use DRAM as a writeback cache in App Direct mode, we would have observed a similar
-performance between the two. However, for the 40~$\mu$ \bigbrain executions, read time on Optane DCPMM in
+performance between the two. Furthermore, in the 40~$\mu$ \bigbrain executions, read time on Optane DCPMM in
 App Direct mode appeared to be slower than Memory mode, potentially indicating that the Optane DCPMM was able
 to keep the input data cached in DRAM, whereas in App Direct Mode, the data had to be loaded from Optane DCPMM.
 Therefore, it is expected the Optane DCPMM in App Direct mode may always have longer read times than Memory Mode
@@ -674,7 +675,7 @@ it may be preferable to set them up as write-through devices. As Big Data neuroi
 tend to generate temporary data files that are larger than input size, it is likely that maintaining the
 devices as write-through is preferable. Furthermore, despite the fact that Optane DCPMM in App Direct Mode does
 not leverage the writeback cache like the local SSD, is it still found to be superior in performance.
-Therefore, the while the performance of Optane DCPMM may not be enhanced by DRAM, it is still superior to that of
+Therefore, while the performance of Optane DCPMM may not be enhanced by DRAM, it is still superior to that of
 an SSD using the writeback cache and scalable network storage.
 
 \subsection{Device scalability}
@@ -697,7 +698,7 @@ was not achievable.
 Despite the fact that only sequential I/O was considered for the anticipated I/O times, 
 Optane DCPMM in App Direct mode always took more time than its sequential estimates. The cause
 of the longer-than-expected makespan seems to be due to write times. While there may be application overheads,
-they should, in theory, affect Optane DCPMM in App Direct Mode as much DRAM. While it is unknown
+they should, in theory, affect Optane DCPMM in App Direct Mode as much as DRAM. While it is unknown
 why Optane DCPMM writes are performing so poorly, it could be a result of filesystem configuration or 
 inaccurate benchmarking of the disk. Otherwise, Optane DCPMM does not appear to scale very well with respect to
 writes. Using the storage benchmarks found in Table~\ref{table:bandwidths}, it is found that with an equivalent
@@ -743,7 +744,7 @@ expected to help reduce I/O times of write-back devices by potentially extending
 It is unclear, however, if traditional SSDs can perform just as well as Optane DCPMM with additional storage devices
 attached.
 
-It is believe Optane DCPMM can be useful for a variety of neuroimaging applications. For
+It is believed that Optane DCPMM can be useful for a variety of neuroimaging applications. For
 instance, typically applications executing in HPC environments can benefit from 
 the speedups provided by Optane DCPMM. Furthermore, image visualization servers will be able
 to display higher resolution images at significantly greater speeds.
