@@ -60,7 +60,7 @@ def stacked_bar(df, spark=False):
 
     global data_size, total_1000
 
-    labels = ["DRAM", "Optane DCPMM", "local SSD", "Isilon"]
+    labels = ["DRAM", "Optane DCPMM", "local SSD*", "Isilon"]
     ind = np.arange(len(labels))
     ind_mem = np.delete(ind, 0)
 
