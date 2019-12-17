@@ -1,5 +1,6 @@
 #!/bin/bash
 
+rm ./experiments/bigbrain-incrementation/makespan.csv
 curr_dir=`pwd`
 cd ./experiments/bids-app-example
 ./plot.py
