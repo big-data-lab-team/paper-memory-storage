@@ -60,7 +60,7 @@ def stacked_bar(df, spark=False):
 
     global data_size, total_1000
 
-    labels = ["DRAM", "Optane", "local SSD", "Isilon"]
+    labels = ["DRAM", "Optane DCPMM", "local SSD", "Isilon"]
     ind = np.arange(len(labels))
     ind_mem = np.delete(ind, 0)
 
@@ -187,7 +187,7 @@ def stacked_bar(df, spark=False):
     if bb20:
         ind = np.asarray([0, 1])
         ind_mem = ind
-        labels = ['Optane', 'Isilon']
+        labels = ['Optane DCPMM', 'Isilon']
 
     print(data_size)
     print(df_memb_mean)
@@ -316,7 +316,7 @@ def stacked_bar(df, spark=False):
 
     else:
 
-        labels = ["Optane", "Isilon"]
+        labels = ["Optane DCPMM", "Isilon"]
         ind = np.arange(len(labels))
         ind_mem_r = ind
         ind_ad_r = ind
@@ -470,7 +470,7 @@ def stacked_bar(df, spark=False):
     r_inc = mpatch.Patch(facecolor="r", alpha=alpha+0.2, label="read/increment")
 
     if spark:
-        if not bb20:
+        if not bb20 or '25cpu' in sys.argv[1] :
             ax.set_ylim(0, 140000)
         else:
             ax.set_ylim(0, 500000)

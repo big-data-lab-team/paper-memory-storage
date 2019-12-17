@@ -53,7 +53,7 @@ def configure_df(df):
 
 def makespan(df, task="task_duration", spark=False):
 
-    labels = ["DRAM", "Optane", "local SSD*", "Isilon"]
+    labels = ["DRAM", "Optane DCPMM", "local SSD*", "Isilon"]
     if not spark:
         dfp = df[df["Task"] == "task_duration"].groupby(["filename"])
     else:
@@ -144,7 +144,7 @@ def makespan(df, task="task_duration", spark=False):
     if bb20:
         ind = np.asarray([0, 1])
         ind_mem = ind
-        labels = ['Optane', 'Isilon']
+        labels = ['Optane DCPMM', 'Isilon']
 
     print(df_memb_mean)
     print(df_memb_std)

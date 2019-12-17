@@ -8,10 +8,14 @@ cd $curr_dir/experiments/bigbrain-incrementation/figures
 ./stacked_bar.py '../results/40bb_redo/*25cpus*' 40bb_25cpus
 ./makespan.py '../results/40bb_redo/*96cpus*' 40bb_96cpus
 ./stacked_bar.py '../results/40bb_redo/*96cpus*' 40bb_96cpus
-./makespan.py '../results/20bb_redo/*25cpus*' 20bb_25cpus spark
-./stacked_bar.py '../results/20bb_redo/*25cpus*' 20bb_25cpus spark
-./makespan.py '../results/20bb_redo/*96cpus*' 20bb_96cpus spark
-./stacked_bar.py '../results/20bb_redo/*96cpus*' 20bb_96cpus spark
+./makespan.py '../results/20bb_redo/*25cpus*' 20bb_25cpus
+./makespan.py '../results/20bb_redo/*25cpus*' spark_20bb_25cpus spark
+./stacked_bar.py '../results/20bb_redo/*25cpus*' 20bb_25cpus
+./stacked_bar.py '../results/20bb_redo/*25cpus*' spark_20bb_25cpus spark
+./makespan.py '../results/20bb_redo/*96cpus*' 20bb_96cpus
+./makespan.py '../results/20bb_redo/*96cpus*' spark_20bb_96cpus spark
+./stacked_bar.py '../results/20bb_redo/*96cpus*' 20bb_96cpus
+./stacked_bar.py '../results/20bb_redo/*96cpus*' spark_20bb_96cpus spark
 cd $curr_dir
 echo 'GNU Parallel: 75BB local App Direct 25 cpus - 1572382794-localAD_1it_25cpus_40bb-1.out'
 ./scripts/gantt.py --incrementation_tf ./experiments/bigbrain-incrementation/results/40bb_redo/1572382794-localAD_1it_25cpus_40bb-1.out --cpus 25
