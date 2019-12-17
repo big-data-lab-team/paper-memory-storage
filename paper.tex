@@ -119,7 +119,7 @@ incorporated software solutions to limit data transfers (e.g. writeback cache, i
 data locality, and lazy evaluation), hardware has also adapted to the growing datasets.
 One such improvement is the concept of placing persistent storage directly on the Dual
 In-line Memory Module (DIMM), thereby reducing the latency of accessing data on 
-flash storage devices. While the latency of these devices is improved, the bandwidth
+storage devices. While the latency of these devices is improved, the bandwidth
 remains the same. However, as noted by \cite{nvdimms}, a severe performance degradation
 can be experienced by having memory traffic and I/O placed on the same bus.
 
@@ -302,7 +302,7 @@ DRAM (App Direct only), Optane DCPMM, local disk and Isilon.
 
 For the 20~$\mu$m \bigbrain, we used the same application, however in this case, it was executed
 using both Apache Spark and GNU Parallel. The configuration was also generally the same, having 
-experiments using both 25 and 96 processes. Repeating the experiments using a larger dataset would enable
+experiments using both 25 and 96 processes. Repeating the experiments with the 20~$\mu$m BigBrain would enable
 us to determine the effects when Optane DCPMM would have to be partially relied upon due to insufficient DRAM
 space. Moreover, with such large datasets, it is likely that Big Data frameworks would be used rather than
 more traditional parallelism frameworks. Using Spark, we can evaluate how Big Data Frameworks perform on
@@ -380,10 +380,11 @@ I/O time.
 \end{figure*}
 
 As can be seen in Figure~\ref{fig:makespan-25cpus}, DRAM (App Direct mode) is the 
-most efficient, with a makespan of 7.6s. Optane in Memory mode is a close second
-with a makespan of approximately 10s. As caching was disabled in App Direct mode, 
+most efficient, with a makespan of 7.6s (all makespan values are available \href{https://github.com/big-data-lab-team/paper-memory-storage/blob/master/experiments/bigbrain-incrementation/results/makespan.csv}{here}).
+Optane DCPMM in Memory mode is a close second
+with a makespan of 10.2s. As caching was disabled in App Direct mode, 
 Optane DCPMM in this mode is approximately 
-12x slower than Optane in Memory mode. Isilon in both Memory mode and App Direct 
+12x slower than Optane DCPMM in Memory mode. Isilon in both Memory mode and App Direct 
 mode is more than 120x slower than Optane DCPMM in Memory mode. Other than for Optane DCPMM, 
 there is no significant difference between Memory mode and App Direct executions.
 
@@ -678,9 +679,8 @@ I/O-throttled, using a write-back cache will significantly improve performance. 
 be seen in Figure~\ref{fig:stacked-25cpus}, for instance, where the local SSD is writing
 entirely to memory, significantly reducing the total write time. However, should write operations
 become throttled, this may slow down the write task duration. In such cases,
-it may be preferable to set them up as write-through devices. As Big Data neuroimaging applications
-tend to generate temporary data files that are larger than input size, it is likely that maintaining the
-devices as write-through is preferable. Furthermore, despite the fact that Optane DCPMM in App Direct mode does
+it may be preferable to set them up as write-through devices. In any case,
+ despite the fact that Optane DCPMM in App Direct mode does
 not leverage the writeback cache like the local SSD, is it still found to be superior in performance.
 Therefore, while the performance of Optane DCPMM may not be enhanced by DRAM, it is still superior to that of
 an SSD using the writeback cache and scalable network storage.
@@ -745,7 +745,7 @@ speed and fluidity of visualization applications on these datasets.
 
 \subsection{Other comments}
 
-Storage performance when scaling the application from 25 to 96 cores could have been improved using a
+Storage performance when scaling the application from 25 to 96 CPU threads could have been improved using a
 NUMA-aware application, since memory is tied to the CPUs. Should a task requiring memory
 stored on one CPU socket be sent to another CPU, this would incur some overheads, reducing overall application
 and storage performance. Furthermore, Intel optimized Python and NumPy libraries could have been used to improve 

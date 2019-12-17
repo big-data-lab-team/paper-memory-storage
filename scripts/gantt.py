@@ -74,7 +74,7 @@ def gantt_increment(df, data_file, ncpus, spark=False):
     #ax.set_yticks(range(len(labels)))
     #ax.set_yticklabels([])
     ax.set_yticks([], [])
-    ax.set_ylabel("process")
+    ax.set_ylabel("CPU threads")
 
     if not spark:
         if '25cpu' in data_file:
