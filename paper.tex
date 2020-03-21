@@ -31,6 +31,7 @@
       #1 \color{black}}
 \newcommand{\tristan}[1]{\color{orange}\textbf{Note from Tristan}:
       #1 \color{black}}
+\captionsetup{belowskip=-1pt}
 
 
 
@@ -49,9 +50,9 @@
 \maketitle
 
 \begin{abstract}
-    Open-access neuroimaging datasets have reached petabyte scale, and continue to grow.
+    Open-access neuroimaging datasets have reached petabyte scale and continue to grow.
 The ability to leverage the entirety of these datasets is limited to a restricted
-number of labs with both the capacity and infrastructure to
+number of research laboratories with both the capacity and infrastructure to
 process the data. Whereas Big Data engines have significantly
 reduced application performance penalties with respect to data
 movement, their applied strategies (e.g. data locality, in-memory computing and lazy evaluation)
@@ -68,7 +69,7 @@ and Reproducibility (CoRR) dataset using 25 and 96 parallel
 processes in both cases. Our results show that the performance of
 applications leveraging persistent memory is superior to that of other
 storage devices, with the exception of DRAM. This is the case
-in both Memory and App Direct mode and irrespective of the
+in both Memory and App Direct mode, irrespective of the
 amount of data and parallelism. Furthermore, persistent memory in App
 Direct mode is believed to benefit from the use of DRAM as
 a cache for writing when output data is significantly
@@ -100,7 +101,7 @@ parallel file systems, such as Lustre~\cite{lustre}. In such conditions, large-s
 studies in neuroimaging remain limited to labs with access to adequate 
 infrastructures.
 
-Furthermore, intermediary data is often required for post-processing analysis. This limits
+Intermediary data is often required for post-processing analysis. This limits
 any performance benefits that can arise from volatile in-memory computing as intermediary
 results need to be materialized onto persistent storage. As neuroimaging datasets continue
 to increase in size, the movement of data will significantly increase the processing time.
@@ -110,11 +111,11 @@ strategies, such as the writeback cache. The writeback cache
 allows processes to use the memory as a cache for writing. This strategy contrasts writethrough, which 
 writes data directly to the device. The writeback cache size
 is configurable, but nevertheless limited. When writes approach the cache's capacity,
-processes performing writes start to be throttled. Once the cache capacity is reached,
+processes performing writes begin to be throttled. Once the cache capacity is reached,
 processes can no longer use the cache until all cached written data is flushed
 to the appropriate storage device.
 
-Whereas Operating Systems and popular Big Data engines, such as MapReduce~\cite{mapreduce} and Apache Spark~\cite{spark}, have
+Whereas operating systems (OS) and popular Big Data engines, such as MapReduce~\cite{mapreduce} and Apache Spark~\cite{spark}, have
 incorporated software solutions to limit data transfers (e.g. writeback cache, in-memory computing,
 data locality, and lazy evaluation), hardware has also adapted to the growing datasets.
 One such improvement is the concept of placing persistent storage directly on the Dual
@@ -258,8 +259,7 @@ would be at play, making the device unfavourable for parallel processing.
 
 Due to the size and uniqueness of the \bigbrain, standardized processing pipelines
 have yet to be developed. In order to quantify the effects of storage devices
-on such a dataset, we have implemented a basic synthetic application that takes 
-the image, split into blocks, and increments all the voxels within each block, in parallel (Algorithm~\ref{alg:incrementation}).
+on such a dataset, we have implemented a basic synthetic application that splits an image into blocks and increments all the voxels within each block, in parallel (Algorithm~\ref{alg:incrementation}).
 This application
 enables us to read and write to different storage devices and ensure that written
 data could not have been previously cached
@@ -270,7 +270,7 @@ All code was implemented in Python 3.6.
 There are some notable differences between the GNU Parallel and Apache Spark implementations.
 For instance, in the GNU Parallel implementation, all operations (i.e. reading, incrementing and writing)
 are done within a single task. This task is applied to all the \bigbrain blocks using GNU Parallel,
-processing a subset of them at a time,
+which then processes a subset of them at a time
 depending on the level of parallelism provided. Reading in the GNU Parallel implementation 
 is achieved using the popular neuroimaging I/O library NiBabel v2.5.0~\cite{nibabel}. When provided with a filename, as is the case
 for the GNU Parallel implementation, Nibabel will simply load the header in memory, and memory map the data
@@ -770,8 +770,8 @@ to display higher resolution images at significantly greater speeds.
 \section{Acknowledgement}
 We are very grateful to the Intel and Dell-EMC teams for giving us the
 opportunity to experiment with the Intel Optane DC Server, for providing
-high-quality technical support, and for their thorough feedback on the
-manuscript. 
+high-quality technical support, and, in  particular, Steve Scargall, for
+providing thorough technical support on the manuscript.
 \bibliographystyle{IEEEtran} 
 \bibliography{biblio}
 
